@@ -1,4 +1,0 @@
-17938279830000 5136 game.lua {"type":"lua_code"}
-17938279830001 850 palette.lua {"type":"lua_code"}
-17938279830002 129600 sala {"type":"bitmap","width":480,"height":270}
-17938279830003 13983 sofa {"type":"bitmap","width":177,"height":79}
