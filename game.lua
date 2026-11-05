@@ -294,6 +294,21 @@ local hookClip = {
     {-0.895, 0.195, 0.538},
 }
 
+-- Keep the impact frames and trim the lead-in and recovery of Hook Punch.
+local hookTiming = {4,6,8,10,11,12,13,14,15,17,19,24}
+
+local function sampleStride(clip, cycle)
+    local position = cycle/(2*math.pi)*(#clip-1)
+    local index = math.floor(position)+1
+    local a, b = clip[index], clip[math.min(index+1,#clip)]
+    local fraction = position-math.floor(position)
+    local pose = {}
+    for channel = 1,#a do
+        pose[channel] = a[channel]+(b[channel]-a[channel])*fraction
+    end
+    return pose
+end
+
 local function bendJoint(y, z, pivot, angle)
     local height = y-pivot
     local sine, cosine = math.sin(angle), math.cos(angle)
@@ -306,12 +321,12 @@ local function courier()
     local farHeight = inKitchen and 56 or 49
     local nearHeight = inKitchen and 110 or 124
     local scale = (farHeight + depth*(nearHeight-farHeight))/1.852
-    local punchPose = strike > 0 and hookClip[25-strike] or nil
-    local angle = facing + (punchPose and punchPose[3]*0.34 or 0)
+    local punchPose = strike > 0 and hookClip[hookTiming[#hookTiming-strike+1]] or nil
+    local angle = facing + (punchPose and (punchPose[3]-hookClip[1][3])*0.24 or 0)
     local sine, cosine = math.sin(angle), math.cos(angle)
     local cycle = step
     local clip = running and runClip or walkClip
-    local pose = walking and clip[math.floor(cycle/(2*math.pi)*#clip)+1] or nil
+    local pose = walking and sampleStride(clip, cycle) or nil
     local bounce = walking and math.abs(math.cos(cycle))*(running and 0.065 or 0.032) or 0
     local vertices, faces = {}, {}
     for i = 1,#actorPoints,3 do
@@ -335,7 +350,7 @@ local function courier()
             ay, az = bendJoint(ay, az, 1.48, shoulder*shoulderWeight*arm)
             if hook then
                 local offset = ax-side*0.24
-                local turn = hook[1]*0.48*arm*shoulderWeight
+                local turn = (hook[1]-hookClip[1][1])*0.37*arm*shoulderWeight
                 ax, az = side*0.24+offset*math.cos(turn)-az*math.sin(turn),
                     offset*math.sin(turn)+az*math.cos(turn)
             end
@@ -420,7 +435,7 @@ function update()
     if not aiming then
         strike = 0
     elseif wasAiming and attack and strike == 0 then
-        strike = 24
+        strike = #hookTiming
     elseif strike > 0 then
         strike = strike-1
     end
@@ -452,7 +467,7 @@ function update()
     if walking then
         local movedX, movedY = x-oldX, y-oldY
         local distance = math.sqrt(movedX*movedX+movedY*movedY)
-        local pixelsPerCycle = running and 29 or 23
+        local pixelsPerCycle = running and 25 or 21
         step = (step + distance*2*math.pi/pixelsPerCycle) % (2*math.pi)
     end
     local status = inKitchen and "COZINHA" or "SALA"
@@ -511,7 +526,7 @@ function update()
     end
     ui.rectfill(0,0,479,15,240)
     local motion = walking and (running and " / CORRIDA" or " / PASSOS") or ""
-    ui.print("9.5 "..status..motion,8,3,241)
+    ui.print("9.6 "..status..motion,8,3,241)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do
             if not pcall(ui.grid, patch.x, patch.y, patch.scale, patch.scale, patch.rows) then
