@@ -210,9 +210,12 @@ local function actorInk(index)
     return index < 16 and 224+index or 226+index
 end
 
+local inKitchen, crossing = false, false
 local function courier()
-    local depth = math.max(0, math.min(1, (y-130)/103))
-    local scale = (1.38 + depth*1.16) * 40/1.852
+    local threshold = inKitchen and 144 or 130
+    local depth = math.max(0, math.min(1, (y-threshold)/(233-threshold)))
+    local farHeight = inKitchen and 56 or 49
+    local scale = (farHeight + depth*(100-farHeight))/1.852
     local sine, cosine = math.sin(facing), math.cos(facing)
     local stride = walking and math.sin(step/3.2)*0.075 or 0
     local vertices, faces = {}, {}
@@ -262,7 +265,6 @@ local function drawImage(image, minX, maxX, colors)
     end
 end
 
-local inKitchen, crossing = false, false
 
 function update()
     ui.cls(0)
@@ -270,6 +272,8 @@ function update()
     for i, color in ipairs(actorPalette) do ui.palset(actorInk(i-1), color) end
     local dx = (held(RIGHT or 2) and 1 or 0) - (held(LEFT or 4) and 1 or 0)
     local dy = (held(DOWN or 3) and 1 or 0) - (held(UP or 1) and 1 or 0)
+    if dy >= 0 then crossing = false end
+    if crossing and dy < 0 then dy = 0 end
     if dy < 0 then
         facing = math.pi + dx*0.7
     elseif dy > 0 then
@@ -290,21 +294,20 @@ function update()
     local nextX, nextY = x + dx * 1.95, y + dy * 1.75
     if walkable(nextX, y) then x = nextX end
     if walkable(x, nextY) then y = nextY end
-    if dy >= 0 then crossing = false end
     local status = inKitchen and "COZINHA" or "SALA"
     if inKitchen then
         if x >= 202 and x <= 270 and y <= 158 then
             status = "PASSAGEM PARA SALA"
             if dy < 0 and not crossing and y <= 146 then
                 crossing = true
-                inKitchen, x, y, status = false, 273, 158, "SALA"
+                inKitchen, x, y, facing, status = false, 273-(x-236)*0.55, 151, 0, "SALA"
             end
         end
     elseif x >= 247 and x <= 304 and y <= 151 then
         status = kitchenBitmap and "PASSAGEM PARA COZINHA" or "COZINHA AUSENTE"
         if dy < 0 and not crossing and y <= 138 and kitchenBitmap then
             crossing = true
-            inKitchen, x, y, status = true, 236, 177, "COZINHA"
+            inKitchen, x, y, facing, status = true, 236-(x-273)*0.55, 154, 0, "COZINHA"
         end
     elseif x >= 218 and x < 238 and y <= 150 then
         status = "CORREDOR EM BREVE"
@@ -341,7 +344,7 @@ function update()
         fine = fineAvailable and drawFine()
     end
     ui.rectfill(0,0,479,15,240)
-    ui.print("8.5 "..status,8,3,241)
+    ui.print("8.6 "..status,8,3,241)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do
             if not pcall(ui.grid, patch.x, patch.y, patch.scale, patch.scale, patch.rows) then
