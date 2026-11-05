@@ -313,7 +313,7 @@ function update()
         fine = detail and fineAvailable and drawFine()
     end
     ui.rectfill(0,0,479,15,240)
-    ui.print("7.8 "..status.."  Z: "..(native and "BITMAP" or fine and "DETALHE" or "COMPAT").."  X: "..formats[mode],8,3,241)
+    ui.print("7.9 "..status.."  Z: "..(native and "BITMAP" or fine and "DETALHE" or "COMPAT").."  X: "..formats[mode],8,3,241)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do
             if not pcall(ui.grid, patch.x, patch.y, patch.scale, patch.scale, patch.rows) then
