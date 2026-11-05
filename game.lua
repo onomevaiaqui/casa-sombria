@@ -111,9 +111,9 @@ if type(require) == "function" and type(ui.spr) == "function" then
     local _, paletteModule = pcall(require, "palette")
     local sprites = type(Sprites) == "table" and Sprites or spritesModule
     local colors = type(_G.Palette) == "table" and _G.Palette or paletteModule
-    if type(sprites) == "table" and sprites.sala74
+    if type(sprites) == "table" and sprites.sala75_0 and sprites.sala75_1 and sprites.sala75_2
         and type(colors) == "table" and #colors > 1 and #colors <= 224 then
-        bitmap, bitmapPalette = sprites.sala74, colors
+        bitmap, bitmapPalette = {sprites.sala75_0, sprites.sala75_1, sprites.sala75_2}, colors
         local byColor = {}
         for index, color in ipairs(colors) do byColor[color] = index-1 end
         sofaColors = {}
@@ -239,10 +239,13 @@ function update()
     ui.palset(240, 0)
     ui.palset(241, encode(32767))
     if native then
-        local ok, result = pcall(ui.spr, bitmap, 0, 0)
-        if not ok or result == false then
-            bitmap, native = nil, false
-            for i, color in ipairs(Palette) do ui.palset(i-1, encode(color)) end
+        for index, strip in ipairs(bitmap) do
+            local ok, result = pcall(ui.spr, strip, 0, (index-1)*82)
+            if not ok or result == false then
+                bitmap, native = nil, false
+                for i, color in ipairs(Palette) do ui.palset(i-1, encode(color)) end
+                break
+            end
         end
     end
     local fine = false
@@ -251,7 +254,7 @@ function update()
         fine = detail and fineAvailable and drawFine()
     end
     ui.rectfill(0,0,479,15,240)
-    ui.print("7.4 "..status.."  Z: "..(native and "BITMAP" or fine and "DETALHE" or "COMPAT").."  X: "..formats[mode],8,3,241)
+    ui.print("7.5 "..status.."  Z: "..(native and "BITMAP" or fine and "DETALHE" or "COMPAT").."  X: "..formats[mode],8,3,241)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do
             if not pcall(ui.grid, patch.x, patch.y, patch.scale, patch.scale, patch.rows) then
