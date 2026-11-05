@@ -222,7 +222,9 @@ local function courier()
     local swing = strike > 0 and math.sin((13-strike)*math.pi/13) or 0
     local angle = facing + swing*0.65
     local sine, cosine = math.sin(angle), math.cos(angle)
-    local stride = walking and math.sin(step/3.2)*0.075 or 0
+    local cycle = step/3.2
+    local stride = walking and math.sin(cycle) or 0
+    local bounce = walking and math.abs(math.cos(cycle))*0.032 or 0
     local vertices, faces = {}, {}
     for i = 1,#actorPoints,3 do
         local a,b,c = string.byte(actorPoints,i,i+2)
@@ -233,13 +235,20 @@ local function courier()
             ay = ay - upper*0.08
             ax = ax*(ay < 0.7 and 1.2 or 1)
         end
-        local leg = math.max(0,1-ay/0.85)
-        az = az + (ax < 0 and stride or -stride)*leg
+        local side = ax < 0 and -1 or 1
+        local leg = math.max(0,1-ay/0.90)
+        local arm = math.max(0,math.min(1,(math.abs(ax)-0.16)/0.10))
+        if ay >= 0.85 and ay <= 1.48 then
+            az = az + side*stride*arm*0.13
+        end
+        az = az - side*stride*leg*0.17
+        ay = ay + bounce*(1-leg) + math.max(0,side*stride)*leg*0.095
+        ax = ax + stride*(1-leg)*0.014
         local depth = az*cosine-ax*sine
         local size = scale*4.5/(4.5+depth)
         vertices[#vertices+1] = {
-            math.floor(x+(ax*cosine+az*sine)*size),
-            math.floor(y-(ay+depth*0.22)*size),
+            math.floor(x+(ax*cosine+az*sine)*size+0.5),
+            math.floor(y-(ay+depth*0.22)*size+0.5),
             depth
         }
     end
@@ -319,9 +328,7 @@ function update()
     elseif dx ~= 0 then
         facing = -dx*1.15
     end
-    walking = dx ~= 0 or dy ~= 0
     local speed = run and 1.65 or 1
-    if walking then step = step + speed end
     -- The sofa touches the wall. Follow its front edge to reach the doorway.
     local function walkable(px, py)
         if inKitchen then
@@ -331,8 +338,11 @@ function update()
             and (px >= 218 or py >= 216 - (px - 48) * 0.19)
     end
     local nextX, nextY = x + dx * 1.95 * speed, y + dy * 1.75 * speed
+    local oldX, oldY = x, y
     if walkable(nextX, y) then x = nextX end
     if walkable(x, nextY) then y = nextY end
+    walking = x ~= oldX or y ~= oldY
+    if walking then step = step + speed end
     local status = inKitchen and "COZINHA" or "SALA"
     if inKitchen then
         if x >= 202 and x <= 270 and y <= 158 then
@@ -388,7 +398,7 @@ function update()
         fine = fineAvailable and drawFine()
     end
     ui.rectfill(0,0,479,15,240)
-    ui.print("8.7 "..status,8,3,241)
+    ui.print("8.8 "..status,8,3,241)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do
             if not pcall(ui.grid, patch.x, patch.y, patch.scale, patch.scale, patch.rows) then
