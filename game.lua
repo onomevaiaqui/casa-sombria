@@ -1679,7 +1679,7 @@ function update()
     elseif dx ~= 0 then
         facing = -dx*1.15
     end
-    local speed = run and 1.85 or 1
+    local speed = run and 2.25 or 1
     -- The sofa touches the wall. Follow its front edge to reach the doorway.
     local function walkable(px, py)
         if inKitchen then
@@ -1688,7 +1688,7 @@ function update()
         return px >= 48 and px <= 448 and py >= 130 and py <= 230
             and (px >= 218 or py >= 216 - (px - 48) * 0.19)
     end
-    local nextX, nextY = x + dx * 1.95 * speed, y + dy * 1.75 * speed
+    local nextX, nextY = x + dx * 2.30 * speed, y + dy * 2.05 * speed
     local oldX, oldY = x, y
     if walkable(nextX, y) then x = nextX end
     if walkable(x, nextY) then y = nextY end
@@ -1697,7 +1697,7 @@ function update()
     if walking then
         local movedX, movedY = x-oldX, y-oldY
         local distance = math.sqrt(movedX*movedX+movedY*movedY)
-        local pixelsPerCycle = actorScale()*(running and 1.45 or 1.10)
+        local pixelsPerCycle = actorScale()*(running and 3.04 or 1.80)
         step = (step + distance*2*math.pi/pixelsPerCycle) % (2*math.pi)
     end
     local status = inKitchen and "COZINHA" or "SALA"
@@ -1756,7 +1756,7 @@ function update()
     end
     ui.rectfill(0,0,479,15,240)
     local motion = walking and (running and " / CORRIDA" or " / PASSOS") or ""
-    ui.print("9.7 "..status..motion,8,3,241)
+    ui.print("9.8 "..status..motion,8,3,241)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do
             if not pcall(ui.grid, patch.x, patch.y, patch.scale, patch.scale, patch.rows) then
