@@ -105,7 +105,7 @@ if type(ui.grid) == "function" then
     end
 end
 local Palette = {0,1,1024,1057,34,35,1059,1058,1091,3105,2081,3137,2114,3139,3138,4162,2115,36,1060,1093,1094,1092,1127,2116,2148,3173,2149,3172,2182,3206,2183,3207,4161,5186,5219,7233,7267,5221,6276,7300,5253,5287,7301,7335,7367,1128,1129,2186,1163,2185,1164,2187,2184,2217,4264,3241,2218,4297,4298,4331,2221,2222,4332,5288,5321,4330,5354,6344,7401,6378,6412,4366,5388,7435,5389,5423,7469,6446,7503,8257,9313,10338,8324,10371,9381,8358,9382,9415,10405,10438,11463,12417,13442,14466,14499,13509,13543,15591,9449,9482,10473,13544,14600,15623,8459,9483,11529,10507,8492,9516,8493,9549,9550,10540,10574,13577,13610,14601,14634,13645,3313,2292,3379,5457,5490,6480,6513,7536,6514,6547,6546,6580,6614,6647,3545,5625,9584,10608,9617,12721,3677,7705,6714,5692,13877,8827,17602,19649,17637,16615,20705,19716,17671,19717,18727,22786,21798,22855,17704,20808,24935,25992,20152,24412,27582}
-local bitmap, bitmapPalette, sofaColors
+local bitmap, kitchenBitmap, bitmapPalette, sofaColors
 if type(require) == "function" and type(ui.spr) == "function" then
     local _, spritesModule = pcall(require, "sprites")
     local _, paletteModule = pcall(require, "palette")
@@ -114,6 +114,9 @@ if type(require) == "function" and type(ui.spr) == "function" then
     if type(sprites) == "table" and sprites.sala75_0 and sprites.sala75_1 and sprites.sala75_2
         and type(colors) == "table" and #colors > 1 and #colors <= 224 then
         bitmap, bitmapPalette = {sprites.sala75_0, sprites.sala75_1, sprites.sala75_2}, colors
+        if sprites.cozinha76_0 and sprites.cozinha76_1 and sprites.cozinha76_2 then
+            kitchenBitmap = {sprites.cozinha76_0, sprites.cozinha76_1, sprites.cozinha76_2}
+        end
         local byColor = {}
         for index, color in ipairs(colors) do byColor[color] = index-1 end
         sofaColors = {}
@@ -210,6 +213,8 @@ local function drawImage(image, minX, maxX, colors)
     end
 end
 
+local inKitchen, previousInteract = false, false
+
 function update()
     local colorButton = held(BTN_X or 6)
     if colorButton and not previous then mode = mode % #formats + 1 end
@@ -218,9 +223,7 @@ function update()
     if detailButton and not previousDetail then detail = not detail end
     previousDetail = detailButton
     ui.cls(0)
-    local native = detail and bitmap ~= nil
-    local status
-    for i, color in ipairs(native and bitmapPalette or Palette) do ui.palset(i-1, encode(color)) end
+
     for i, color in ipairs(actorPalette) do ui.palset(i+223, encode(color)) end
     local dx = (held(RIGHT or 2) and 1 or 0) - (held(LEFT or 4) and 1 or 0)
     local dy = (held(DOWN or 3) and 1 or 0) - (held(UP or 1) and 1 or 0)
@@ -229,20 +232,55 @@ function update()
     if walking then step = step + 1 end
     -- The sofa touches the wall. Follow its front edge to reach the doorway.
     local function walkable(px, py)
-        return px >= 48 and px <= 392 and py >= 130 and py <= 230
-            and (px >= 230 or py >= 216 - (px - 48) * 0.19)
+        if inKitchen then
+            return py >= 144 and py <= 233 and px >= 145 and px <= 312 + (py-144)*0.9
+        end
+        return px >= 48 and px <= 448 and py >= 130 and py <= 230
+            and (px >= 218 or py >= 216 - (px - 48) * 0.19)
     end
     local nextX, nextY = x + dx * 1.4, y + dy * 1.25
     if walkable(nextX, y) then x = nextX end
     if walkable(x, nextY) then y = nextY end
-    local status = y <= 150 and "PORTA" or "FRENTE"
+    local interact = held(BTN_E or 15)
+    local pressed = interact and not previousInteract
+    previousInteract = interact
+    local status = inKitchen and "COZINHA" or "SALA"
+    if inKitchen then
+        if x >= 202 and x <= 270 and y <= 158 then
+            status = "E: SALA"
+            if pressed then
+                inKitchen, x, y, status = false, 273, 158, "SALA"
+            end
+        end
+    elseif x >= 247 and x <= 304 and y <= 151 then
+        status = kitchenBitmap and "E: COZINHA" or "COZINHA AUSENTE"
+        if pressed and kitchenBitmap then
+            inKitchen, x, y, status = true, 236, 177, "COZINHA"
+        end
+    elseif x >= 218 and x < 238 and y <= 150 then
+        status = "CORREDOR EM BREVE"
+    elseif x >= 392 and y <= 160 then
+        status = "FRENTE EM BREVE"
+    elseif x >= 168 and x <= 245 and y >= 221 then
+        status = "ESCRITORIO / PORAO EM BREVE"
+    end
+    local strips = inKitchen and kitchenBitmap or (detail and bitmap)
+    local native = not not strips
+    for i, color in ipairs(native and bitmapPalette or Palette) do ui.palset(i-1, encode(color)) end
     ui.palset(240, 0)
     ui.palset(241, encode(32767))
     if native then
-        for index, strip in ipairs(bitmap) do
+        for index, strip in ipairs(strips) do
             local ok, result = pcall(ui.spr, strip, 0, (index-1)*82)
             if not ok or result == false then
-                bitmap, native = nil, false
+                if inKitchen then
+                    kitchenBitmap, inKitchen, x, y = nil, false, 273, 158
+                    status = "ERRO COZINHA"
+                else
+                    bitmap = nil
+                end
+                native = false
+                ui.cls(0)
                 for i, color in ipairs(Palette) do ui.palset(i-1, encode(color)) end
                 break
             end
@@ -254,7 +292,7 @@ function update()
         fine = detail and fineAvailable and drawFine()
     end
     ui.rectfill(0,0,479,15,240)
-    ui.print("7.5 "..status.."  Z: "..(native and "BITMAP" or fine and "DETALHE" or "COMPAT").."  X: "..formats[mode],8,3,241)
+    ui.print("7.6 "..status.."  Z: "..(native and "BITMAP" or fine and "DETALHE" or "COMPAT").."  X: "..formats[mode],8,3,241)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do
             if not pcall(ui.grid, patch.x, patch.y, patch.scale, patch.scale, patch.rows) then
@@ -264,5 +302,5 @@ function update()
         end
     end
     courier()
-    if y <= 159 then drawImage(detailedSofa, x-24, x+24, native and sofaColors or nil) end
+    if not inKitchen and y <= 159 then drawImage(detailedSofa, x-24, x+24, native and sofaColors or nil) end
 end
