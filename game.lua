@@ -132,10 +132,10 @@ local function encode(c)
     if mode == 2 then return r * 1024 + g * 32 + b end
     return r * 2048 + (g * 2 + math.floor(g / 16)) * 32 + b
 end
-local x, y, facing, walking, step = 105, 216, 1, false, 0
+local x, y, facing, walking, step = 105, 216, -0.8, false, 0
 local actorPalette = {
-    2056,5136,7282,8549,10665,12653,10570,15820,
-    15501,11133,21471,6328,11833,9511
+    3204, 5320, 8420, 11558, 6411, 7504, 10709, 13946,
+    5358, 7508, 15990, 20283, 21342, 7501, 5319, 15033
 }
 local actorFaces = {
     {1,2,3,4,0},{5,8,7,6,1},{1,5,6,2,0},
@@ -144,20 +144,23 @@ local actorFaces = {
 
 local function courier()
     local scale = 0.75 + (y - 145) / 180
-    local angle = -facing * 0.75
+    local angle = facing
     local sine, cosine = math.sin(angle), math.cos(angle)
     local stride = walking and math.sin(step / 4) * 2.5 or 0
+    local bob = walking and math.abs(stride)*0.42 or 0
     local faces = {}
 
-    local function part(px, py, pz, w, h, d, lit, dark)
+    local function part(px, py, pz, w, h, d, lit, dark, topWidth, topDepth)
         local vertices = {}
         for _, corner in ipairs({
             {0,0,0},{1,0,0},{1,1,0},{0,1,0},
             {0,0,1},{1,0,1},{1,1,1},{0,1,1}
         }) do
-            local ax = px + corner[1] * w
-            local ay = py + corner[2] * h
-            local az = pz + corner[3] * d
+            local width = corner[2] == 1 and (topWidth or w) or w
+            local depthWidth = corner[2] == 1 and (topDepth or d) or d
+            local ax = px + w/2 + (corner[1]-0.5)*width
+            local ay = py + corner[2]*h + (py >= 16 and bob or 0)
+            local az = pz + d/2 + (corner[3]-0.5)*depthWidth
             local depth = az * cosine - ax * sine
             local magnification = scale * 95 / (95 + depth)
             vertices[#vertices + 1] = {
@@ -175,17 +178,32 @@ local function courier()
         end
     end
 
-    part(-7,2,-3+stride,5,11,6,14,3)
-    part(2,2,-3-stride,5,11,6,14,3)
-    part(-7,0,-5+stride,5,3,8,5,2)
-    part(2,0,-5-stride,5,3,8,5,2)
-    part(-8,12,-4,16,12,8,12,9)
-    part(-6,24,-4,12,8,8,13,9)
-    part(-7,31,-5,14,4,10,12,9)
-    part(-6,31,-9,12,2,5,12,9)
-    part(-10,15,-6,4,7,6,13,9)
-    part(6,15,-6,4,7,6,13,9)
-    part(-10,16,-15,20,3,12,11,10)
+    -- Boots, trousers and a tapered work shirt.
+    part(-6,0,-5+stride,5,3,8,5,1,4)
+    part(1,0,-5-stride,5,3,8,5,1,4)
+    part(-6,3,-2.5+stride,5,14,5,4,3,6)
+    part(1,3,-2.5-stride,5,14,5,4,3,6)
+    part(-6,16,-3.5,12,3,7,3,1)
+    part(-6,19,-3.5,12,10,7,10,9,16,8)
+    part(-2,23,-4.1,4,6,0.8,9,2,6)
+    part(-9,24,-3.5,4,5,6,10,9,5)
+    part(5,24,-3.5,4,5,6,10,9,5)
+    part(-9,20,-6,3.5,5,6,8,6)
+    part(5.5,20,-6,3.5,5,6,8,6)
+    part(-9,19,-11,18,2.5,10,13,14,18)
+    part(-7.5,21.5,-9.5,15,0.5,7,12,14)
+
+    -- Angled jaw, neck, ears and separate planes for the hair and face.
+    part(-2,28,-2.5,4,4,5,7,6)
+    part(-3.1,31,-3.8,6.2,7,7,8,7,8.4,7.5)
+    part(-4.6,33,-1.8,1.5,3,2.5,7,6)
+    part(3.1,33,-1.8,1.5,3,2.5,7,6)
+    part(-1,33.5,-4.7,2,2.3,1.3,8,6,1.3)
+    part(-3.1,36.1,-4.05,2.3,0.8,0.5,2,1)
+    part(0.8,36.1,-4.05,2.3,0.8,0.5,2,1)
+    part(-4.3,37,-3.8,8.6,3.5,7.6,2,1,7,6.5)
+    part(-4,38,-4.6,4.6,2.1,3,2,1,3.6)
+    part(-4.1,35,1.8,8.2,3,2.2,2,1)
 
     table.sort(faces,function(a,b) return a[5]>b[5] end)
     for _, face in ipairs(faces) do
@@ -227,7 +245,13 @@ function update()
     for i, color in ipairs(actorPalette) do ui.palset(i+223, encode(color)) end
     local dx = (held(RIGHT or 2) and 1 or 0) - (held(LEFT or 4) and 1 or 0)
     local dy = (held(DOWN or 3) and 1 or 0) - (held(UP or 1) and 1 or 0)
-    if dx ~= 0 then facing = dx end
+    if dy < 0 then
+        facing = math.pi + dx*0.7
+    elseif dy > 0 then
+        facing = -dx*0.7
+    elseif dx ~= 0 then
+        facing = -dx*1.15
+    end
     walking = dx ~= 0 or dy ~= 0
     if walking then step = step + 1 end
     -- The sofa touches the wall. Follow its front edge to reach the doorway.
@@ -289,7 +313,7 @@ function update()
         fine = detail and fineAvailable and drawFine()
     end
     ui.rectfill(0,0,479,15,240)
-    ui.print("7.7 "..status.."  Z: "..(native and "BITMAP" or fine and "DETALHE" or "COMPAT").."  X: "..formats[mode],8,3,241)
+    ui.print("7.8 "..status.."  Z: "..(native and "BITMAP" or fine and "DETALHE" or "COMPAT").."  X: "..formats[mode],8,3,241)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do
             if not pcall(ui.grid, patch.x, patch.y, patch.scale, patch.scale, patch.rows) then
