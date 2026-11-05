@@ -105,6 +105,7 @@ if type(ui.grid) == "function" then
 end
 local Palette = {0,1,1024,1057,34,35,1059,1058,1091,3105,2081,3137,2114,3139,3138,4162,2115,36,1060,1093,1094,1092,1127,2116,2148,3173,2149,3172,2182,3206,2183,3207,4161,5186,5219,7233,7267,5221,6276,7300,5253,5287,7301,7335,7367,1128,1129,2186,1163,2185,1164,2187,2184,2217,4264,3241,2218,4297,4298,4331,2221,2222,4332,5288,5321,4330,5354,6344,7401,6378,6412,4366,5388,7435,5389,5423,7469,6446,7503,8257,9313,10338,8324,10371,9381,8358,9382,9415,10405,10438,11463,12417,13442,14466,14499,13509,13543,15591,9449,9482,10473,13544,14600,15623,8459,9483,11529,10507,8492,9516,8493,9549,9550,10540,10574,13577,13610,14601,14634,13645,3313,2292,3379,5457,5490,6480,6513,7536,6514,6547,6546,6580,6614,6647,3545,5625,9584,10608,9617,12721,3677,7705,6714,5692,13877,8827,17602,19649,17637,16615,20705,19716,17671,19717,18727,22786,21798,22855,17704,20808,24935,25992,20152,24412,27582}
 local bitmap, kitchenBitmap, bitmapPalette, sofaColors
+local roomBitmaps = {}
 if type(require) == "function" and type(ui.spr) == "function" then
     local _, spritesModule = pcall(require, "sprites")
     local _, paletteModule = pcall(require, "palette")
@@ -115,6 +116,12 @@ if type(require) == "function" and type(ui.spr) == "function" then
         bitmap, bitmapPalette = {sprites.sala75_0, sprites.sala75_1, sprites.sala75_2}, colors
         if sprites.cozinha76_0 and sprites.cozinha76_1 and sprites.cozinha76_2 then
             kitchenBitmap = {sprites.cozinha76_0, sprites.cozinha76_1, sprites.cozinha76_2}
+        end
+        for _, name in ipairs({"corredor","banheiro","quarto","garagem","quintal","frente"}) do
+            local prefix = name.."100_"
+            if sprites[prefix.."0"] and sprites[prefix.."1"] and sprites[prefix.."2"] then
+                roomBitmaps[name] = {sprites[prefix.."0"],sprites[prefix.."1"],sprites[prefix.."2"]}
+            end
         end
         local byColor = {}
         for index, color in ipairs(colors) do byColor[color] = index-1 end
@@ -1545,17 +1552,111 @@ local function actorInk(index)
     return index < 16 and 224+index or 226+index
 end
 
-local inKitchen, crossing = false, false
+local currentRoom, crossing = "sala", false
+local roomNotice = ""
+roomBitmaps.sala, roomBitmaps.cozinha = bitmap, kitchenBitmap
+local rooms = {
+    sala = {label="SALA", floor=130, far=49, near=124},
+    cozinha = {label="COZINHA", floor=144, far=56, near=110},
+    corredor = {label="CORREDOR", floor=174, far=66, near=105},
+    banheiro = {label="BANHEIRO", floor=185, far=78, near=110},
+    quarto = {label="QUARTO", floor=174, far=62, near=108},
+    garagem = {label="GARAGEM", floor=166, far=58, near=110},
+    quintal = {label="QUINTAL DE TRAS", floor=165, far=56, near=105},
+    frente = {label="FRENTE DA CASA", floor=174, far=60, near=105}
+}
+
+-- Each opening records a destination spawn outside its return trigger.
+local exits = {
+    sala = {
+        {x1=247,x2=304,y1=130,y2=142,dx=0,dy=-1,to="cozinha",x=236,y=160},
+        {x1=218,x2=238,y1=130,y2=150,dx=0,dy=-1,to="corredor",x=245,y=228},
+        {x1=392,x2=448,y1=130,y2=158,dx=0,dy=-1,to="quintal",x=365,y=215},
+        {x1=60,x2=146,y1=220,y2=230,dx=0,dy=1,to="frente",x=102,y=195},
+        {x1=320,x2=390,y1=220,y2=230,dx=0,dy=1,to="garagem",x=302,y=197}
+    },
+    cozinha = {
+        {x1=202,x2=270,y1=144,y2=151,dx=0,dy=-1,to="sala",x=273,y=158}
+    },
+    corredor = {
+        {x1=210,x2=288,y1=174,y2=207,dx=0,dy=-1,to="sala",x=226,y=160},
+        {x1=60,x2=96,y1=190,y2=234,dx=-1,dy=0,to="quarto",x=399,y=217},
+        {x1=403,x2=436,y1=190,y2=234,dx=1,dy=0,to="banheiro",x=72,y=218}
+    },
+    banheiro = {
+        {x1=36,x2=58,y1=216,y2=234,dx=-1,dy=0,to="corredor",x=380,y=220}
+    },
+    quarto = {
+        {x1=424,x2=452,y1=184,y2=234,dx=1,dy=0,to="corredor",x=118,y=220}
+    },
+    garagem = {
+        {x1=268,x2=337,y1=166,y2=186,dx=0,dy=-1,to="sala",x=355,y=211},
+        {x1=180,x2=325,y1=223,y2=235,dx=0,dy=1,to="frente",x=387,y=210}
+    },
+    quintal = {
+        {x1=332,x2=404,y1=165,y2=194,dx=0,dy=-1,to="sala",x=419,y=170},
+        {x1=18,x2=45,y1=205,y2=235,dx=-1,dy=0,to="frente",x=45,y=219}
+    },
+    frente = {
+        {x1=64,x2=135,y1=174,y2=185,dx=0,dy=-1,to="sala",x=105,y=212},
+        {x1=350,x2=440,y1=174,y2=196,dx=0,dy=-1,to="garagem",x=282,y=213},
+        {x1=18,x2=35,y1=205,y2=235,dx=-1,dy=0,to="quintal",x=64,y=223}
+    }
+}
+
+local function walkable(px, py)
+    if currentRoom == "sala" then
+        return px >= 48 and px <= 448 and py >= 130 and py <= 230
+            and (px >= 218 or py >= 216-(px-48)*0.19)
+    elseif currentRoom == "cozinha" then
+        return py >= 144 and py <= 233 and px >= 145 and px <= 312+(py-144)*0.9
+    elseif currentRoom == "corredor" then
+        return px >= 60 and px <= 436 and py >= 174 and py <= 234
+            and (py >= 207 or (px >= 210 and px <= 288))
+    elseif currentRoom == "banheiro" then
+        return px >= 36 and px <= 330 and py >= 185 and py <= 234
+            and (px >= 174 or py >= 216)
+    elseif currentRoom == "quarto" then
+        return px >= 218 and px <= 452 and py >= 174 and py <= 234
+            and (px <= 334 or py >= 207)
+    elseif currentRoom == "garagem" then
+        return px >= 180 and px <= 375 and py >= 166 and py <= 235
+            and (px >= 260 or py >= 220)
+    elseif currentRoom == "quintal" then
+        return px >= 18 and px <= 440 and py >= 165 and py <= 235
+            and (py >= 211 or (px >= 308 and px <= 404))
+    end
+    return px >= 18 and px <= 450 and py >= 174 and py <= 235
+end
+
+local function checkPassage(dx, dy)
+    roomNotice = ""
+    for _, exit in ipairs(exits[currentRoom]) do
+        local near = x >= exit.x1 and x <= exit.x2 and y >= exit.y1 and y <= exit.y2
+        local towards = (exit.dx ~= 0 and dx*exit.dx > 0) or (exit.dy ~= 0 and dy*exit.dy > 0)
+        if near then
+            roomNotice = "PARA "..rooms[exit.to].label
+            if towards and not crossing then
+                if roomBitmaps[exit.to] then
+                    currentRoom, x, y, facing = exit.to, exit.x, exit.y, 0
+                    crossing, walking, running, step = true, false, false, 0
+                    roomNotice = ""
+                else
+                    roomNotice = "FUNDO AUSENTE: "..rooms[exit.to].label
+                end
+                return
+            end
+        end
+    end
+end
 local aiming, strike, running = false, 0, false
 local menuOpen, aimCancelled = false, false
 local previousA, previousB, previousY = false, false, false
 
 local function actorScale()
-    local threshold = inKitchen and 144 or 130
-    local depth = math.max(0, math.min(1, (y-threshold)/(233-threshold)))
-    local farHeight = inKitchen and 56 or 49
-    local nearHeight = inKitchen and 110 or 124
-    return (farHeight+depth*(nearHeight-farHeight))/1.852
+    local camera = rooms[currentRoom]
+    local depth = math.max(0,math.min(1,(y-camera.floor)/(235-camera.floor)))
+    return (camera.far+depth*(camera.near-camera.far))/1.852
 end
 
 local function animationDelta()
@@ -1670,8 +1771,8 @@ function update()
         if strike > actorClips.punch.count then strike = 0 end
     end
     if menuOpen or guard or cancel then dx, dy = 0, 0 end
-    if dy >= 0 then crossing = false end
-    if crossing and dy < 0 then dy = 0 end
+    if dx == 0 and dy == 0 then crossing = false end
+    if crossing then dx, dy = 0, 0 end
     if dy < 0 then
         facing = math.pi + dx*0.7
     elseif dy > 0 then
@@ -1680,14 +1781,6 @@ function update()
         facing = -dx*1.15
     end
     local speed = run and 2.25 or 1
-    -- The sofa touches the wall. Follow its front edge to reach the doorway.
-    local function walkable(px, py)
-        if inKitchen then
-            return py >= 144 and py <= 233 and px >= 145 and px <= 312 + (py-144)*0.9
-        end
-        return px >= 48 and px <= 448 and py >= 130 and py <= 230
-            and (px >= 218 or py >= 216 - (px - 48) * 0.19)
-    end
     local nextX, nextY = x + dx * 3.45 * speed, y + dy * 3.075 * speed
     local oldX, oldY = x, y
     if walkable(nextX, y) then x = nextX end
@@ -1700,34 +1793,14 @@ function update()
         local pixelsPerCycle = actorScale()*(running and 3.04 or 1.80)
         step = (step + distance*2*math.pi/pixelsPerCycle) % (2*math.pi)
     end
-    local status = inKitchen and "COZINHA" or "SALA"
-    if inKitchen then
-        if x >= 202 and x <= 270 and y <= 158 then
-            status = "PASSAGEM PARA SALA"
-            if dy < 0 and not crossing and y <= 146 then
-                crossing = true
-                inKitchen, x, y, facing, status = false, 273-(x-236)*0.55, 151, 0, "SALA"
-            end
-        end
-    elseif x >= 247 and x <= 304 and y <= 151 then
-        status = kitchenBitmap and "PASSAGEM PARA COZINHA" or "COZINHA AUSENTE"
-        if dy < 0 and not crossing and y <= 138 and kitchenBitmap then
-            crossing = true
-            inKitchen, x, y, facing, status = true, 236-(x-273)*0.55, 154, 0, "COZINHA"
-        end
-    elseif x >= 218 and x < 238 and y <= 150 then
-        status = "CORREDOR EM BREVE"
-    elseif x >= 392 and y <= 160 then
-        status = "FRENTE EM BREVE"
-    elseif x >= 168 and x <= 245 and y >= 221 then
-        status = "ESCRITORIO / PORAO EM BREVE"
-    end
+    checkPassage(dx,dy)
+    local status = roomNotice ~= "" and roomNotice or rooms[currentRoom].label
     if aiming then
         status = strike > 0 and "SOCO" or "PUNHOS LEVANTADOS"
     elseif confirm and not menuOpen and not guard then
         status = "NADA PARA USAR"
     end
-    local strips = inKitchen and kitchenBitmap or bitmap
+    local strips = roomBitmaps[currentRoom]
     local native = not not strips
     for i, color in ipairs(native and bitmapPalette or Palette) do ui.palset(i-1, color) end
     ui.palset(240, 0)
@@ -1736,11 +1809,12 @@ function update()
         for index, strip in ipairs(strips) do
             local ok, result = pcall(ui.spr, strip, 0, (index-1)*82)
             if not ok or result == false then
-                if inKitchen then
-                    kitchenBitmap, inKitchen, x, y = nil, false, 273, 158
-                    status = "ERRO COZINHA"
+                if currentRoom ~= "sala" then
+                    roomBitmaps[currentRoom] = nil
+                    currentRoom, x, y, facing = "sala",273,158,0
+                    status = "ERRO FUNDO: VOLTA A SALA"
                 else
-                    bitmap = nil
+                    roomBitmaps.sala, bitmap = nil, nil
                 end
                 native = false
                 ui.cls(0)
@@ -1756,7 +1830,7 @@ function update()
     end
     ui.rectfill(0,0,479,15,240)
     local motion = walking and (running and " / CORRIDA" or " / PASSOS") or ""
-    ui.print("9.9 "..status..motion,8,3,241)
+    ui.print("10.0 "..status..motion,8,3,241)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do
             if not pcall(ui.grid, patch.x, patch.y, patch.scale, patch.scale, patch.rows) then
@@ -1766,7 +1840,7 @@ function update()
         end
     end
     courier()
-    if not inKitchen and y <= 159 then drawImage(detailedSofa, x-24, x+24, native and sofaColors or nil) end
+    if currentRoom == "sala" and y <= 159 then drawImage(detailedSofa, x-24, x+24, native and sofaColors or nil) end
     if menuOpen then
         ui.rectfill(112,65,367,165,240)
         ui.print("PAUSA",128,77,241)
