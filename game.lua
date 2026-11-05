@@ -215,16 +215,96 @@ local inKitchen, crossing = false, false
 local aiming, strike, running = false, 0, false
 local menuOpen, aimCancelled = false, false
 local previousA, previousB, previousY = false, false, false
+local walkClip = {
+    {0.243, 0.000, 0.516, 0.110, 0.005, 0.285, 0.012},
+    {0.315, -0.110, 0.411, 0.086, 0.122, 0.247, 0.015},
+    {0.350, -0.212, 0.274, 0.078, 0.228, 0.119, 0.021},
+    {0.374, -0.305, 0.134, 0.080, 0.310, -0.031, 0.026},
+    {0.426, -0.363, 0.059, 0.111, 0.384, -0.162, 0.026},
+    {0.487, -0.420, 0.076, 0.145, 0.449, -0.229, 0.024},
+    {0.479, -0.473, 0.113, 0.181, 0.528, -0.209, 0.019},
+    {0.469, -0.484, 0.172, 0.208, 0.560, -0.118, 0.000},
+    {0.444, -0.436, 0.233, 0.260, 0.550, 0.005, -0.014},
+    {0.358, -0.302, 0.252, 0.351, 0.514, 0.089, -0.009},
+    {0.206, -0.130, 0.204, 0.421, 0.385, 0.151, 0.001},
+    {0.044, 0.044, 0.133, 0.440, 0.265, 0.193, 0.005},
+    {-0.094, 0.182, 0.069, 0.386, 0.194, 0.209, 0.009},
+    {-0.218, 0.273, 0.018, 0.274, 0.145, 0.257, 0.012},
+    {-0.319, 0.328, 0.005, 0.142, 0.086, 0.314, 0.017},
+    {-0.354, 0.371, 0.074, 0.028, 0.007, 0.375, 0.024},
+    {-0.370, 0.433, 0.153, 0.006, -0.056, 0.450, 0.026},
+    {-0.430, 0.507, 0.178, 0.085, -0.085, 0.529, 0.020},
+    {-0.454, 0.536, 0.203, 0.164, -0.061, 0.568, 0.001},
+    {-0.311, 0.494, 0.357, 0.182, -0.066, 0.590, -0.016},
+    {-0.169, 0.428, 0.470, 0.206, -0.100, 0.571, -0.015},
+    {-0.026, 0.301, 0.542, 0.195, -0.123, 0.493, -0.002},
+    {0.106, 0.150, 0.552, 0.160, -0.099, 0.394, 0.006},
+    {0.243, 0.000, 0.516, 0.110, 0.005, 0.285, 0.012},
+}
+local runClip = {
+    {1.101, 0.289, 1.081, 0.457, 0.805, -0.543, 0.866},
+    {1.277, 0.035, 1.006, 0.330, 0.988, -0.647, 0.786},
+    {1.368, -0.194, 0.870, 0.166, 1.128, -0.611, 0.617},
+    {1.367, -0.400, 0.700, 0.013, 1.188, -0.569, 0.477},
+    {1.290, -0.450, 0.523, 0.067, 1.157, -0.472, 0.394},
+    {1.170, -0.408, 0.393, 0.247, 1.055, -0.309, 0.404},
+    {1.036, -0.322, 0.336, 0.471, 0.867, -0.113, 0.475},
+    {0.937, -0.179, 0.369, 0.706, 0.584, 0.048, 0.543},
+    {0.874, 0.051, 0.463, 0.943, 0.245, 0.144, 0.611},
+    {0.800, 0.387, 0.543, 1.142, -0.096, 0.227, 0.700},
+    {0.680, 0.781, 0.578, 1.252, -0.384, 0.377, 0.764},
+    {0.493, 1.119, 0.556, 1.259, -0.566, 0.594, 0.782},
+    {0.249, 1.339, 0.467, 1.181, -0.628, 0.818, 0.743},
+    {-0.004, 1.451, 0.334, 1.041, -0.614, 1.009, 0.657},
+    {-0.220, 1.470, 0.205, 0.861, -0.573, 1.128, 0.578},
+    {-0.393, 1.403, 0.101, 0.654, -0.514, 1.123, 0.532},
+    {-0.487, 1.270, 0.078, 0.453, -0.419, 1.016, 0.520},
+    {-0.424, 1.114, 0.231, 0.310, -0.287, 0.845, 0.588},
+    {-0.268, 0.989, 0.470, 0.278, -0.125, 0.620, 0.669},
+    {-0.071, 0.936, 0.702, 0.368, 0.031, 0.360, 0.703},
+    {0.190, 0.900, 0.910, 0.499, 0.164, 0.095, 0.741},
+    {0.546, 0.801, 1.070, 0.561, 0.328, -0.158, 0.797},
+    {0.894, 0.613, 1.128, 0.555, 0.575, -0.385, 0.820},
+    {1.101, 0.289, 1.081, 0.457, 0.805, -0.543, 0.866},
+}
+local hookClip = {
+    {-0.895, 0.195, 0.538},
+    {-0.937, 0.187, 0.526},
+    {-0.955, 0.131, 0.500},
+    {-0.940, 0.044, 0.401},
+    {-0.875, 0.007, 0.113},
+    {-0.672, 0.075, -0.359},
+    {-0.283, 0.328, -0.688},
+    {0.225, 0.626, -0.818},
+    {0.647, 0.832, -0.780},
+    {0.739, 0.987, -0.454},
+    {0.282, 0.880, 0.437},
+    {-0.676, 1.000, 0.929},
+    {-0.866, 0.914, 0.924},
+    {-0.755, 0.829, 0.863},
+    {-0.771, 0.661, 0.901},
+    {-0.825, 0.452, 0.815},
+    {-0.851, 0.288, 0.718},
+    {-0.845, 0.179, 0.641},
+    {-0.877, 0.142, 0.592},
+    {-0.907, 0.149, 0.537},
+    {-0.903, 0.150, 0.495},
+    {-0.883, 0.159, 0.434},
+    {-0.882, 0.178, 0.448},
+    {-0.895, 0.195, 0.538},
+}
+
 local function courier()
     local threshold = inKitchen and 144 or 130
     local depth = math.max(0, math.min(1, (y-threshold)/(233-threshold)))
     local farHeight = inKitchen and 56 or 49
     local scale = (farHeight + depth*(100-farHeight))/1.852
-    local swing = strike > 0 and math.sin((13-strike)*math.pi/13) or 0
-    local angle = facing + swing*0.22
+    local punchPose = strike > 0 and hookClip[25-strike] or nil
+    local angle = facing + (punchPose and punchPose[3]*0.34 or 0)
     local sine, cosine = math.sin(angle), math.cos(angle)
     local cycle = step
-    local stride = walking and math.sin(cycle) or 0
+    local clip = running and runClip or walkClip
+    local pose = walking and clip[math.floor(cycle/(2*math.pi)*#clip)+1] or nil
     local bounce = walking and math.abs(math.cos(cycle))*(running and 0.065 or 0.032) or 0
     local vertices, faces = {}, {}
     for i = 1,#actorPoints,3 do
@@ -237,21 +317,24 @@ local function courier()
             local forearm = arm * math.max(0,math.min(1,(1.42-ay)/0.40))
             if aiming then
                 -- Raise both hands, then extend the right fist and retract it.
-                local punch = side > 0 and swing or 0
+                local punch = side > 0 and punchPose and punchPose[2] or 0
+                local hook = side > 0 and punchPose and punchPose[1] or 0
                 ay = ay + forearm*(0.37+0.08*punch)
                 az = az - forearm*(0.22+0.50*punch)
-                ax = ax - side*forearm*(0.045+0.07*punch)
+                ax = ax - side*forearm*(0.045+0.12*punch) + hook*forearm*0.15
             else
-                az = az + side*stride*arm*(running and 0.24 or 0.15)
-                if running then ay = ay + forearm*(0.15+0.08*side*stride) end
+                local armSwing = pose and pose[side < 0 and 5 or 6] or 0
+                az = az + armSwing*arm*(running and 0.24 or 0.15)
+                if running then ay = ay + forearm*(0.15+0.08*armSwing) end
             end
         end
         local reach = running and 0.25 or 0.18
         local lift = running and 0.16 or 0.09
-        az = az - side*stride*leg*reach
-        ay = ay + bounce*(1-leg) + math.max(0,side*stride)*leg*lift
-        ax = ax + stride*(1-leg)*0.014
-        if running then az = az - math.max(0,ay-0.80)*0.16 end
+        local stride = pose and pose[side < 0 and 1 or 2] or 0
+        local knee = pose and pose[side < 0 and 3 or 4] or 0
+        az = az - stride*leg*reach
+        ay = ay + bounce*(1-leg) + knee*leg*lift
+        if pose then az = az - math.max(0,ay-0.80)*pose[7]*0.18 end
         local depth = az*cosine-ax*sine
         local size = scale*4.5/(4.5+depth)
         vertices[#vertices+1] = {
@@ -322,7 +405,7 @@ function update()
     if not aiming then
         strike = 0
     elseif wasAiming and attack and strike == 0 then
-        strike = 13
+        strike = 24
     elseif strike > 0 then
         strike = strike-1
     end
@@ -412,7 +495,7 @@ function update()
         fine = fineAvailable and drawFine()
     end
     ui.rectfill(0,0,479,15,240)
-    ui.print("9.2 "..status,8,3,241)
+    ui.print("9.3 "..status,8,3,241)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do
             if not pcall(ui.grid, patch.x, patch.y, patch.scale, patch.scale, patch.rows) then
