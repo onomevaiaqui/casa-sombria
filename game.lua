@@ -1688,7 +1688,7 @@ function update()
         return px >= 48 and px <= 448 and py >= 130 and py <= 230
             and (px >= 218 or py >= 216 - (px - 48) * 0.19)
     end
-    local nextX, nextY = x + dx * 2.30 * speed, y + dy * 2.05 * speed
+    local nextX, nextY = x + dx * 3.45 * speed, y + dy * 3.075 * speed
     local oldX, oldY = x, y
     if walkable(nextX, y) then x = nextX end
     if walkable(x, nextY) then y = nextY end
@@ -1756,7 +1756,7 @@ function update()
     end
     ui.rectfill(0,0,479,15,240)
     local motion = walking and (running and " / CORRIDA" or " / PASSOS") or ""
-    ui.print("9.8 "..status..motion,8,3,241)
+    ui.print("9.9 "..status..motion,8,3,241)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do
             if not pcall(ui.grid, patch.x, patch.y, patch.scale, patch.scale, patch.rows) then
