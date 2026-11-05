@@ -1,3 +1,5 @@
+local perspective = require("perspective")
+local navigation = require("navigation")
 -- Teste 3.2: fundo e mascara em bitmap, entregador em 3D.
 local function decode(encoded)
 local alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
@@ -1565,14 +1567,14 @@ local currentRoom, crossing = "sala", false
 local roomNotice = ""
 roomBitmaps.sala, roomBitmaps.cozinha = bitmap, kitchenBitmap
 local rooms = {
-    sala = {label="SALA", floor=130, far=49, near=124},
-    cozinha = {label="COZINHA", floor=144, far=56, near=110},
-    corredor = {label="CORREDOR", floor=174, far=66, near=105},
-    banheiro = {label="BANHEIRO", floor=185, far=78, near=110},
-    quarto = {label="QUARTO", floor=174, far=62, near=108},
-    garagem = {label="GARAGEM", floor=166, far=58, near=110},
-    quintal = {label="QUINTAL DE TRAS", floor=165, far=56, near=105},
-    frente = {label="FRENTE DA CASA", floor=174, far=60, near=105}
+    sala = {label="SALA"},
+    cozinha = {label="COZINHA"},
+    corredor = {label="CORREDOR"},
+    banheiro = {label="BANHEIRO"},
+    quarto = {label="QUARTO"},
+    garagem = {label="GARAGEM"},
+    quintal = {label="QUINTAL DE TRAS"},
+    frente = {label="FRENTE DA CASA"}
 }
 
 -- Each opening records a destination spawn outside its return trigger.
@@ -1588,9 +1590,9 @@ local exits = {
         {x1=202,x2=270,y1=144,y2=151,dx=0,dy=-1,to="sala",x=273,y=158}
     },
     corredor = {
-        {x1=210,x2=288,y1=174,y2=207,dx=0,dy=-1,to="sala",x=226,y=160},
-        {x1=60,x2=96,y1=190,y2=234,dx=-1,dy=0,to="quarto",x=399,y=217},
-        {x1=403,x2=436,y1=190,y2=234,dx=1,dy=0,to="banheiro",x=72,y=218}
+        {x1=210,x2=288,y1=174,y2=185,dx=0,dy=-1,to="sala",x=226,y=160},
+        {x1=60,x2=96,y1=190,y2=234,dx=-1,dy=0,to="quarto",x=421,y=228},
+        {x1=403,x2=436,y1=190,y2=234,dx=1,dy=0,to="banheiro",x=77,y=228}
     },
     banheiro = {
         {x1=36,x2=58,y1=216,y2=234,dx=-1,dy=0,to="corredor",x=380,y=220}
@@ -1608,47 +1610,51 @@ local exits = {
     },
     frente = {
         {x1=64,x2=135,y1=174,y2=185,dx=0,dy=-1,to="sala",x=105,y=212},
-        {x1=350,x2=440,y1=174,y2=196,dx=0,dy=-1,to="garagem",x=282,y=213},
-        {x1=18,x2=35,y1=205,y2=235,dx=-1,dy=0,to="quintal",x=64,y=223}
+        {x1=350,x2=440,y1=198,y2=212,dx=0,dy=-1,to="garagem",x=282,y=213},
+        {x1=18,x2=35,y1=205,y2=235,dx=-1,dy=0,to="quintal",x=64,y=230}
     }
 }
 
-local function walkable(px, py)
-    if currentRoom == "sala" then
-        return px >= 48 and px <= 448 and py >= 130 and py <= 230
-            and (px >= 218 or py >= 216-(px-48)*0.19)
-    elseif currentRoom == "cozinha" then
-        return py >= 144 and py <= 233 and px >= 145 and px <= 312+(py-144)*0.9
-    elseif currentRoom == "corredor" then
-        return px >= 60 and px <= 436 and py >= 174 and py <= 234
-            and (py >= 207 or (px >= 210 and px <= 288))
-    elseif currentRoom == "banheiro" then
-        return px >= 36 and px <= 330 and py >= 185 and py <= 234
-            and (px >= 174 or py >= 216)
-    elseif currentRoom == "quarto" then
-        return px >= 218 and px <= 452 and py >= 174 and py <= 234
-            and (px <= 334 or py >= 207)
-    elseif currentRoom == "garagem" then
-        return px >= 180 and px <= 375 and py >= 166 and py <= 235
-            and (px >= 260 or py >= 220)
-    elseif currentRoom == "quintal" then
-        return px >= 18 and px <= 440 and py >= 165 and py <= 235
-            and (py >= 211 or (px >= 308 and px <= 404))
-    end
-    return px >= 18 and px <= 450 and py >= 174 and py <= 235
+local function walkable(px,py)
+    local radius=math.max(2,perspective.scale(currentRoom,py)*0.14)
+    local vertical=math.max(1.2,radius*(py-perspective.rooms[currentRoom].horizon)/320)
+    return navigation.walkable(currentRoom,px,py)
+       and navigation.walkable(currentRoom,px-radius,py)
+       and navigation.walkable(currentRoom,px+radius,py)
+       and navigation.walkable(currentRoom,px,py-vertical)
+       and navigation.walkable(currentRoom,px,py+vertical)
 end
+local transitionCarry
+local aiming,strike,running = false,0,false
 
-local function checkPassage(dx, dy)
+local function checkPassage(dx,dy,keyDx,keyDy)
     roomNotice = ""
+    local inOpening=false
     for _, exit in ipairs(exits[currentRoom]) do
         local near = x >= exit.x1 and x <= exit.x2 and y >= exit.y1 and y <= exit.y2
         local towards = (exit.dx ~= 0 and dx*exit.dx > 0) or (exit.dy ~= 0 and dy*exit.dy > 0)
         if near then
+            inOpening=true
             roomNotice = "PARA "..rooms[exit.to].label
             if towards and not crossing then
                 if roomBitmaps[exit.to] then
-                    currentRoom, x, y, facing = exit.to, exit.x, exit.y, 0
-                    crossing, walking, running, step = true, false, false, 0
+                    local from=currentRoom
+                    currentRoom,x,y=exit.to,exit.x,exit.y
+                    for _,back in ipairs(exits[currentRoom])do
+                        if back.to==from then
+                            local awayX=x-(back.x1+back.x2)/2
+                            local awayY=y-(back.y1+back.y2)/2
+                            local length=math.sqrt(awayX*awayX+awayY*awayY)
+                            if length>0 then transitionCarry={dx=keyDx or dx,dy=keyDy or dy,x=awayX/length,y=awayY/length} end
+                            break
+                        end
+                    end
+                    crossing=true
+                    if transitionCarry then
+                        local gx,gz=perspective.ground(currentRoom,x,y)
+                        local tx,tz=perspective.ground(currentRoom,x+transitionCarry.x,y+transitionCarry.y)
+                        facing=math.atan(-(tx-gx),-(tz-gz))
+                    end
                     roomNotice = ""
                 else
                     roomNotice = "FUNDO AUSENTE: "..rooms[exit.to].label
@@ -1657,15 +1663,13 @@ local function checkPassage(dx, dy)
             end
         end
     end
+    if not inOpening then crossing=false end
 end
-local aiming, strike, running = false, 0, false
 local aimCancelled = false
 local previousA, previousB, previousY = false, false, false
 
 local function actorScale()
-    local camera = rooms[currentRoom]
-    local depth = math.max(0,math.min(1,(y-camera.floor)/(235-camera.floor)))
-    return (camera.far+depth*(camera.near-camera.far))/1.852
+    return perspective.scale(currentRoom,y)*1.8/1.852
 end
 
 local function animationDelta()
@@ -1675,7 +1679,8 @@ local function animationDelta()
             return 1/fps
         end
     end
-    return 1/30
+    -- Lupinho targets 60 Hz and does not expose ui.stat in some builds.
+    return 1/60
 end
 
 local function courier()
@@ -1708,10 +1713,7 @@ local function courier()
         if index==207 then hand={ax,ay,az} end
         local depth = az*cosine-ax*sine
         local size = scale*4.5/(4.5+depth)
-        vertices[index+1] = {
-            math.floor(x+(ax*cosine+az*sine)*size+0.5),
-            math.floor(y-(ay+depth*0.22)*size+0.5), depth
-        }
+        vertices[index+1]=perspective.vertex(currentRoom,x,y,ax,ay,az,facing)
     end
     local function heldBox(px,py,pz,w,h,d)
         local points = {}
@@ -1719,7 +1721,7 @@ local function courier()
             local ax,ay,az=px+corner[1]*w,py+corner[2]*h,pz+corner[3]*d
             local depth=az*cosine-ax*sine
             local size=scale*4.5/(4.5+depth)
-            points[#points+1]={math.floor(x+(ax*cosine+az*sine)*size+0.5),math.floor(y-(ay+depth*0.22)*size+0.5),depth}
+            points[#points+1]=perspective.vertex(currentRoom,x,y,ax,ay,az,facing)
         end
         for _,quad in ipairs({{1,2,3,4},{5,8,7,6},{1,5,6,2},{4,3,7,8},{1,4,8,5},{2,6,7,3}}) do
             for _,triangle in ipairs({{quad[1],quad[2],quad[3]},{quad[1],quad[3],quad[4]}}) do
@@ -1817,6 +1819,7 @@ local function drawTitle()
                 if titleChoice==1 then
                     currentRoom,x,y,facing = "sala",105,216,-0.8
                     crossing,walking,running,step = false,false,false,0
+                    transitionCarry=nil
                     aiming,strike,aimCancelled = false,0,false
                     roomNotice = ""
                     inventory:reset()
@@ -1895,6 +1898,7 @@ function update()
             inventory:close()
         else
             inventory:open()
+            transitionCarry=nil
             inventory.previous.b = b
         end
         aiming,strike = false,0
@@ -1917,29 +1921,28 @@ function update()
         if strike > actorClips.punch.count then strike = 0 end
     end
     if guard or cancel then dx, dy = 0, 0 end
-    if dx == 0 and dy == 0 then crossing = false end
-    if crossing then dx, dy = 0, 0 end
-    if dy < 0 then
-        facing = math.pi + dx*0.7
-    elseif dy > 0 then
-        facing = -dx*0.7
-    elseif dx ~= 0 then
-        facing = -dx*1.15
+    local inputDx,inputDy=dx,dy
+    if dx==0 and dy==0 then crossing=false;transitionCarry=nil end
+    if transitionCarry then
+        if dx==transitionCarry.dx and dy==transitionCarry.dy then
+            dx,dy=transitionCarry.x,transitionCarry.y
+        else transitionCarry=nil end
     end
-    local speed = run and 2.25 or 1
-    local nextX, nextY = x + dx * 3.45 * speed, y + dy * 3.075 * speed
-    local oldX, oldY = x, y
-    if walkable(nextX, y) then x = nextX end
-    if walkable(x, nextY) then y = nextY end
-    walking = x ~= oldX or y ~= oldY
-    running = walking and run
+    local oldGX,oldGZ=perspective.ground(currentRoom,x,y)
+    local travelled
+    x,y,travelled=perspective.move(currentRoom,x,y,dx,dy,animationDelta(),run,walkable)
+    walking=travelled>0.00001
+    running=walking and run
     if walking then
-        local movedX, movedY = x-oldX, y-oldY
-        local distance = math.sqrt(movedX*movedX+movedY*movedY)
-        local pixelsPerCycle = actorScale()*(running and 3.04 or 1.80)
-        step = (step + distance*2*math.pi/pixelsPerCycle) % (2*math.pi)
+        local gx,gz=perspective.ground(currentRoom,x,y)
+        local desired=math.atan(-(gx-oldGX),-(gz-oldGZ))
+        local turn=(desired-facing+math.pi)%(2*math.pi)-math.pi
+        local limit=10*animationDelta()
+        facing=facing+math.max(-limit,math.min(limit,turn))
+        local metresPerCycle=running and 3.0118408704 or 1.7576561718
+        step=(step+travelled*2*math.pi/metresPerCycle)%(2*math.pi)
     end
-    checkPassage(dx,dy)
+    checkPassage(dx,dy,inputDx,inputDy)
     local status = roomNotice ~= "" and roomNotice or rooms[currentRoom].label
     if aiming then
         status = strike > 0 and "SOCO" or "PUNHOS LEVANTADOS"
@@ -1984,7 +1987,7 @@ function update()
     end
     ui.rectfill(0,0,479,15,240)
     local motion = walking and (running and " / CORRIDA" or " / PASSOS") or ""
-    ui.print("10.7 "..status..motion,8,3,241)
+    ui.print("10.9 "..status..motion,8,3,241)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do
             if not pcall(ui.grid, patch.x, patch.y, patch.scale, patch.scale, patch.rows) then
@@ -1996,7 +1999,7 @@ function update()
     courier()
     if currentRoom=="sala" then
         if native and sofaBitmap and y<=187 and x<230 then
-            pcall(ui.spr,sofaBitmap,64,132)
+            pcall(ui.spr,sofaBitmap,64,115)
         elseif not native and y<=159 then
             drawImage(detailedSofa,x-24,x+24)
         end

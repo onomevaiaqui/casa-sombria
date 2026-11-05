@@ -1,0 +1,40 @@
+A ULTIMA ENTREGA - REVISAO 10.9
+
+Movimento
+Deslocamento em unidades do piso projetado, com tempo por quadro.
+Andar 1,701 m/s, correr 4,107 m/s. Valores estimados dos trechos de apoio dos
+pes nos FBX Walking e Standard Run fornecidos pelo usuario.
+Passada de 1,758 m e 3,012 m por ciclo, respectivamente.
+Diagonal normalizada. Giro segue o deslocamento real.
+Sem parada obrigatoria nem reinicio dos passos durante a troca de camera.
+Direcao de entrada mantida enquanto o direcional continuar segurado.
+
+Escala
+Modelo normalizado para 1,80 m. Ajustes iniciais de projecao para os oito
+cenarios, usando portas como referencia de 2,10 m.
+As medidas em pixels e horizontes sao estimativas visuais. Os fundos foram
+produzidos separadamente e nao possuem uma geometria 3D comum; esta revisao
+nao garante correspondencia arquitetonica perfeita entre todos os objetos.
+Revertida a reducao dos moveis da sala, cozinha e banheiro feita na 10.5.
+Mantidos os bitmaps pre-renderizados e o ator em 3D.
+
+Colisoes
+Poligonos do piso e pegadas dos obstaculos por cenario, com margem para o corpo.
+Sofa, mesa lateral, plantas, mesa/cadeiras, bancada, box, vaso, pia, cama,
+armario, carro, bancada da garagem, brinquedos, postes e cercas.
+Pontos de chegada ajustados. Passagem da garagem na frente da casa reposicionada.
+Todos os 18 acessos possuem caminhos conectados no teste de navegacao.
+Subpassos de movimento impedem atravessar obstaculos finos em baixa taxa de quadros.
+
+Icone
+Mesmo perfil do Rally, recodificado em 128 x 64 e 12.669 bytes.
+Confirmar a entrega da versao 10.9 antes de avaliar o novo arquivo no console.
+
+Validacao
+lua .tools/check-perspective.lua
+lua .tools/check-navigation.lua
+node .tools/check-icon.cjs
+Tambem verificados inventario, equipamento e codec oficial de todos os bitmaps.
+Teste visual dos oito cenarios no Lupinho Web; caminhada sala-cozinha sem
+interromper o direcional e bloqueio do movimento junto da mesa da cozinha.
+Nao executado no hardware Lupi nesta etapa.

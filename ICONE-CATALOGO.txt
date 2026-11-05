@@ -6,6 +6,12 @@ GIF89a, 128 x 64, 12 quadros completos, 120 ms por quadro, repeticao infinita.
 Paleta fixa de 16 cores, identica em todos os quadros.
 Sem transparencia ou entrelacamento. Descarte 1, LZW inicial de 8 bits.
 
+Revisao 10.9
+Arquivo com 12.669 bytes, mantendo a resolucao 128 x 64 e 12 quadros.
+Recodificado com FFmpeg 7.1 e a paleta fixa usados no Rally validado.
+Todos os quadros decodificados foram comparados aos originais dessa exportacao.
+A exibicao deste icone no catalogo ainda precisa de confirmacao no console.
+
 Perfil reutilizado do chat Lupi Combat Rally 3D, cuja versao 12.9 foi
 confirmada pelo usuario no aparelho. Isso nao determina os limites maximos
 do firmware nem substitui confirmar este novo icone no console.
