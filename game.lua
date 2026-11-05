@@ -186,8 +186,7 @@ function update()
     ui.rectfill(0,0,479,15,240)
     drawImage(detailedBackground, 0, 479)
     local fine = detail and fineAvailable and drawFine()
-    ui.print("6.7 "..status.."  Z: "..(fine and "DETALHE" or "COMPAT").."  X: "..formats[mode],8,3,241)
-    if not native then drawImage(detailedBackground, 0, 479) end
+    ui.print("6.8 "..status.."  Z: "..(fine and "DETALHE" or "COMPAT").."  X: "..formats[mode],8,3,241)
     if not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do
             if not pcall(ui.grid, patch.x, patch.y, patch.scale, patch.scale, patch.rows) then
