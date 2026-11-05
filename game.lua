@@ -298,7 +298,8 @@ local function courier()
     local threshold = inKitchen and 144 or 130
     local depth = math.max(0, math.min(1, (y-threshold)/(233-threshold)))
     local farHeight = inKitchen and 56 or 49
-    local scale = (farHeight + depth*(100-farHeight))/1.852
+    local nearHeight = inKitchen and 110 or 124
+    local scale = (farHeight + depth*(nearHeight-farHeight))/1.852
     local punchPose = strike > 0 and hookClip[25-strike] or nil
     local angle = facing + (punchPose and punchPose[3]*0.34 or 0)
     local sine, cosine = math.sin(angle), math.cos(angle)
@@ -314,26 +315,35 @@ local function courier()
         local leg = math.max(0,1-ay/0.90)
         local arm = math.max(0,math.min(1,(math.abs(ax)-0.17)/0.085))
         if ay >= 0.82 and ay <= 1.50 then
-            local forearm = arm * math.max(0,math.min(1,(1.42-ay)/0.40))
+            local forearm = arm * math.max(0,math.min(1,(1.49-ay)/0.44))
             if aiming then
                 -- Raise both hands, then extend the right fist and retract it.
                 local punch = side > 0 and punchPose and punchPose[2] or 0
                 local hook = side > 0 and punchPose and punchPose[1] or 0
-                ay = ay + forearm*(0.37+0.08*punch)
-                az = az - forearm*(0.22+0.50*punch)
+                ay = ay + forearm*(0.52+0.10*punch)
+                az = az - forearm*(0.30+0.64*punch)
                 ax = ax - side*forearm*(0.045+0.12*punch) + hook*forearm*0.15
             else
                 local armSwing = pose and pose[side < 0 and 5 or 6] or 0
-                az = az + armSwing*arm*(running and 0.24 or 0.15)
+                az = az + armSwing*arm*(running and 0.32 or 0.22)
                 if running then ay = ay + forearm*(0.15+0.08*armSwing) end
             end
         end
-        local reach = running and 0.25 or 0.18
-        local lift = running and 0.16 or 0.09
-        local stride = pose and pose[side < 0 and 1 or 2] or 0
-        local knee = pose and pose[side < 0 and 3 or 4] or 0
-        az = az - stride*leg*reach
-        ay = ay + bounce*(1-leg) + knee*leg*lift
+        if pose and ay < 0.94 then
+            local stride = pose[side < 0 and 1 or 2]
+            local knee = pose[side < 0 and 3 or 4]
+            if ay < 0.49 then
+                local bend = -knee*(running and 0.95 or 0.78)
+                local down = ay-0.49
+                ay = 0.49 + down*math.cos(bend)-az*math.sin(bend)
+                az = down*math.sin(bend)+az*math.cos(bend)
+            end
+            local hip = stride*(running and 0.72 or 0.84)
+            local down = ay-0.94
+            ay = 0.94 + down*math.cos(hip)-az*math.sin(hip)
+            az = down*math.sin(hip)+az*math.cos(hip)
+        end
+        ay = ay + bounce*(1-leg)
         if pose then az = az - math.max(0,ay-0.80)*pose[7]*0.18 end
         local depth = az*cosine-ax*sine
         local size = scale*4.5/(4.5+depth)
@@ -495,7 +505,8 @@ function update()
         fine = fineAvailable and drawFine()
     end
     ui.rectfill(0,0,479,15,240)
-    ui.print("9.3 "..status,8,3,241)
+    local motion = walking and (running and " / CORRIDA" or " / PASSOS") or ""
+    ui.print("9.4 "..status..motion,8,3,241)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do
             if not pcall(ui.grid, patch.x, patch.y, patch.scale, patch.scale, patch.rows) then
