@@ -104,7 +104,7 @@ if type(ui.grid) == "function" then
     end
 end
 local Palette = {0,1,1024,1057,34,35,1059,1058,1091,3105,2081,3137,2114,3139,3138,4162,2115,36,1060,1093,1094,1092,1127,2116,2148,3173,2149,3172,2182,3206,2183,3207,4161,5186,5219,7233,7267,5221,6276,7300,5253,5287,7301,7335,7367,1128,1129,2186,1163,2185,1164,2187,2184,2217,4264,3241,2218,4297,4298,4331,2221,2222,4332,5288,5321,4330,5354,6344,7401,6378,6412,4366,5388,7435,5389,5423,7469,6446,7503,8257,9313,10338,8324,10371,9381,8358,9382,9415,10405,10438,11463,12417,13442,14466,14499,13509,13543,15591,9449,9482,10473,13544,14600,15623,8459,9483,11529,10507,8492,9516,8493,9549,9550,10540,10574,13577,13610,14601,14634,13645,3313,2292,3379,5457,5490,6480,6513,7536,6514,6547,6546,6580,6614,6647,3545,5625,9584,10608,9617,12721,3677,7705,6714,5692,13877,8827,17602,19649,17637,16615,20705,19716,17671,19717,18727,22786,21798,22855,17704,20808,24935,25992,20152,24412,27582}
-local bitmap, kitchenBitmap, titleBitmap, bitmapPalette, sofaColors
+local bitmap, kitchenBitmap, titleBitmap, sofaBitmap, bitmapPalette, sofaColors
 local roomBitmaps = {}
 local itemSprites = {}
 local inventory
@@ -131,6 +131,7 @@ if type(require) == "function" and type(ui.spr) == "function" then
         for name, ref in pairs(sprites) do
             if type(name)=="string" and name:sub(1,5)=="item_" then itemSprites[name]=ref end
         end
+        sofaBitmap = sprites.sofa105
         local byColor = {}
         for index, color in ipairs(colors) do byColor[color] = index-1 end
         sofaColors = {}
@@ -1564,12 +1565,12 @@ local currentRoom, crossing = "sala", false
 local roomNotice = ""
 roomBitmaps.sala, roomBitmaps.cozinha = bitmap, kitchenBitmap
 local rooms = {
-    sala = {label="SALA", floor=130, far=54, near=190},
-    cozinha = {label="COZINHA", floor=144, far=66, near=185},
-    corredor = {label="CORREDOR", floor=174, far=80, near=150},
-    banheiro = {label="BANHEIRO", floor=185, far=110, near=190},
-    quarto = {label="QUARTO", floor=174, far=105, near=185},
-    garagem = {label="GARAGEM", floor=166, far=78, near=170},
+    sala = {label="SALA", floor=130, far=49, near=124},
+    cozinha = {label="COZINHA", floor=144, far=56, near=110},
+    corredor = {label="CORREDOR", floor=174, far=66, near=105},
+    banheiro = {label="BANHEIRO", floor=185, far=78, near=110},
+    quarto = {label="QUARTO", floor=174, far=62, near=108},
+    garagem = {label="GARAGEM", floor=166, far=58, near=110},
     quintal = {label="QUINTAL DE TRAS", floor=165, far=56, near=105},
     frente = {label="FRENTE DA CASA", floor=174, far=60, near=105}
 }
@@ -1983,7 +1984,7 @@ function update()
     end
     ui.rectfill(0,0,479,15,240)
     local motion = walking and (running and " / CORRIDA" or " / PASSOS") or ""
-    ui.print("10.4 "..status..motion,8,3,241)
+    ui.print("10.5 "..status..motion,8,3,241)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do
             if not pcall(ui.grid, patch.x, patch.y, patch.scale, patch.scale, patch.rows) then
@@ -1993,6 +1994,12 @@ function update()
         end
     end
     courier()
-    if currentRoom == "sala" and y <= 159 then drawImage(detailedSofa, x-24, x+24, native and sofaColors or nil) end
+    if currentRoom=="sala" then
+        if native and sofaBitmap and y<=187 and x<230 then
+            pcall(ui.spr,sofaBitmap,64,132)
+        elseif not native and y<=159 then
+            drawImage(detailedSofa,x-24,x+24)
+        end
+    end
     inventory:markers(currentRoom)
 end
