@@ -1737,7 +1737,46 @@ local function drawImage(image, minX, maxX, colors)
 end
 
 
+local titleOpen, titleChoice, canContinue = true, 1, false
+local titleUp, titleDown, titleConfirm = false, false, false
+local pauseChoice, pauseUp, pauseDown = 1, false, false
+
+local function drawTitle()
+    for i, color in ipairs(bitmapPalette or Palette) do ui.palset(i-1,color) end
+    ui.palset(240,0)
+    ui.palset(241,32767)
+    ui.cls(240)
+    if bitmap then
+        for index, strip in ipairs(bitmap) do
+            pcall(ui.spr,strip,0,(index-1)*82)
+        end
+    end
+    ui.rectfill(96,48,383,202,240)
+    ui.print("CASA SOMBRIA",170,68,241)
+    ui.print("A ULTIMA ENTREGA",160,88,241)
+    ui.print((titleChoice==1 and "> " or "  ").."NOVO JOGO",156,122,241)
+    ui.print((titleChoice==2 and "> " or "  ").."CONTINUAR",156,144,241)
+    ui.print(canContinue and "Retomar esta sessao" or "Sem partida nesta sessao",132,170,241)
+    ui.print("B CONFIRMA    DIRECIONAL ESCOLHE",116,188,241)
+    local up,down,confirm = held(UP or 1),held(DOWN or 3),held(BTN_Z or 4)
+    if (up and not titleUp) or (down and not titleDown) then
+        titleChoice = 3-titleChoice
+    end
+    if confirm and not titleConfirm and (titleChoice==1 or canContinue) then
+        if titleChoice==1 then
+            currentRoom,x,y,facing = "sala",105,216,-0.8
+            crossing,walking,running,step = false,false,false,0
+            aiming,strike,aimCancelled = false,0,false
+            roomNotice = ""
+        end
+        titleOpen,canContinue,menuOpen = false,true,false
+        previousB = true
+    end
+    titleUp,titleDown,titleConfirm = up,down,confirm
+end
+
 function update()
+    if titleOpen then drawTitle(); return end
     ui.cls(0)
 
     for i, color in ipairs(actorPalette) do ui.palset(actorInk(i-1), color) end
@@ -1748,18 +1787,28 @@ function update()
     local cancel, confirm, attack = a and not previousA, b and not previousB, run and not previousY
     previousA, previousB, previousY = a, b, run
     if not guard then aimCancelled = false end
+    local openedMenu = false
     if cancel then
         if menuOpen then
             menuOpen = false
         elseif aiming or (guard and not aimCancelled) then
             aimCancelled = true
         else
-            menuOpen = true
+            menuOpen, pauseChoice, openedMenu = true, 1, true
         end
     elseif confirm and menuOpen then
+        if pauseChoice == 2 then
+            titleOpen,titleChoice,titleConfirm = true,2,true
+        end
         menuOpen = false
         confirm = false
     end
+    local up,down = held(UP or 1),held(DOWN or 3)
+    if menuOpen and not openedMenu and ((up and not pauseUp) or (down and not pauseDown)) then
+        pauseChoice = 3-pauseChoice
+    end
+    pauseUp,pauseDown = up,down
+    if titleOpen then return end
     local wasAiming = aiming
     aiming = guard and not aimCancelled and not menuOpen
     if not aiming then
@@ -1830,7 +1879,7 @@ function update()
     end
     ui.rectfill(0,0,479,15,240)
     local motion = walking and (running and " / CORRIDA" or " / PASSOS") or ""
-    ui.print("10.0 "..status..motion,8,3,241)
+    ui.print("10.1 "..status..motion,8,3,241)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do
             if not pcall(ui.grid, patch.x, patch.y, patch.scale, patch.scale, patch.rows) then
@@ -1844,8 +1893,8 @@ function update()
     if menuOpen then
         ui.rectfill(112,65,367,165,240)
         ui.print("PAUSA",128,77,241)
-        ui.print("B: CONTINUAR   A: VOLTAR",128,97,241)
-        ui.print("Y: CORRER   B: ACAO",128,117,241)
-        ui.print("R: PREPARAR   R + Y: ATACAR",128,137,241)
+        ui.print((pauseChoice==1 and "> " or "  ").."CONTINUAR",128,97,241)
+        ui.print((pauseChoice==2 and "> " or "  ").."TELA INICIAL",128,117,241)
+        ui.print("B CONFIRMA    A FECHA",128,137,241)
     end
 end
