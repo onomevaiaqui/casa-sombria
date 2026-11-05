@@ -211,17 +211,28 @@ local function actorInk(index)
 end
 
 local inKitchen, crossing = false, false
+local aiming, strike = false, 0
+local menuOpen, aimCancelled = false, false
+local previousA, previousB, previousY = false, false, false
 local function courier()
     local threshold = inKitchen and 144 or 130
     local depth = math.max(0, math.min(1, (y-threshold)/(233-threshold)))
     local farHeight = inKitchen and 56 or 49
     local scale = (farHeight + depth*(100-farHeight))/1.852
-    local sine, cosine = math.sin(facing), math.cos(facing)
+    local swing = strike > 0 and math.sin((13-strike)*math.pi/13) or 0
+    local angle = facing + swing*0.65
+    local sine, cosine = math.sin(angle), math.cos(angle)
     local stride = walking and math.sin(step/3.2)*0.075 or 0
     local vertices, faces = {}, {}
     for i = 1,#actorPoints,3 do
         local a,b,c = string.byte(actorPoints,i,i+2)
         local ax, ay, az = (a-128)/128, b/128, (c-128)/128
+        if aiming then
+            local upper = math.max(0, ay-0.75)
+            az = az - upper*(0.15+swing*0.3)
+            ay = ay - upper*0.08
+            ax = ax*(ay < 0.7 and 1.2 or 1)
+        end
         local leg = math.max(0,1-ay/0.85)
         az = az + (ax < 0 and stride or -stride)*leg
         local depth = az*cosine-ax*sine
@@ -272,6 +283,33 @@ function update()
     for i, color in ipairs(actorPalette) do ui.palset(actorInk(i-1), color) end
     local dx = (held(RIGHT or 2) and 1 or 0) - (held(LEFT or 4) and 1 or 0)
     local dy = (held(DOWN or 3) and 1 or 0) - (held(UP or 1) and 1 or 0)
+    local a, b = held(BTN_G or 13), held(BTN_Z or 4)
+    local run, guard = held(BTN_F or 12), held(BTN_E or 15)
+    local cancel, confirm, attack = a and not previousA, b and not previousB, run and not previousY
+    previousA, previousB, previousY = a, b, run
+    if not guard then aimCancelled = false end
+    if cancel then
+        if menuOpen then
+            menuOpen = false
+        elseif aiming or (guard and not aimCancelled) then
+            aimCancelled = true
+        else
+            menuOpen = true
+        end
+    elseif confirm and menuOpen then
+        menuOpen = false
+        confirm = false
+    end
+    local wasAiming = aiming
+    aiming = guard and not aimCancelled and not menuOpen
+    if not aiming then
+        strike = 0
+    elseif wasAiming and attack and strike == 0 then
+        strike = 13
+    elseif strike > 0 then
+        strike = strike-1
+    end
+    if menuOpen or guard or cancel then dx, dy = 0, 0 end
     if dy >= 0 then crossing = false end
     if crossing and dy < 0 then dy = 0 end
     if dy < 0 then
@@ -282,7 +320,8 @@ function update()
         facing = -dx*1.15
     end
     walking = dx ~= 0 or dy ~= 0
-    if walking then step = step + 1 end
+    local speed = run and 1.65 or 1
+    if walking then step = step + speed end
     -- The sofa touches the wall. Follow its front edge to reach the doorway.
     local function walkable(px, py)
         if inKitchen then
@@ -291,7 +330,7 @@ function update()
         return px >= 48 and px <= 448 and py >= 130 and py <= 230
             and (px >= 218 or py >= 216 - (px - 48) * 0.19)
     end
-    local nextX, nextY = x + dx * 1.95, y + dy * 1.75
+    local nextX, nextY = x + dx * 1.95 * speed, y + dy * 1.75 * speed
     if walkable(nextX, y) then x = nextX end
     if walkable(x, nextY) then y = nextY end
     local status = inKitchen and "COZINHA" or "SALA"
@@ -315,6 +354,11 @@ function update()
         status = "FRENTE EM BREVE"
     elseif x >= 168 and x <= 245 and y >= 221 then
         status = "ESCRITORIO / PORAO EM BREVE"
+    end
+    if aiming then
+        status = strike > 0 and "GOLPE" or "POSICAO DE ATAQUE"
+    elseif confirm and not menuOpen and not guard then
+        status = "NADA PARA USAR"
     end
     local strips = inKitchen and kitchenBitmap or bitmap
     local native = not not strips
@@ -344,7 +388,7 @@ function update()
         fine = fineAvailable and drawFine()
     end
     ui.rectfill(0,0,479,15,240)
-    ui.print("8.6 "..status,8,3,241)
+    ui.print("8.7 "..status,8,3,241)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do
             if not pcall(ui.grid, patch.x, patch.y, patch.scale, patch.scale, patch.rows) then
@@ -355,4 +399,11 @@ function update()
     end
     courier()
     if not inKitchen and y <= 159 then drawImage(detailedSofa, x-24, x+24, native and sofaColors or nil) end
+    if menuOpen then
+        ui.rectfill(112,65,367,165,240)
+        ui.print("PAUSA",128,77,241)
+        ui.print("B: CONTINUAR   A: VOLTAR",128,97,241)
+        ui.print("Y: CORRER   B: ACAO",128,117,241)
+        ui.print("R: PREPARAR   R + Y: ATACAR",128,137,241)
+    end
 end
