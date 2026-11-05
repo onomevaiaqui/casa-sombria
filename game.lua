@@ -213,7 +213,7 @@ local function drawImage(image, minX, maxX, colors)
     end
 end
 
-local inKitchen, previousInteract = false, false
+local inKitchen = false
 
 function update()
     local colorButton = held(BTN_X or 6)
@@ -241,20 +241,17 @@ function update()
     local nextX, nextY = x + dx * 1.4, y + dy * 1.25
     if walkable(nextX, y) then x = nextX end
     if walkable(x, nextY) then y = nextY end
-    local interact = held(BTN_E or 15)
-    local pressed = interact and not previousInteract
-    previousInteract = interact
     local status = inKitchen and "COZINHA" or "SALA"
     if inKitchen then
         if x >= 202 and x <= 270 and y <= 158 then
-            status = "E: SALA"
-            if pressed then
+            status = "PASSAGEM PARA SALA"
+            if dy < 0 and y <= 146 then
                 inKitchen, x, y, status = false, 273, 158, "SALA"
             end
         end
     elseif x >= 247 and x <= 304 and y <= 151 then
-        status = kitchenBitmap and "E: COZINHA" or "COZINHA AUSENTE"
-        if pressed and kitchenBitmap then
+        status = kitchenBitmap and "PASSAGEM PARA COZINHA" or "COZINHA AUSENTE"
+        if dy < 0 and y <= 138 and kitchenBitmap then
             inKitchen, x, y, status = true, 236, 177, "COZINHA"
         end
     elseif x >= 218 and x < 238 and y <= 150 then
@@ -292,7 +289,7 @@ function update()
         fine = detail and fineAvailable and drawFine()
     end
     ui.rectfill(0,0,479,15,240)
-    ui.print("7.6 "..status.."  Z: "..(native and "BITMAP" or fine and "DETALHE" or "COMPAT").."  X: "..formats[mode],8,3,241)
+    ui.print("7.7 "..status.."  Z: "..(native and "BITMAP" or fine and "DETALHE" or "COMPAT").."  X: "..formats[mode],8,3,241)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do
             if not pcall(ui.grid, patch.x, patch.y, patch.scale, patch.scale, patch.rows) then
