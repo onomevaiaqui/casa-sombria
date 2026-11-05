@@ -1,0 +1,17 @@
+A Ultima Entrega - icone do catalogo
+
+Arquivo icon.gif na raiz, sem campo icon no lupi.yaml.
+Arte proveniente da tela inicial aprovada, com a pizza e o titulo do jogo.
+GIF89a, 128 x 64, 12 quadros completos, 120 ms por quadro, repeticao infinita.
+Paleta fixa de 16 cores, identica em todos os quadros.
+Sem transparencia ou entrelacamento. Descarte 1, LZW inicial de 8 bits.
+
+Perfil reutilizado do chat Lupi Combat Rally 3D, cuja versao 12.9 foi
+confirmada pelo usuario no aparelho. Isso nao determina os limites maximos
+do firmware nem substitui confirmar este novo icone no console.
+
+Guia de origem
+https://github.com/onomevaiaqui/lupi3d/blob/main/docs/ICONE-CATALOGO.md
+
+Verificacao local
+node .tools/check-icon.cjs
