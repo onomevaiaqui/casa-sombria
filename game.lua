@@ -130,7 +130,7 @@ local actorPalette = {
 }
 
 local function courier()
-    local scale = 1.53 + (y - 145) / 165
+    local scale = 1.83 + (y - 145) / 122
     local angle = facing
     local sine, cosine = math.sin(angle), math.cos(angle)
     local stride = walking and math.sin(step / 4) * 2.5 or 0
@@ -305,7 +305,7 @@ function update()
         fine = fineAvailable and drawFine()
     end
     ui.rectfill(0,0,479,15,240)
-    ui.print("8.1 "..status,8,3,241)
+    ui.print("8.2 "..status,8,3,241)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do
             if not pcall(ui.grid, patch.x, patch.y, patch.scale, patch.scale, patch.rows) then
