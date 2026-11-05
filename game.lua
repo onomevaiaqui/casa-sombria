@@ -104,7 +104,7 @@ if type(ui.grid) == "function" then
     end
 end
 local Palette = {0,1,1024,1057,34,35,1059,1058,1091,3105,2081,3137,2114,3139,3138,4162,2115,36,1060,1093,1094,1092,1127,2116,2148,3173,2149,3172,2182,3206,2183,3207,4161,5186,5219,7233,7267,5221,6276,7300,5253,5287,7301,7335,7367,1128,1129,2186,1163,2185,1164,2187,2184,2217,4264,3241,2218,4297,4298,4331,2221,2222,4332,5288,5321,4330,5354,6344,7401,6378,6412,4366,5388,7435,5389,5423,7469,6446,7503,8257,9313,10338,8324,10371,9381,8358,9382,9415,10405,10438,11463,12417,13442,14466,14499,13509,13543,15591,9449,9482,10473,13544,14600,15623,8459,9483,11529,10507,8492,9516,8493,9549,9550,10540,10574,13577,13610,14601,14634,13645,3313,2292,3379,5457,5490,6480,6513,7536,6514,6547,6546,6580,6614,6647,3545,5625,9584,10608,9617,12721,3677,7705,6714,5692,13877,8827,17602,19649,17637,16615,20705,19716,17671,19717,18727,22786,21798,22855,17704,20808,24935,25992,20152,24412,27582}
-local bitmap, kitchenBitmap, bitmapPalette, sofaColors
+local bitmap, kitchenBitmap, titleBitmap, bitmapPalette, sofaColors
 local roomBitmaps = {}
 if type(require) == "function" and type(ui.spr) == "function" then
     local _, spritesModule = pcall(require, "sprites")
@@ -122,6 +122,9 @@ if type(require) == "function" and type(ui.spr) == "function" then
             if sprites[prefix.."0"] and sprites[prefix.."1"] and sprites[prefix.."2"] then
                 roomBitmaps[name] = {sprites[prefix.."0"],sprites[prefix.."1"],sprites[prefix.."2"]}
             end
+        end
+        if sprites.titulo103_0 and sprites.titulo103_1 and sprites.titulo103_2 then
+            titleBitmap = {sprites.titulo103_0,sprites.titulo103_1,sprites.titulo103_2}
         end
         local byColor = {}
         for index, color in ipairs(colors) do byColor[color] = index-1 end
@@ -1741,37 +1744,104 @@ local titleOpen, titleChoice, canContinue = true, 1, false
 local titleUp, titleDown, titleConfirm = false, false, false
 local pauseChoice, pauseUp, pauseDown = 1, false, false
 
+local settingsOpen, controlsOpen, settingsChoice = false,false,1
+local titleCancel,titleLeft,titleRight = false,false,false
+local volume = 100
+
 local function drawTitle()
-    for i, color in ipairs(bitmapPalette or Palette) do ui.palset(i-1,color) end
+    local up,down,confirm,cancel = held(UP or 1),held(DOWN or 3),held(BTN_Z or 4),held(BTN_G or 13)
+    local left,right = held(LEFT or 4),held(RIGHT or 2)
+    local choose = confirm and not titleConfirm
+    local back = cancel and not titleCancel
+    local previous = up and not titleUp
+    local nextChoice = down and not titleDown
+    if settingsOpen then
+        if back then
+            if controlsOpen then controlsOpen = false else settingsOpen = false end
+        elseif not controlsOpen then
+            if previous then settingsChoice = (settingsChoice+1)%3+1 end
+            if nextChoice then settingsChoice = settingsChoice%3+1 end
+            if settingsChoice==1 then
+                local change = (right and not titleRight and 10 or 0)-(left and not titleLeft and 10 or 0)
+                if change~=0 then
+                    volume = math.max(0,math.min(100,volume+change))
+                    if type(sfx)=="table" and type(sfx.volume)=="function" then
+                        pcall(sfx.volume,volume/100)
+                    end
+                end
+            end
+            if choose then
+                if settingsChoice==2 then controlsOpen = true
+                elseif settingsChoice==3 then settingsOpen = false end
+            end
+        end
+    else
+        if previous then titleChoice = (titleChoice+1)%3+1 end
+        if nextChoice then titleChoice = titleChoice%3+1 end
+        if choose then
+            if titleChoice==3 then
+                settingsOpen,settingsChoice = true,1
+            elseif titleChoice==1 or canContinue then
+                if titleChoice==1 then
+                    currentRoom,x,y,facing = "sala",105,216,-0.8
+                    crossing,walking,running,step = false,false,false,0
+                    aiming,strike,aimCancelled = false,0,false
+                    roomNotice = ""
+                end
+                titleOpen,canContinue,menuOpen = false,true,false
+                previousB = true
+            end
+        end
+    end
+    titleUp,titleDown,titleConfirm,titleCancel,titleLeft,titleRight = up,down,confirm,cancel,left,right
+    for i,color in ipairs(bitmapPalette or Palette) do ui.palset(i-1,color) end
     ui.palset(240,0)
     ui.palset(241,32767)
+    ui.palset(242,31)
+    ui.palset(243,12684)
     ui.cls(240)
-    if bitmap then
-        for index, strip in ipairs(bitmap) do
-            pcall(ui.spr,strip,0,(index-1)*82)
+    local background = titleBitmap or bitmap
+    local loaded = background ~= nil
+    if background then
+        for index,strip in ipairs(background) do
+            local ok,result = pcall(ui.spr,strip,0,(index-1)*82)
+            if not ok or result==false then loaded=false; break end
         end
     end
-    ui.rectfill(96,48,383,202,240)
-    ui.print("A ULTIMA ENTREGA",160,78,241)
-    ui.print((titleChoice==1 and "> " or "  ").."NOVO JOGO",156,122,241)
-    ui.print((titleChoice==2 and "> " or "  ").."CONTINUAR",156,144,241)
-    ui.print(canContinue and "Retomar esta sessao" or "Sem partida nesta sessao",132,170,241)
-    ui.print("B CONFIRMA    DIRECIONAL ESCOLHE",116,188,241)
-    local up,down,confirm = held(UP or 1),held(DOWN or 3),held(BTN_Z or 4)
-    if (up and not titleUp) or (down and not titleDown) then
-        titleChoice = 3-titleChoice
-    end
-    if confirm and not titleConfirm and (titleChoice==1 or canContinue) then
-        if titleChoice==1 then
-            currentRoom,x,y,facing = "sala",105,216,-0.8
-            crossing,walking,running,step = false,false,false,0
-            aiming,strike,aimCancelled = false,0,false
-            roomNotice = ""
+    if not loaded then ui.cls(240) end
+    if not titleBitmap or not loaded then ui.print("A ULTIMA ENTREGA",32,38,242) end
+    if settingsOpen then
+        ui.rectfill(20,106,258,226,240)
+        if controlsOpen then
+            ui.print("CONTROLES",34,116,241)
+            ui.print("DIRECIONAL: MOVER",34,134,241)
+            ui.print("Y: CORRER   B: ACAO",34,151,241)
+            ui.print("R: GUARDA  R + Y: SOCO",34,168,241)
+            ui.print("A: MENU / CANCELAR",34,185,241)
+        else
+            ui.print("CONFIGURACOES",34,116,241)
+            local options = {"VOLUME < "..volume.."% >","CONTROLES","VOLTAR"}
+            for index,text in ipairs(options) do
+                ui.print((settingsChoice==index and "> " or "  ")..text,30,136+(index-1)*22,settingsChoice==index and 241 or 243)
+            end
         end
-        titleOpen,canContinue,menuOpen = false,true,false
-        previousB = true
+        ui.print("B CONFIRMA  A VOLTA",30,211,241)
+    else
+        local options = {"NOVO JOGO","CONTINUAR","CONFIGURACOES"}
+        for index,text in ipairs(options) do
+            local row = 120+(index-1)*23
+            local ink = index==2 and not canContinue and 243 or 241
+            ui.print(text,46,row,ink)
+            if titleChoice==index then
+                ui.print(">",30,row,242)
+                ui.rectfill(45,row+12,45+#text*6,row+12,242)
+            end
+        end
+        if titleChoice==2 then
+            ui.print(canContinue and "Retomar sessao" or "Sem partida nesta sessao",30,193,243)
+        end
+        ui.print("B CONFIRMAR   A VOLTAR",22,226,241)
     end
-    titleUp,titleDown,titleConfirm = up,down,confirm
 end
 
 function update()
@@ -1878,7 +1948,7 @@ function update()
     end
     ui.rectfill(0,0,479,15,240)
     local motion = walking and (running and " / CORRIDA" or " / PASSOS") or ""
-    ui.print("10.2 "..status..motion,8,3,241)
+    ui.print("10.3 "..status..motion,8,3,241)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do
             if not pcall(ui.grid, patch.x, patch.y, patch.scale, patch.scale, patch.rows) then
