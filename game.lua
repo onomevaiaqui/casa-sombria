@@ -106,6 +106,8 @@ end
 local Palette = {0,1,1024,1057,34,35,1059,1058,1091,3105,2081,3137,2114,3139,3138,4162,2115,36,1060,1093,1094,1092,1127,2116,2148,3173,2149,3172,2182,3206,2183,3207,4161,5186,5219,7233,7267,5221,6276,7300,5253,5287,7301,7335,7367,1128,1129,2186,1163,2185,1164,2187,2184,2217,4264,3241,2218,4297,4298,4331,2221,2222,4332,5288,5321,4330,5354,6344,7401,6378,6412,4366,5388,7435,5389,5423,7469,6446,7503,8257,9313,10338,8324,10371,9381,8358,9382,9415,10405,10438,11463,12417,13442,14466,14499,13509,13543,15591,9449,9482,10473,13544,14600,15623,8459,9483,11529,10507,8492,9516,8493,9549,9550,10540,10574,13577,13610,14601,14634,13645,3313,2292,3379,5457,5490,6480,6513,7536,6514,6547,6546,6580,6614,6647,3545,5625,9584,10608,9617,12721,3677,7705,6714,5692,13877,8827,17602,19649,17637,16615,20705,19716,17671,19717,18727,22786,21798,22855,17704,20808,24935,25992,20152,24412,27582}
 local bitmap, kitchenBitmap, titleBitmap, bitmapPalette, sofaColors
 local roomBitmaps = {}
+local itemSprites = {}
+local inventory
 if type(require) == "function" and type(ui.spr) == "function" then
     local _, spritesModule = pcall(require, "sprites")
     local _, paletteModule = pcall(require, "palette")
@@ -125,6 +127,9 @@ if type(require) == "function" and type(ui.spr) == "function" then
         end
         if sprites.titulo103_0 and sprites.titulo103_1 and sprites.titulo103_2 then
             titleBitmap = {sprites.titulo103_0,sprites.titulo103_1,sprites.titulo103_2}
+        end
+        for name, ref in pairs(sprites) do
+            if type(name)=="string" and name:sub(1,5)=="item_" then itemSprites[name]=ref end
         end
         local byColor = {}
         for index, color in ipairs(colors) do byColor[color] = index-1 end
@@ -1559,12 +1564,12 @@ local currentRoom, crossing = "sala", false
 local roomNotice = ""
 roomBitmaps.sala, roomBitmaps.cozinha = bitmap, kitchenBitmap
 local rooms = {
-    sala = {label="SALA", floor=130, far=49, near=124},
-    cozinha = {label="COZINHA", floor=144, far=56, near=110},
-    corredor = {label="CORREDOR", floor=174, far=66, near=105},
-    banheiro = {label="BANHEIRO", floor=185, far=78, near=110},
-    quarto = {label="QUARTO", floor=174, far=62, near=108},
-    garagem = {label="GARAGEM", floor=166, far=58, near=110},
+    sala = {label="SALA", floor=130, far=54, near=190},
+    cozinha = {label="COZINHA", floor=144, far=66, near=185},
+    corredor = {label="CORREDOR", floor=174, far=80, near=150},
+    banheiro = {label="BANHEIRO", floor=185, far=110, near=190},
+    quarto = {label="QUARTO", floor=174, far=105, near=185},
+    garagem = {label="GARAGEM", floor=166, far=78, near=170},
     quintal = {label="QUINTAL DE TRAS", floor=165, far=56, near=105},
     frente = {label="FRENTE DA CASA", floor=174, far=60, near=105}
 }
@@ -1653,7 +1658,7 @@ local function checkPassage(dx, dy)
     end
 end
 local aiming, strike, running = false, 0, false
-local menuOpen, aimCancelled = false, false
+local aimCancelled = false
 local previousA, previousB, previousY = false, false, false
 
 local function actorScale()
@@ -1689,7 +1694,7 @@ local function courier()
     local blend = position-frame
     local sine, cosine = math.sin(facing), math.cos(facing)
     local scale = actorScale()
-    local vertices, faces = {}, {}
+    local vertices, faces, hand = {}, {}, nil
     local currentOffset, nextOffset = frame*408*3, nextFrame*408*3
     for index = 0,407 do
         local first = currentOffset+index*3+1
@@ -1699,12 +1704,37 @@ local function courier()
         local ax = actorLow[1]+(a+(d-a)*blend)/255*actorSpan[1]
         local ay = actorLow[2]+(b+(e-b)*blend)/255*actorSpan[2]
         local az = actorLow[3]+(c+(f-c)*blend)/255*actorSpan[3]
+        if index==207 then hand={ax,ay,az} end
         local depth = az*cosine-ax*sine
         local size = scale*4.5/(4.5+depth)
         vertices[index+1] = {
             math.floor(x+(ax*cosine+az*sine)*size+0.5),
             math.floor(y-(ay+depth*0.22)*size+0.5), depth
         }
+    end
+    local function heldBox(px,py,pz,w,h,d)
+        local points = {}
+        for _,corner in ipairs({{0,0,0},{1,0,0},{1,1,0},{0,1,0},{0,0,1},{1,0,1},{1,1,1},{0,1,1}}) do
+            local ax,ay,az=px+corner[1]*w,py+corner[2]*h,pz+corner[3]*d
+            local depth=az*cosine-ax*sine
+            local size=scale*4.5/(4.5+depth)
+            points[#points+1]={math.floor(x+(ax*cosine+az*sine)*size+0.5),math.floor(y-(ay+depth*0.22)*size+0.5),depth}
+        end
+        for _,quad in ipairs({{1,2,3,4},{5,8,7,6},{1,5,6,2},{4,3,7,8},{1,4,8,5},{2,6,7,3}}) do
+            for _,triangle in ipairs({{quad[1],quad[2],quad[3]},{quad[1],quad[3],quad[4]}}) do
+                local a,b,c=points[triangle[1]],points[triangle[2]],points[triangle[3]]
+                local area=(b[1]-a[1])*(c[2]-a[2])-(b[2]-a[2])*(c[1]-a[1])
+                if area<0 then faces[#faces+1]={a,b,c,a[3]+b[3]+c[3],quad[1]==1 and 227 or 246} end
+            end
+        end
+    end
+    if hand and inventory then
+        if inventory.equipped=="crowbar" then
+            heldBox(hand[1]-0.015,hand[2]-0.06,hand[3]-0.03,0.03,0.44,0.03)
+            heldBox(hand[1]-0.08,hand[2]+0.35,hand[3]-0.03,0.08,0.03,0.03)
+        elseif inventory.equipped=="phone" then
+            heldBox(hand[1]-0.035,hand[2]-0.025,hand[3]-0.035,0.07,0.13,0.025)
+        end
     end
     for i = 1,#actorTriangles,7 do
         local al,ah,bl,bh,cl,ch,ink = string.byte(actorTriangles,i,i+6)
@@ -1742,7 +1772,8 @@ end
 
 local titleOpen, titleChoice, canContinue = true, 1, false
 local titleUp, titleDown, titleConfirm = false, false, false
-local pauseChoice, pauseUp, pauseDown = 1, false, false
+inventory = require("inventory").new(itemSprites)
+local notice, noticeFrames = "",0
 
 local settingsOpen, controlsOpen, settingsChoice = false,false,1
 local titleCancel,titleLeft,titleRight = false,false,false
@@ -1787,8 +1818,10 @@ local function drawTitle()
                     crossing,walking,running,step = false,false,false,0
                     aiming,strike,aimCancelled = false,0,false
                     roomNotice = ""
+                    inventory:reset()
+                    notice,noticeFrames = "",0
                 end
-                titleOpen,canContinue,menuOpen = false,true,false
+                titleOpen,canContinue = false,true
                 previousB = true
             end
         end
@@ -1856,30 +1889,24 @@ function update()
     local cancel, confirm, attack = a and not previousA, b and not previousB, run and not previousY
     previousA, previousB, previousY = a, b, run
     if not guard then aimCancelled = false end
-    local openedMenu = false
     if cancel then
-        if menuOpen then
-            menuOpen = false
-        elseif aiming or (guard and not aimCancelled) then
-            aimCancelled = true
+        if inventory.visible then
+            inventory:close()
         else
-            menuOpen, pauseChoice, openedMenu = true, 1, true
+            inventory:open()
+            inventory.previous.b = b
         end
-    elseif confirm and menuOpen then
-        if pauseChoice == 2 then
-            titleOpen,titleChoice,titleConfirm = true,2,true
-        end
-        menuOpen = false
-        confirm = false
+        aiming,strike = false,0
+        aimCancelled = guard
     end
-    local up,down = held(UP or 1),held(DOWN or 3)
-    if menuOpen and not openedMenu and ((up and not pauseUp) or (down and not pauseDown)) then
-        pauseChoice = 3-pauseChoice
+    if inventory.visible then
+        walking,running = false,false
+        inventory:handle(held(UP or 1),held(DOWN or 3),held(LEFT or 4),held(RIGHT or 2),b,currentRoom)
+        inventory:draw(bitmapPalette or Palette)
+        return
     end
-    pauseUp,pauseDown = up,down
-    if titleOpen then return end
     local wasAiming = aiming
-    aiming = guard and not aimCancelled and not menuOpen
+    aiming = guard and not aimCancelled
     if not aiming then
         strike = 0
     elseif wasAiming and attack and strike == 0 then
@@ -1888,7 +1915,7 @@ function update()
         strike = strike + animationDelta()*60
         if strike > actorClips.punch.count then strike = 0 end
     end
-    if menuOpen or guard or cancel then dx, dy = 0, 0 end
+    if guard or cancel then dx, dy = 0, 0 end
     if dx == 0 and dy == 0 then crossing = false end
     if crossing then dx, dy = 0, 0 end
     if dy < 0 then
@@ -1915,8 +1942,16 @@ function update()
     local status = roomNotice ~= "" and roomNotice or rooms[currentRoom].label
     if aiming then
         status = strike > 0 and "SOCO" or "PUNHOS LEVANTADOS"
-    elseif confirm and not menuOpen and not guard then
-        status = "NADA PARA USAR"
+    elseif confirm and not guard then
+        local pickup = inventory:nearby(currentRoom,x,y)
+        notice = pickup and inventory:collect(pickup) or "NADA PARA USAR"
+        noticeFrames = 50
+    end
+    local pickup = inventory:nearby(currentRoom,x,y)
+    if noticeFrames>0 then
+        status,noticeFrames = notice,noticeFrames-1
+    elseif pickup and not aiming then
+        status = pickup.document and "B: PEGAR ARQUIVO" or "B: PEGAR ITEM"
     end
     local strips = roomBitmaps[currentRoom]
     local native = not not strips
@@ -1948,7 +1983,7 @@ function update()
     end
     ui.rectfill(0,0,479,15,240)
     local motion = walking and (running and " / CORRIDA" or " / PASSOS") or ""
-    ui.print("10.3 "..status..motion,8,3,241)
+    ui.print("10.4 "..status..motion,8,3,241)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do
             if not pcall(ui.grid, patch.x, patch.y, patch.scale, patch.scale, patch.rows) then
@@ -1959,11 +1994,5 @@ function update()
     end
     courier()
     if currentRoom == "sala" and y <= 159 then drawImage(detailedSofa, x-24, x+24, native and sofaColors or nil) end
-    if menuOpen then
-        ui.rectfill(112,65,367,165,240)
-        ui.print("PAUSA",128,77,241)
-        ui.print((pauseChoice==1 and "> " or "  ").."CONTINUAR",128,97,241)
-        ui.print((pauseChoice==2 and "> " or "  ").."TELA INICIAL",128,117,241)
-        ui.print("B CONFIRMA    A FECHA",128,137,241)
-    end
+    inventory:markers(currentRoom)
 end
