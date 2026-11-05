@@ -1752,8 +1752,7 @@ local function drawTitle()
         end
     end
     ui.rectfill(96,48,383,202,240)
-    ui.print("CASA SOMBRIA",170,68,241)
-    ui.print("A ULTIMA ENTREGA",160,88,241)
+    ui.print("A ULTIMA ENTREGA",160,78,241)
     ui.print((titleChoice==1 and "> " or "  ").."NOVO JOGO",156,122,241)
     ui.print((titleChoice==2 and "> " or "  ").."CONTINUAR",156,144,241)
     ui.print(canContinue and "Retomar esta sessao" or "Sem partida nesta sessao",132,170,241)
@@ -1879,7 +1878,7 @@ function update()
     end
     ui.rectfill(0,0,479,15,240)
     local motion = walking and (running and " / CORRIDA" or " / PASSOS") or ""
-    ui.print("10.1 "..status..motion,8,3,241)
+    ui.print("10.2 "..status..motion,8,3,241)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do
             if not pcall(ui.grid, patch.x, patch.y, patch.scale, patch.scale, patch.rows) then
