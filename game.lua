@@ -246,9 +246,10 @@ local function actorInk(index)
 end
 
 local function courier()
-    local scale = (1.83 + (y-145)/122) * 40/1.852
+    local depth = math.max(0, math.min(1, (y-130)/103))
+    local scale = (1.38 + depth*1.16) * 40/1.852
     local sine, cosine = math.sin(facing), math.cos(facing)
-    local stride = walking and math.sin(step/4)*0.075 or 0
+    local stride = walking and math.sin(step/3.2)*0.075 or 0
     local vertices, faces = {}, {}
     for i = 1,#actorPoints,3 do
         local a,b,c = string.byte(actorPoints,i,i+2)
@@ -296,7 +297,7 @@ local function drawImage(image, minX, maxX, colors)
     end
 end
 
-local inKitchen = false
+local inKitchen, crossing = false, false
 
 function update()
     ui.cls(0)
@@ -321,20 +322,23 @@ function update()
         return px >= 48 and px <= 448 and py >= 130 and py <= 230
             and (px >= 218 or py >= 216 - (px - 48) * 0.19)
     end
-    local nextX, nextY = x + dx * 1.4, y + dy * 1.25
+    local nextX, nextY = x + dx * 1.95, y + dy * 1.75
     if walkable(nextX, y) then x = nextX end
     if walkable(x, nextY) then y = nextY end
+    if dy >= 0 then crossing = false end
     local status = inKitchen and "COZINHA" or "SALA"
     if inKitchen then
         if x >= 202 and x <= 270 and y <= 158 then
             status = "PASSAGEM PARA SALA"
-            if dy < 0 and y <= 146 then
+            if dy < 0 and not crossing and y <= 146 then
+                crossing = true
                 inKitchen, x, y, status = false, 273, 158, "SALA"
             end
         end
     elseif x >= 247 and x <= 304 and y <= 151 then
         status = kitchenBitmap and "PASSAGEM PARA COZINHA" or "COZINHA AUSENTE"
-        if dy < 0 and y <= 138 and kitchenBitmap then
+        if dy < 0 and not crossing and y <= 138 and kitchenBitmap then
+            crossing = true
             inKitchen, x, y, status = true, 236, 177, "COZINHA"
         end
     elseif x >= 218 and x < 238 and y <= 150 then
@@ -372,7 +376,7 @@ function update()
         fine = fineAvailable and drawFine()
     end
     ui.rectfill(0,0,479,15,240)
-    ui.print("8.3 "..status,8,3,241)
+    ui.print("8.4 "..status,8,3,241)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do
             if not pcall(ui.grid, patch.x, patch.y, patch.scale, patch.scale, patch.rows) then
