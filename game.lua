@@ -294,6 +294,12 @@ local hookClip = {
     {-0.895, 0.195, 0.538},
 }
 
+local function bendJoint(y, z, pivot, angle)
+    local height = y-pivot
+    local sine, cosine = math.sin(angle), math.cos(angle)
+    return pivot + height*cosine-z*sine, height*sine+z*cosine
+end
+
 local function courier()
     local threshold = inKitchen and 144 or 130
     local depth = math.max(0, math.min(1, (y-threshold)/(233-threshold)))
@@ -314,34 +320,33 @@ local function courier()
         local side = ax < 0 and -1 or 1
         local leg = math.max(0,1-ay/0.90)
         local arm = math.max(0,math.min(1,(math.abs(ax)-0.17)/0.085))
-        if ay >= 0.82 and ay <= 1.50 then
-            local forearm = arm * math.max(0,math.min(1,(1.49-ay)/0.44))
+        if ay >= 0.76 and ay <= 1.52 and arm > 0 then
+            local armSwing = pose and pose[side < 0 and 5 or 6] or 0
+            local hook = side > 0 and punchPose or nil
+            local shoulder = armSwing*(running and 0.78 or 0.48)
+            local elbow = running and 0.94 or 0.22
             if aiming then
-                -- Raise both hands, then extend the right fist and retract it.
-                local punch = side > 0 and punchPose and punchPose[2] or 0
-                local hook = side > 0 and punchPose and punchPose[1] or 0
-                ay = ay + forearm*(0.52+0.10*punch)
-                az = az - forearm*(0.30+0.64*punch)
-                ax = ax - side*forearm*(0.045+0.12*punch) + hook*forearm*0.15
-            else
-                local armSwing = pose and pose[side < 0 and 5 or 6] or 0
-                az = az + armSwing*arm*(running and 0.32 or 0.22)
-                if running then ay = ay + forearm*(0.15+0.08*armSwing) end
+                shoulder = 0.52 + (hook and 0.42*hook[2] or 0)
+                elbow = 1.50 - (hook and 0.70*hook[2] or 0)
+            end
+            local elbowWeight = math.max(0, math.min(1,(1.24-ay)/0.16))
+            local shoulderWeight = math.max(0, math.min(1,(1.51-ay)/0.14))
+            ay, az = bendJoint(ay, az, 1.16, elbow*elbowWeight*arm)
+            ay, az = bendJoint(ay, az, 1.48, shoulder*shoulderWeight*arm)
+            if hook then
+                local offset = ax-side*0.24
+                local turn = hook[1]*0.48*arm*shoulderWeight
+                ax, az = side*0.24+offset*math.cos(turn)-az*math.sin(turn),
+                    offset*math.sin(turn)+az*math.cos(turn)
             end
         end
         if pose and ay < 0.94 then
             local stride = pose[side < 0 and 1 or 2]
             local knee = pose[side < 0 and 3 or 4]
-            if ay < 0.49 then
-                local bend = -knee*(running and 0.95 or 0.78)
-                local down = ay-0.49
-                ay = 0.49 + down*math.cos(bend)-az*math.sin(bend)
-                az = down*math.sin(bend)+az*math.cos(bend)
-            end
-            local hip = stride*(running and 0.72 or 0.84)
-            local down = ay-0.94
-            ay = 0.94 + down*math.cos(hip)-az*math.sin(hip)
-            az = down*math.sin(hip)+az*math.cos(hip)
+            local kneeWeight = math.max(0,math.min(1,(0.55-ay)/0.13))
+            local hipWeight = math.max(0,math.min(1,(0.94-ay)/0.14))
+            ay, az = bendJoint(ay, az, 0.49, -knee*kneeWeight*(running and 0.78 or 0.66))
+            ay, az = bendJoint(ay, az, 0.94, stride*hipWeight*(running and 0.58 or 0.68))
         end
         ay = ay + bounce*(1-leg)
         if pose then az = az - math.max(0,ay-0.80)*pose[7]*0.18 end
@@ -506,7 +511,7 @@ function update()
     end
     ui.rectfill(0,0,479,15,240)
     local motion = walking and (running and " / CORRIDA" or " / PASSOS") or ""
-    ui.print("9.4 "..status..motion,8,3,241)
+    ui.print("9.5 "..status..motion,8,3,241)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do
             if not pcall(ui.grid, patch.x, patch.y, patch.scale, patch.scale, patch.rows) then
