@@ -105,6 +105,22 @@ if type(ui.grid) == "function" then
     end
 end
 local Palette = {0,1,1024,1057,34,35,1059,1058,1091,3105,2081,3137,2114,3139,3138,4162,2115,36,1060,1093,1094,1092,1127,2116,2148,3173,2149,3172,2182,3206,2183,3207,4161,5186,5219,7233,7267,5221,6276,7300,5253,5287,7301,7335,7367,1128,1129,2186,1163,2185,1164,2187,2184,2217,4264,3241,2218,4297,4298,4331,2221,2222,4332,5288,5321,4330,5354,6344,7401,6378,6412,4366,5388,7435,5389,5423,7469,6446,7503,8257,9313,10338,8324,10371,9381,8358,9382,9415,10405,10438,11463,12417,13442,14466,14499,13509,13543,15591,9449,9482,10473,13544,14600,15623,8459,9483,11529,10507,8492,9516,8493,9549,9550,10540,10574,13577,13610,14601,14634,13645,3313,2292,3379,5457,5490,6480,6513,7536,6514,6547,6546,6580,6614,6647,3545,5625,9584,10608,9617,12721,3677,7705,6714,5692,13877,8827,17602,19649,17637,16615,20705,19716,17671,19717,18727,22786,21798,22855,17704,20808,24935,25992,20152,24412,27582}
+local bitmap, bitmapPalette, sofaColors
+if type(require) == "function" and type(ui.spr) == "function" then
+    local _, spritesModule = pcall(require, "sprites")
+    local _, paletteModule = pcall(require, "palette")
+    local sprites = type(Sprites) == "table" and Sprites or spritesModule
+    local colors = type(_G.Palette) == "table" and _G.Palette or paletteModule
+    if type(sprites) == "table" and sprites.sala74
+        and type(colors) == "table" and #colors > 1 and #colors <= 224 then
+        bitmap, bitmapPalette = sprites.sala74, colors
+        local byColor = {}
+        for index, color in ipairs(colors) do byColor[color] = index-1 end
+        sofaColors = {}
+        for index, color in ipairs(Palette) do sofaColors[index] = byColor[color] end
+    end
+end
+
 local mode, previous = 1, false
 local formats = {"BGR555", "RGB555", "RGB565"}
 local function encode(c)
@@ -181,13 +197,14 @@ local function held(button)
     return value == true or (type(value) == "number" and value > 0)
 end
 
-local function drawImage(image, minX, maxX)
+local function drawImage(image, minX, maxX, colors)
     local scale = 2
     for i = 1, #image, 5 do
         local a,b,c,d,color = string.byte(image,i,i+4)
         if (c+1)*scale-1 >= minX and a*scale <= maxX then
-            if (d+1)*scale-1 >= 16 then
-                ui.rectfill(a*scale,math.max(16,b*scale),(c+1)*scale-1,(d+1)*scale-1,color-1)
+            local ink = colors and colors[color] or (not colors and color-1)
+            if ink and (d+1)*scale-1 >= 16 then
+                ui.rectfill(a*scale,math.max(16,b*scale),(c+1)*scale-1,(d+1)*scale-1,ink)
             end
         end
     end
@@ -201,8 +218,9 @@ function update()
     if detailButton and not previousDetail then detail = not detail end
     previousDetail = detailButton
     ui.cls(0)
+    local native = detail and bitmap ~= nil
     local status
-    for i, color in ipairs(Palette) do ui.palset(i-1, encode(color)) end
+    for i, color in ipairs(native and bitmapPalette or Palette) do ui.palset(i-1, encode(color)) end
     for i, color in ipairs(actorPalette) do ui.palset(i+223, encode(color)) end
     local dx = (held(RIGHT or 2) and 1 or 0) - (held(LEFT or 4) and 1 or 0)
     local dy = (held(DOWN or 3) and 1 or 0) - (held(UP or 1) and 1 or 0)
@@ -217,14 +235,24 @@ function update()
     local nextX, nextY = x + dx * 1.4, y + dy * 1.25
     if walkable(nextX, y) then x = nextX end
     if walkable(x, nextY) then y = nextY end
-    local status = y <= 150 and "LUA / PORTA" or "LUA / FRENTE"
+    local status = y <= 150 and "PORTA" or "FRENTE"
     ui.palset(240, 0)
     ui.palset(241, encode(32767))
+    if native then
+        local ok, result = pcall(ui.spr, bitmap, 0, 0)
+        if not ok or result == false then
+            bitmap, native = nil, false
+            for i, color in ipairs(Palette) do ui.palset(i-1, encode(color)) end
+        end
+    end
+    local fine = false
+    if not native then
+        drawImage(detailedBackground, 0, 479)
+        fine = detail and fineAvailable and drawFine()
+    end
     ui.rectfill(0,0,479,15,240)
-    drawImage(detailedBackground, 0, 479)
-    local fine = detail and fineAvailable and drawFine()
-    ui.print("7.3 "..status.."  Z: "..(fine and "DETALHE" or "COMPAT").."  X: "..formats[mode],8,3,241)
-    if not fine and gridPatches then
+    ui.print("7.4 "..status.."  Z: "..(native and "BITMAP" or fine and "DETALHE" or "COMPAT").."  X: "..formats[mode],8,3,241)
+    if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do
             if not pcall(ui.grid, patch.x, patch.y, patch.scale, patch.scale, patch.rows) then
                 gridPatches = nil
@@ -233,5 +261,5 @@ function update()
         end
     end
     courier()
-    if y <= 159 then drawImage(detailedSofa, x-24, x+24) end
+    if y <= 159 then drawImage(detailedSofa, x-24, x+24, native and sofaColors or nil) end
 end
