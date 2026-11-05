@@ -137,54 +137,62 @@ local actorPalette = {
     3204, 5320, 8420, 11558, 6411, 7504, 10709, 13946,
     5358, 7508, 15990, 20283, 21342, 7501, 5319, 15033
 }
-local actorFaces = {
-    {1,2,3,4,0},{5,8,7,6,1},{1,5,6,2,0},
-    {4,3,7,8,1},{1,4,8,5,0},{2,6,7,3,1}
-}
 
 local function courier()
-    local scale = 0.75 + (y - 145) / 180
+    local scale = 1.24 + (y - 145) / 170
     local angle = facing
     local sine, cosine = math.sin(angle), math.cos(angle)
     local stride = walking and math.sin(step / 4) * 2.5 or 0
     local bob = walking and math.abs(stride)*0.42 or 0
     local faces = {}
 
-    local function part(px, py, pz, w, h, d, lit, dark, topWidth, topDepth)
-        local vertices = {}
-        for _, corner in ipairs({
-            {0,0,0},{1,0,0},{1,1,0},{0,1,0},
-            {0,0,1},{1,0,1},{1,1,1},{0,1,1}
-        }) do
-            local width = corner[2] == 1 and (topWidth or w) or w
-            local depthWidth = corner[2] == 1 and (topDepth or d) or d
-            local ax = px + w/2 + (corner[1]-0.5)*width
-            local ay = py + corner[2]*h + (py >= 16 and bob or 0)
-            local az = pz + d/2 + (corner[3]-0.5)*depthWidth
-            local depth = az * cosine - ax * sine
-            local magnification = scale * 95 / (95 + depth)
-            vertices[#vertices + 1] = {
-                math.max(0, math.min(479, math.floor(x + (ax * cosine + az * sine) * magnification))),
-                math.floor(y - (ay + depth * 0.22) * magnification),
-                depth
-            }
-        end
-        for _, face in ipairs(actorFaces) do
-            local a,b,c,e = vertices[face[1]],vertices[face[2]],vertices[face[3]],vertices[face[4]]
-            local area = (b[1]-a[1])*(c[2]-a[2]) - (b[2]-a[2])*(c[1]-a[1])
-            if area < 0 then
-                faces[#faces + 1] = {a,b,c,e,a[3]+b[3]+c[3]+e[3],face[5]==0 and lit or dark}
+    local function part(px, py, pz, w, h, d, lit, dark, topWidth, topDepth, bevel)
+        local ring = bevel and {
+            {bevel,0},{1-bevel,0},{1,bevel},{1,1-bevel},
+            {1-bevel,1},{bevel,1},{0,1-bevel},{0,bevel}
+        } or {{0,0},{1,0},{1,1},{0,1}}
+        local lower, upper = {}, {}
+        for level = 0,1 do
+            local layer = level == 0 and lower or upper
+            local width = level == 1 and (topWidth or w) or w
+            local depthWidth = level == 1 and (topDepth or d) or d
+            for index, corner in ipairs(ring) do
+                local ax = px + w/2 + (corner[1]-0.5)*width
+                local ay = py + level*h + (py >= 16 and bob or 0)
+                local az = pz + d/2 + (corner[2]-0.5)*depthWidth
+                local depth = az*cosine - ax*sine
+                local size = scale*95/(95+depth)
+                layer[index] = {
+                    math.max(0, math.min(479, math.floor(x+(ax*cosine+az*sine)*size))),
+                    math.floor(y-(ay+depth*0.22)*size), depth
+                }
             end
+        end
+        local function face(a,b,c,color)
+            local area = (b[1]-a[1])*(c[2]-a[2])-(b[2]-a[2])*(c[1]-a[1])
+            if area < 0 then
+                faces[#faces+1] = {a,b,c,a[3]+b[3]+c[3],color}
+            end
+        end
+        for index = 1,#ring do
+            local nextIndex = index % #ring + 1
+            local color = ring[index][2] < ring[nextIndex][2] and dark or lit
+            face(lower[index],lower[nextIndex],upper[nextIndex],color)
+            face(lower[index],upper[nextIndex],upper[index],color)
+        end
+        for index = 2,#ring-1 do
+            face(upper[1],upper[index],upper[index+1],lit)
+            face(lower[1],lower[index+1],lower[index],dark)
         end
     end
 
     -- Boots, trousers and a tapered work shirt.
-    part(-6,0,-5+stride,5,3,8,5,1,4)
+    part(-6,0,-5+stride,5,3,8,5,1,4,nil,0.18)
     part(1,0,-5-stride,5,3,8,5,1,4)
-    part(-6,3,-2.5+stride,5,14,5,4,3,6)
+    part(-6,3,-2.5+stride,5,14,5,4,3,6,nil,0.18)
     part(1,3,-2.5-stride,5,14,5,4,3,6)
     part(-6,16,-3.5,12,3,7,3,1)
-    part(-6,19,-3.5,12,10,7,10,9,16,8)
+    part(-6,19,-3.5,12,10,7,10,9,16,8,0.23)
     part(-2,23,-4.1,4,6,0.8,9,2,6)
     part(-9,24,-3.5,4,5,6,10,9,5)
     part(5,24,-3.5,4,5,6,10,9,5)
@@ -195,21 +203,20 @@ local function courier()
 
     -- Angled jaw, neck, ears and separate planes for the hair and face.
     part(-2,28,-2.5,4,4,5,7,6)
-    part(-3.1,31,-3.8,6.2,7,7,8,7,8.4,7.5)
+    part(-3.1,31,-3.8,6.2,7,7,8,7,8.4,7.5,0.25)
     part(-4.6,33,-1.8,1.5,3,2.5,7,6)
     part(3.1,33,-1.8,1.5,3,2.5,7,6)
     part(-1,33.5,-4.7,2,2.3,1.3,8,6,1.3)
     part(-3.1,36.1,-4.05,2.3,0.8,0.5,2,1)
     part(0.8,36.1,-4.05,2.3,0.8,0.5,2,1)
-    part(-4.3,37,-3.8,8.6,3.5,7.6,2,1,7,6.5)
+    part(-4.3,37,-3.8,8.6,3.5,7.6,2,1,7,6.5,0.24)
     part(-4,38,-4.6,4.6,2.1,3,2,1,3.6)
     part(-4.1,35,1.8,8.2,3,2.2,2,1)
 
-    table.sort(faces,function(a,b) return a[5]>b[5] end)
+    table.sort(faces,function(a,b) return a[4]>b[4] end)
     for _, face in ipairs(faces) do
-        local a,b,c,d,color = face[1],face[2],face[3],face[4],face[6]
+        local a,b,c,color = face[1],face[2],face[3],face[5]
         ui.trisfill(a[1],a[2],b[1],b[2],c[1],c[2],color + 223)
-        ui.trisfill(a[1],a[2],c[1],c[2],d[1],d[2],color + 223)
     end
 end
 
@@ -313,7 +320,7 @@ function update()
         fine = detail and fineAvailable and drawFine()
     end
     ui.rectfill(0,0,479,15,240)
-    ui.print("7.9 "..status.."  Z: "..(native and "BITMAP" or fine and "DETALHE" or "COMPAT").."  X: "..formats[mode],8,3,241)
+    ui.print("8.0 "..status.."  Z: "..(native and "BITMAP" or fine and "DETALHE" or "COMPAT").."  X: "..formats[mode],8,3,241)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do
             if not pcall(ui.grid, patch.x, patch.y, patch.scale, patch.scale, patch.rows) then
