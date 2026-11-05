@@ -212,7 +212,7 @@ local function actorInk(index)
 end
 
 local inKitchen, crossing = false, false
-local aiming, strike = false, 0
+local aiming, strike, running = false, 0, false
 local menuOpen, aimCancelled = false, false
 local previousA, previousB, previousY = false, false, false
 local function courier()
@@ -221,30 +221,37 @@ local function courier()
     local farHeight = inKitchen and 56 or 49
     local scale = (farHeight + depth*(100-farHeight))/1.852
     local swing = strike > 0 and math.sin((13-strike)*math.pi/13) or 0
-    local angle = facing + swing*0.65
+    local angle = facing + swing*0.22
     local sine, cosine = math.sin(angle), math.cos(angle)
-    local cycle = step/3.2
+    local cycle = step
     local stride = walking and math.sin(cycle) or 0
-    local bounce = walking and math.abs(math.cos(cycle))*0.032 or 0
+    local bounce = walking and math.abs(math.cos(cycle))*(running and 0.065 or 0.032) or 0
     local vertices, faces = {}, {}
     for i = 1,#actorPoints,3 do
         local a,b,c = string.byte(actorPoints,i,i+2)
         local ax, ay, az = (a-128)/128, b/128, (c-128)/128
-        if aiming then
-            local upper = math.max(0, ay-0.75)
-            az = az - upper*(0.15+swing*0.3)
-            ay = ay - upper*0.08
-            ax = ax*(ay < 0.7 and 1.2 or 1)
-        end
         local side = ax < 0 and -1 or 1
         local leg = math.max(0,1-ay/0.90)
-        local arm = math.max(0,math.min(1,(math.abs(ax)-0.16)/0.10))
-        if ay >= 0.85 and ay <= 1.48 then
-            az = az + side*stride*arm*0.13
+        local arm = math.max(0,math.min(1,(math.abs(ax)-0.17)/0.085))
+        if ay >= 0.82 and ay <= 1.50 then
+            local forearm = arm * math.max(0,math.min(1,(1.42-ay)/0.40))
+            if aiming then
+                -- Raise both hands, then extend the right fist and retract it.
+                local punch = side > 0 and swing or 0
+                ay = ay + forearm*(0.37+0.08*punch)
+                az = az - forearm*(0.22+0.50*punch)
+                ax = ax - side*forearm*(0.045+0.07*punch)
+            else
+                az = az + side*stride*arm*(running and 0.24 or 0.15)
+                if running then ay = ay + forearm*(0.15+0.08*side*stride) end
+            end
         end
-        az = az - side*stride*leg*0.17
-        ay = ay + bounce*(1-leg) + math.max(0,side*stride)*leg*0.095
+        local reach = running and 0.25 or 0.18
+        local lift = running and 0.16 or 0.09
+        az = az - side*stride*leg*reach
+        ay = ay + bounce*(1-leg) + math.max(0,side*stride)*leg*lift
         ax = ax + stride*(1-leg)*0.014
+        if running then az = az - math.max(0,ay-0.80)*0.16 end
         local depth = az*cosine-ax*sine
         local size = scale*4.5/(4.5+depth)
         vertices[#vertices+1] = {
@@ -329,7 +336,7 @@ function update()
     elseif dx ~= 0 then
         facing = -dx*1.15
     end
-    local speed = run and 1.65 or 1
+    local speed = run and 1.85 or 1
     -- The sofa touches the wall. Follow its front edge to reach the doorway.
     local function walkable(px, py)
         if inKitchen then
@@ -343,7 +350,13 @@ function update()
     if walkable(nextX, y) then x = nextX end
     if walkable(x, nextY) then y = nextY end
     walking = x ~= oldX or y ~= oldY
-    if walking then step = step + speed end
+    running = walking and run
+    if walking then
+        local movedX, movedY = x-oldX, y-oldY
+        local distance = math.sqrt(movedX*movedX+movedY*movedY)
+        local pixelsPerCycle = running and 29 or 23
+        step = (step + distance*2*math.pi/pixelsPerCycle) % (2*math.pi)
+    end
     local status = inKitchen and "COZINHA" or "SALA"
     if inKitchen then
         if x >= 202 and x <= 270 and y <= 158 then
@@ -367,7 +380,7 @@ function update()
         status = "ESCRITORIO / PORAO EM BREVE"
     end
     if aiming then
-        status = strike > 0 and "GOLPE" or "POSICAO DE ATAQUE"
+        status = strike > 0 and "SOCO" or "PUNHOS LEVANTADOS"
     elseif confirm and not menuOpen and not guard then
         status = "NADA PARA USAR"
     end
@@ -399,7 +412,7 @@ function update()
         fine = fineAvailable and drawFine()
     end
     ui.rectfill(0,0,479,15,240)
-    ui.print("9.1 "..status,8,3,241)
+    ui.print("9.2 "..status,8,3,241)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do
             if not pcall(ui.grid, patch.x, patch.y, patch.scale, patch.scale, patch.rows) then
