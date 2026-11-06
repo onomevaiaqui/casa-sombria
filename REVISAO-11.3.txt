@@ -1,0 +1,32 @@
+A Ultima Entrega 11.3 - acabamento sobre a referencia validada 11.2
+
+Referencia preservada: personagem de 1,80m, dimensoes dos oito ambientes,
+moveis, cameras, matrizes de projecao, colisoes, acessos e movimentos.
+As cameras efetivas estao em metric_rooms.lua; P.rooms e metadado legado.
+O acabamento foi renderizado a partir dos mesmos arquivos Blender.
+Nenhum objeto original nem camera foi deslocado ou redimensionado.
+Somente o entregador continua em 3D em tempo real; os fundos sao bitmaps.
+
+Arte: texturas de reboco, ceramica, madeira e tecido; rodapes, batentes,
+molduras, bordas do tapete e detalhes dos armarios. Quadros da sala usam
+as duas imagens fornecidas pelo usuario. Fundos externos ainda simples;
+este e um primeiro acabamento, com o enquadramento aberto validado.
+
+Paletas: ate 191 cores por ambiente, aplicadas nos indices dos bitmaps
+sem ocupar 224..255, reservados ao personagem/interface. A paleta mestre
+do conversor tem 204 entradas. Os PNGs usam cores portadoras: a cor final
+depende de metric_rooms.lua. Nao recolorir os PNGs isoladamente.
+Cada fundo completo tem 480 x 270 em tres faixas de 480 x 90:
+43.200 bytes por faixa, abaixo dos 46.059 bytes do console.
+Icone mantido em 64 x 64, 16 cores e 12 quadros.
+
+Referencia recuperavel na tag referencia-validada-11.2, com cenas Blender
+e medidas arquivadas em .tools/validated112/. O teste check-reference.lua
+repete comandos em oito ambientes a 5/30/60 FPS e compara deslocamento,
+animacao e triangulos do personagem com a referencia aprovada.
+
+Validacao: replay de caminhada/corrida/guarda/soco/inventario preservado;
+18 transicoes e chegadas conectadas; itens alcancaveis; troca das oito
+paletas e retorno do inventario; conversor oficial; comparacao de todos
+os pixels dos oito bitmaps com as cores previstas; inspecao no Lupinho.
+Confirmacao no console fisico ainda pendente.

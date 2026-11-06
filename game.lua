@@ -1919,7 +1919,7 @@ function update()
     for i, color in ipairs(native and bitmapPalette or Palette) do ui.palset(i-1, color) end
     ui.palset(240, 0)
     ui.palset(241, 32767)
-    if native and metric.rooms[currentRoom]then metric.applyPalette(bitmapPalette,ui.palset)end
+    if native and metric.rooms[currentRoom]then metric.applyPalette(bitmapPalette,ui.palset,currentRoom)end
     if native then
         for index, strip in ipairs(strips) do
             local ok, result = pcall(ui.spr, strip, 0, (index-1)*(metric.rooms[currentRoom] and 90 or 82))
@@ -1945,7 +1945,7 @@ function update()
     end
     ui.rectfill(0,0,479,15,240)
     local motion = walking and (running and " / CORRIDA" or " / PASSOS") or ""
-    ui.print("11.2 BLOQUEIO "..(metric.rooms[currentRoom] and "ESCALA / " or "")..status..motion,8,3,241)
+    ui.print("11.3 "..status..motion,8,3,241)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do
             if not pcall(ui.grid, patch.x, patch.y, patch.scale, patch.scale, patch.rows) then
