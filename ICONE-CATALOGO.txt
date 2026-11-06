@@ -1,26 +1,24 @@
-A Ultima Entrega - icone do catalogo
+A Ultima Entrega - capa animada do catalogo, revisao 11.4
 
-Arquivo icon.gif na raiz, sem campo icon no lupi.yaml.
-Arte proveniente da tela inicial aprovada, com a pizza e o titulo do jogo.
-GIF89a, 64 x 64, 12 quadros completos, 120 ms por quadro, repeticao infinita.
-Paleta fixa de 16 cores, identica em todos os quadros.
-Sem transparencia ou entrelacamento. Descarte 1, LZW inicial de 8 bits.
+Arquivo icon.gif, em minusculas, na raiz da branch main publica.
+Nao requer campo icon no lupi.yaml nem desenho da miniatura pelo game.lua.
 
-Correcao de publicacao 11.0
-O log do pipeline do console confirmou limite de canvas de 64 x 64.
-O antigo GIF 128 x 64 impedia a conclusao da atualizacao do jogo.
-Arquivo corrigido com 5.347 bytes e 12 quadros completos de 64 x 64.
-Arte reduzida proporcionalmente para 64 x 32 e centralizada no canvas,
-sem esticar ou cortar. Paleta anterior de 16 cores preservada.
-Todos os quadros decodificados foram comparados pixel a pixel.
-A exibicao deste icone no catalogo ainda precisa de confirmacao no console.
+Capa derivada da tela inicial aprovada, com a pizza e o titulo do jogo.
+GIF89a de 64 x 32 pixels, preenchendo o canvas, sem faixas adicionadas.
+16 cores em paleta fixa, identica em todos os 12 quadros completos.
+120 ms por quadro; ciclo de 1,44 s; repeticao infinita.
+Sem transparencia ou entrelacamento; descarte 1; LZW inicial de 8 bits.
+Todos os indices de pixel ficam em 0..15. Tamanho: 7.676 bytes.
 
-Perfil reutilizado do chat Lupi Combat Rally 3D, cuja versao 12.9 foi
-confirmada pelo usuario no aparelho. Isso nao determina os limites maximos
-do firmware nem substitui confirmar este novo icone no console.
+O pipeline do console recusou anteriormente canvas de 128 x 64,
+com a mensagem GIF canvas 128x64 exceeds 64x64. A nova capa respeita
+ambas as dimensoes desse limite. Substitui o GIF 64 x 64 com faixas pretas.
 
-Guia de origem
-https://github.com/onomevaiaqui/lupi3d/blob/main/docs/ICONE-CATALOGO.md
+Validacao: node .tools/check-icon.cjs; todos os quadros tambem foram
+decodificados e comparados pixel a pixel com a conversao esperada.
+A exibicao no menu fisico depende da atualizacao do catalogo e ainda
+precisa ser confirmada no aparelho. Versao 11.4 identifica a publicacao.
 
-Verificacao local
-node .tools/check-icon.cjs
+Referencia de organizacao do arquivo: docs/ICONE-CATALOGO.md do
+repositorio onomevaiaqui/lupi3d. O tamanho 128 x 64 desse outro teste
+nao se aplica ao limite observado no pipeline deste jogo.
