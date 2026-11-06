@@ -27,4 +27,8 @@ Ainda falta confirmar no console fisico.
 
 Esta e uma revisao de proporcoes com arte geometrica provisoria nesses
 dois comodos. Os outros seis ambientes mantem a versao anterior e ainda
-precisam da mesma reconstrucao dimensional. O icone permanece inalterado.
+precisam da mesma reconstrucao dimensional.
+
+Correcao de publicacao: icon.gif agora tem canvas 64 x 64. O pipeline
+do console rejeitou o anterior 128 x 64 e interrompeu a atualizacao.
+A versao do jogo permanece 11.0; somente o icone e sua validacao mudaram.
