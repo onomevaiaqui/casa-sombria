@@ -1,0 +1,10 @@
+REVISAO 11.6 - Tela inicial
+
+A cor preta opaca da imagem do titulo foi substituida por BGR555 1
+(quase preto), para evitar a mesma ambiguidade com a cor transparente.
+Os demais pixels da arte permanecem identicos. Nenhuma mudanca de camera,
+colisao, controles ou animacao.
+
+Conversao oficial: 43 imagens, 205 cores globais; tres faixas do titulo
+sem indice zero. Replay aprovado 11.2 e bancos de paleta validados.
+Confirmacao final pendente no console fisico.
