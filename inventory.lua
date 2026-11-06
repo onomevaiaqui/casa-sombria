@@ -197,13 +197,6 @@ function Inventory.new(sprites)
         return "ITEM COLETADO"
     end
 
-    function state:markers(room)
-        for _,pickup in ipairs(pickups) do
-            if pickup.room==room and not self.collected[pickup.id] then
-                ui.rectfill(pickup.x-1,pickup.y-2,pickup.x+1,pickup.y,241)
-            end
-        end
-    end
 
     function state:draw(palette)
         for i,color in ipairs(palette) do ui.palset(i-1,color) end

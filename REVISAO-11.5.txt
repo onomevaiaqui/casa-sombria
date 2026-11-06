@@ -1,0 +1,17 @@
+REVISAO 11.5 - Correcoes de transparencia e marcadores
+
+Os oito fundos e as mascaras do sofa e do carro nao usam mais preto
+opaco como cor portadora. Esse preto podia coincidir com o indice zero,
+reservado a transparencia pelo console, deixando buracos em tons claros.
+A nova portadora BGR555 32766 e convertida de volta ao mesmo tom de cada
+comodo em metric_rooms.lua. Nao altera a arte nem a paleta visual final.
+
+Removidos os quadrados brancos que indicavam os itens no chao. A coleta
+com B e o aviso de proximidade continuam funcionando.
+
+Validacao local: codec oficial, 43 imagens, paleta global de 205 entradas;
+fundos de 43200 bytes por faixa, abaixo do limite de 46059 bytes.
+Comparados todos os 129600 pixels de cada um dos oito fundos com a arte
+11.3: cores identicas e nenhum indice transparente. Mascaras conferidas.
+Replay 11.2 preservado: movimentos, projecao, escala, 18 transicoes e
+colisoes. Falta confirmar o resultado no hardware fisico do usuario.

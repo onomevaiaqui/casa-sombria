@@ -1945,7 +1945,7 @@ function update()
     end
     ui.rectfill(0,0,479,15,240)
     local motion = walking and (running and " / CORRIDA" or " / PASSOS") or ""
-    ui.print("11.4 "..status..motion,8,3,241)
+    ui.print("11.5 "..status..motion,8,3,241)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do
             if not pcall(ui.grid, patch.x, patch.y, patch.scale, patch.scale, patch.rows) then
@@ -1967,5 +1967,4 @@ function update()
             drawImage(detailedSofa,x-24,x+24)
         end
     end
-    inventory:markers(currentRoom)
 end
