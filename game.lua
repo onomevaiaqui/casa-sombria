@@ -1,3 +1,4 @@
+local frameTime = require("frame_time")
 local metric = require("metric_rooms")
 local perspective = require("perspective")
 local navigation = require("navigation")
@@ -1676,20 +1677,7 @@ end
 local aimCancelled = false
 local previousA, previousB, previousY = false, false, false
 
-local function actorScale()
-    return perspective.scale(currentRoom,y,x)*1.8/1.852
-end
-
-local function animationDelta()
-    if type(ui.stat) == "function" then
-        local ok, fps = pcall(ui.stat, 7)
-        if ok and type(fps) == "number" and fps >= 10 and fps <= 120 then
-            return 1/fps
-        end
-    end
-    -- Lupinho targets 60 Hz and does not expose ui.stat in some builds.
-    return 1/60
-end
+local function animationDelta() return frameTime.dt end
 
 local function courier()
     local clip, position = actorClips.idle, 0
@@ -1706,8 +1694,7 @@ local function courier()
     local frame = math.floor(position)
     local nextFrame = math.min(frame+1,clip.count-1)
     local blend = position-frame
-    local sine, cosine = math.sin(facing), math.cos(facing)
-    local scale = actorScale()
+    local project = perspective.projector(currentRoom,x,y,facing)
     local vertices, faces, hand = {}, {}, nil
     local currentOffset, nextOffset = frame*408*3, nextFrame*408*3
     for index = 0,407 do
@@ -1719,17 +1706,13 @@ local function courier()
         local ay = actorLow[2]+(b+(e-b)*blend)/255*actorSpan[2]
         local az = actorLow[3]+(c+(f-c)*blend)/255*actorSpan[3]
         if index==207 then hand={ax,ay,az} end
-        local depth = az*cosine-ax*sine
-        local size = scale*4.5/(4.5+depth)
-        vertices[index+1]=perspective.vertex(currentRoom,x,y,ax,ay,az,facing)
+        vertices[index+1]=project(ax,ay,az)
     end
     local function heldBox(px,py,pz,w,h,d)
         local points = {}
         for _,corner in ipairs({{0,0,0},{1,0,0},{1,1,0},{0,1,0},{0,0,1},{1,0,1},{1,1,1},{0,1,1}}) do
             local ax,ay,az=px+corner[1]*w,py+corner[2]*h,pz+corner[3]*d
-            local depth=az*cosine-ax*sine
-            local size=scale*4.5/(4.5+depth)
-            points[#points+1]=perspective.vertex(currentRoom,x,y,ax,ay,az,facing)
+            points[#points+1]=project(ax,ay,az)
         end
         for _,quad in ipairs({{1,2,3,4},{5,8,7,6},{1,5,6,2},{4,3,7,8},{1,4,8,5},{2,6,7,3}}) do
             for _,triangle in ipairs({{quad[1],quad[2],quad[3]},{quad[1],quad[3],quad[4]}}) do
@@ -1890,6 +1873,7 @@ local function drawTitle()
 end
 
 function update()
+    frameTime.sample(ui)
     if titleOpen then drawTitle(); return end
     ui.cls(0)
 
@@ -1996,7 +1980,7 @@ function update()
     end
     ui.rectfill(0,0,479,15,240)
     local motion = walking and (running and " / CORRIDA" or " / PASSOS") or ""
-    ui.print("11.0 "..(metric.rooms[currentRoom] and "ESCALA / " or "")..status..motion,8,3,241)
+    ui.print("11.1 "..(metric.rooms[currentRoom] and "ESCALA / " or "")..status..motion,8,3,241)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do
             if not pcall(ui.grid, patch.x, patch.y, patch.scale, patch.scale, patch.rows) then

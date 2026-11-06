@@ -43,6 +43,24 @@ function P.vertex(room,x,y,ax,ay,az,facing)
  local sx,sy=P.screen(room,gx+right,gz+depth,ay*factor)
  return {math.floor(sx+.5),math.floor(sy+.5),gz+depth}
 end
+function P.projector(room,x,y,facing)
+ local gx,gz=P.ground(room,x,y)
+ local s,c=math.sin(facing),math.cos(facing)
+ local factor=1.8/1.852
+ if metric.rooms[room]then
+  local rx,ry,dx,dy=metric.basis(room)
+  return function(ax,ay,az)
+   local right,away=(ax*c+az*s)*factor,(az*c-ax*s)*factor
+   local sx,sy,depth=metric.project(room,gx+rx*right+dx*away,gz+ry*right+dy*away,ay*factor)
+   return {math.floor(sx+.5),math.floor(sy+.5),depth}
+  end
+ end
+ return function(ax,ay,az)
+  local right,depth=(ax*c+az*s)*factor,(az*c-ax*s)*factor
+  local sx,sy=P.screen(room,gx+right,gz+depth,ay*factor)
+  return {math.floor(sx+.5),math.floor(sy+.5),gz+depth}
+ end
+end
 function P.facing(room,dx,dy)
  if metric.rooms[room]then return metric.facing(room,dx,dy)end
  return math.atan(-dx,-dy)
@@ -54,7 +72,7 @@ function P.move(room,x,y,dx,dy,dt,running,walkable)
  local ux,uz=tx-gx,tz-gz
  local length=math.sqrt(ux*ux+uz*uz)
  if length<1e-9 then return x,y,0 end
- local distance=(running and 4.1070557323 or 1.7009575856)*math.min(dt,.1)
+ local distance=(running and 4.1070557323 or 1.7009575856)*math.max(0,math.min(dt,.5))
  ux,uz=ux/length*distance,uz/length*distance
  local n=math.max(1,math.ceil(distance/.025));local moved=0
  for i=1,n do

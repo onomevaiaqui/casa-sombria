@@ -1,0 +1,24 @@
+A Ultima Entrega 11.1 - correcao do tempo de movimento
+
+Antes: ui.stat(7) abaixo de 10 FPS fazia a simulacao assumir 60 FPS.
+A 5 FPS, andar rendia somente 0,142 m por segundo real em vez de 1,701.
+Outro limite de 0,1 s por quadro tambem atrasava o movimento abaixo de 10 FPS.
+Agora leituras de 2 a 240 FPS sao aceitas, amostradas uma unica vez por update.
+Um dado invalido preserva a ultima taxa valida. Pausas ficam limitadas a 0,5 s.
+Andar, giro e soco compartilham o tempo. Os passos seguem a distancia percorrida.
+Velocidades fisicas mantidas: andar 1,701 m/s, correr 4,107 m/s.
+
+Projecao: inversa do piso, senos/cossenos e base da camera calculados uma vez
+por personagem, em vez de repetidos para cada um dos 408 vertices.
+Testada equivalencia das coordenadas com a projecao anterior.
+Nenhuma alteracao de escala, malha, animacao ou fundo nesta revisao.
+
+Proporcoes ainda nao resolvidas: seis fundos antigos foram produzidos sem
+geometria comum e nao possuem cameras originais recuperaveis. Necessitam
+reconstrucao dimensional; uma mudanca global no boneco nao resolve isso.
+Os dois fundos metricos da 11.0 preservam suas cameras e medidas.
+Precisam de revisao do enquadramento a partir do teste no aparelho.
+
+Icone 64 x 64 mantido (limite confirmado pelo pipeline do console).
+Testes: movimento por segundo a 2/3/5/8/9/10/15/30/60 FPS, colisoes e 18
+transicoes automaticas, equipamento e inventario. Hardware ainda a testar.
