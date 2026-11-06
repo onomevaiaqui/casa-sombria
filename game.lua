@@ -136,7 +136,7 @@ if type(require) == "function" and type(ui.spr) == "function" then
         for name, ref in pairs(sprites) do
             if type(name)=="string" and name:sub(1,5)=="item_" then itemSprites[name]=ref end
         end
-        sofaBitmap = sprites.sofa105
+        sofaBitmap = sprites.sofa112
         carSprite = sprites.fusca110
         local byColor = {}
         for index, color in ipairs(colors) do byColor[color] = index-1 end
@@ -145,7 +145,7 @@ if type(require) == "function" and type(ui.spr) == "function" then
     end
 end
 
-local x, y, facing, walking, step = 105, 216, -0.8, false, 0
+local x, y, facing, walking, step = 238.483849239, 196.782395152, -0.8, false, 0
 local actorPalette = {9651,2147,4234,11732,13846,3172,5320,4299,6375,5388,2117,2118,3205,3206,5292,5325,3175,3208,8558,9617,5285,5286,1058,1091,6479,7504,7400,7434,6414,6446}
 local actorTriangles = decode(([=[
 UwDmANQAANQA5gDVABnUANUA7QAJ1ADtAMkACckA7QA5AAfJADkA1AAZ1AA5AFMAGFMAOQBtABhTAG0AbgATUwDcAOYAA9wAUwAbAAQbAFMAbgAE1QDmAOkA
@@ -1582,42 +1582,7 @@ local rooms = {
 }
 
 -- Each opening records a destination spawn outside its return trigger.
-local exits = {
-    sala = {
-        {x1=247,x2=304,y1=130,y2=142,dx=0,dy=-1,to="cozinha",x=236,y=160},
-        {x1=218,x2=238,y1=130,y2=150,dx=0,dy=-1,to="corredor",x=245,y=228},
-        {x1=392,x2=448,y1=130,y2=158,dx=0,dy=-1,to="quintal",x=365,y=215},
-        {x1=60,x2=146,y1=220,y2=230,dx=0,dy=1,to="frente",x=102,y=195},
-        {x1=320,x2=390,y1=220,y2=230,dx=0,dy=1,to="garagem",x=290.98569552,y=155.35317815}
-    },
-    cozinha = {
-        {x1=202,x2=270,y1=144,y2=151,dx=0,dy=-1,to="sala",x=273,y=158}
-    },
-    corredor = {
-        {x1=210,x2=288,y1=174,y2=185,dx=0,dy=-1,to="sala",x=226,y=160},
-        {x1=60,x2=96,y1=190,y2=234,dx=-1,dy=0,to="quarto",x=421,y=228},
-        {x1=403,x2=436,y1=190,y2=234,dx=1,dy=0,to="banheiro",x=241.81137978,y=219.98346848}
-    },
-    banheiro = {
-        {x1=157,x2=284,y1=235,y2=276,dx=0,dy=1,to="corredor",x=380,y=220,world={0.65,1.8,0.85,1.15,-1}}
-    },
-    quarto = {
-        {x1=424,x2=452,y1=184,y2=234,dx=1,dy=0,to="corredor",x=118,y=220}
-    },
-    garagem = {
-        {x1=283,x2=320,y1=147,y2=153,dx=0,dy=-1,to="sala",x=355,y=211,world={2.1,2.85,5.25,5.48,1}},
-        {x1=220,x2=302,y1=242,y2=273,dx=0,dy=1,to="frente",x=387,y=210,world={2.0,2.85,0.5,1.0,-1}}
-    },
-    quintal = {
-        {x1=332,x2=404,y1=165,y2=194,dx=0,dy=-1,to="sala",x=419,y=170},
-        {x1=18,x2=45,y1=205,y2=235,dx=-1,dy=0,to="frente",x=45,y=219}
-    },
-    frente = {
-        {x1=64,x2=135,y1=174,y2=185,dx=0,dy=-1,to="sala",x=105,y=212},
-        {x1=350,x2=440,y1=198,y2=212,dx=0,dy=-1,to="garagem",x=260.93724232,y=231.89442246},
-        {x1=18,x2=35,y1=205,y2=235,dx=-1,dy=0,to="quintal",x=64,y=230}
-    }
-}
+local exits = {sala={{x1=241,x2=261,y1=147,y2=153,dx=0.345996120574,dy=-1.24603831363,to="cozinha",x=251.900730568,y=162.488097993,world={2.85,3.35,4.2,4.55,1,2}},{x1=175,x2=197,y1=144,y2=150,dx=0.916339066885,dy=-1.19469165542,to="corredor",x=241.815253758,y=162.529012025,world={1,1.5,4.2,4.55,1,2}},{x1=315,x2=336,y1=150,y2=157,dx=-0.328077433196,dy=-1.30536259366,to="quintal",x=256.608384911,y=155.120038953,world={4.85,5.35,4.2,4.55,1,2}},{x1=131,x2=165,y1=216,y2=229,dx=-1.99348606299,dy=2.95579756633,to="frente",x=187.072485541,y=148.497884221,world={1.35,1.85,0.25,0.6,-1,2}},{x1=301,x2=333,y1=227,y2=241,dx=0.392561600276,dy=3.29665849302,to="garagem",x=271.090486539,y=153.444694174,world={4.35,4.85,0.25,0.6,-1,2}}},cozinha={{x1=242,x2=264,y1=151,y2=158,dx=0.204800167157,dy=-1.50288565772,to="sala",x=249.533787956,y=156.988171503,world={1.85,2.35,3.6,3.95,1,2}}},corredor={{x1=231,x2=254,y1=151,y2=157,dx=0.144225798907,dy=-1.53971525462,to="sala",x=181.16054683,y=153.812952484,world={0.65,1.15,3.8,4.15,1,2}},{x1=201,x2=224,y1=193,y2=207,dx=-5.37401619314,dy=-0.0963419855312,to="quarto",x=279.549597255,y=195.088824039,world={0.25,0.6,1.35,1.85,-1,1}},{x1=255,x2=272,y1=166,y2=176,dx=4.70040129641,dy=0.0730527007789,to="banheiro",x=240.539708877,y=211.613740403,world={1.2,1.55,2.75,3.25,1,1}}},quarto={{x1=297,x2=319,y1=189,y2=204,dx=5.33358079236,dy=0.205783237553,to="corredor",x=240.961943531,y=200.508625204,world={2.9,3.25,1.35,1.85,1,1}}},banheiro={{x1=219,x2=257,y1=224,y2=241,dx=-0.455062066337,dy=4.33410983766,to="corredor",x=238.725259817,y=170.493171935,world={1,1.5,0.25,0.6,-1,2}}},garagem={{x1=262,x2=280,y1=145,y2=150,dx=-0.0569794465225,dy=-1.00653848103,to="sala",x=314.197726692,y=217.884988804,world={2.25,2.75,5.1,5.45,1,2}},{x1=261,x2=291,y1=226,y2=238,dx=0.168834800429,dy=2.98245655128,to="frente",x=310.535486766,y=153.626244975,world={2.25,2.75,0.25,0.6,-1,2}}},quintal={{x1=249,x2=268,y1=146,y2=152,dx=0.287382671458,dy=-1.14028533599,to="sala",x=326.987708925,y=160.585092739,world={3.25,3.75,4.4,4.75,1,2}},{x1=92,x2=119,y1=189,y2=201,dx=-4.2879276254,dy=-0.27376752036,to="frente",x=146.807567833,y=155.114816924,world={0.25,0.6,0.95,1.45,-1,1}}},frente={{x1=182,x2=200,y1=142,y2=146,dx=0.75896591765,dy=-0.812877278029,to="sala",x=157.866041205,y=207.779489942,world={1.75,2.25,5.4,5.75,1,2}},{x1=302,x2=318,y1=146,y2=151,dx=-0.126834727369,dy=-0.884283511896,to="garagem",x=274.705294492,y=217.300058316,world={5.75,6.25,5.4,5.75,1,2}},{x1=121,x2=140,y1=151,y2=158,dx=-3.03933877943,dy=-0.135568465161,to="quintal",x=128.637286901,y=195.97585454,world={0.25,0.6,3.95,4.45,-1,1}}}}
 
 local function walkable(px,py)
     if metric.rooms[currentRoom]then return navigation.walkable(currentRoom,px,py)end
@@ -1808,7 +1773,7 @@ local function drawTitle()
                 settingsOpen,settingsChoice = true,1
             elseif titleChoice==1 or canContinue then
                 if titleChoice==1 then
-                    currentRoom,x,y,facing = "sala",105,216,-0.8
+                    currentRoom,x,y,facing = "sala",238.483849239,196.782395152,-0.8
                     crossing,walking,running,step = false,false,false,0
                     transitionCarry=nil
                     aiming,strike,aimCancelled = false,0,false
@@ -1961,7 +1926,7 @@ function update()
             if not ok or result == false then
                 if currentRoom ~= "sala" then
                     roomBitmaps[currentRoom] = nil
-                    currentRoom, x, y, facing = "sala",273,158,0
+                    currentRoom, x, y, facing = "sala",238.483849239,196.782395152,0
                     status = "ERRO FUNDO: VOLTA A SALA"
                 else
                     roomBitmaps.sala, bitmap = nil, nil
@@ -1980,7 +1945,7 @@ function update()
     end
     ui.rectfill(0,0,479,15,240)
     local motion = walking and (running and " / CORRIDA" or " / PASSOS") or ""
-    ui.print("11.1 "..(metric.rooms[currentRoom] and "ESCALA / " or "")..status..motion,8,3,241)
+    ui.print("11.2 BLOQUEIO "..(metric.rooms[currentRoom] and "ESCALA / " or "")..status..motion,8,3,241)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do
             if not pcall(ui.grid, patch.x, patch.y, patch.scale, patch.scale, patch.rows) then
@@ -1995,8 +1960,9 @@ function update()
         if gy>5.15 then ui.spr(carSprite,metric.carMask.x,metric.carMask.y)end
     end
     if currentRoom=="sala" then
-        if native and sofaBitmap and y<=187 and x<230 then
-            pcall(ui.spr,sofaBitmap,64,115)
+        local gx,gy=metric.ground(currentRoom,x,y)
+        if native and sofaBitmap and gy>3.9 then
+            pcall(ui.spr,sofaBitmap,86,119)
         elseif not native and y<=159 then
             drawImage(detailedSofa,x-24,x+24)
         end

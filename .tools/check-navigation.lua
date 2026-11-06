@@ -16,6 +16,7 @@ local function find(fn,key)
 end
 local function set(k,v)local _,i=find(update,k);debug.setupvalue(update,i,v)end
 local collision=find(update,'walkable')
+assert(collision(find(update,'x'),find(update,'y')),'New Game spawned inside scenery')
 local metric=require('metric_rooms')
 local function trigger(room,e,x,y)
  return not e.world or metric.inOpening(room,x,y,e.world)

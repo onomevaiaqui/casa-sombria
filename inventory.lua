@@ -22,16 +22,16 @@ local documents = {
 
 -- Temporary locations for testing collection; documents use a separate list.
 local pickups = {
-    {id="door_key", room="quarto", x=285,y=215},
-    {id="letter", document=true, room="quarto", x=245,y=217},
-    {id="note", document=true, room="cozinha", x=164,y=219},
-    {id="battery", room="garagem", x=308.1921,y=179.2574},
-    {id="remote", room="garagem", x=277.0003,y=231.7362},
-    {id="screwdriver", room="garagem", x=305.0819,y=193.8431},
-    {id="cutters", room="garagem", x=287.4475,y=157.9229},
-    {id="crowbar", room="corredor", x=344,y=221},
-    {id="valve", room="banheiro", x=275.4888,y=196.7829},
-    {id="collar", room="quintal", x=120,y=223}
+    {id="door_key", room="quarto", x=271.65287201,y=174.33389769},
+    {id="letter", document=true, room="quarto", x=271.66239863,y=211.34173986},
+    {id="note", document=true, room="cozinha", x=257.46333099,y=199.48463577},
+    {id="battery", room="garagem", x=268.28489786,y=176.40109708},
+    {id="remote", room="garagem", x=268.96227067,y=199.87254970},
+    {id="screwdriver", room="garagem", x=268.57292435,y=186.38142108},
+    {id="cutters", room="garagem", x=267.70238002,y=156.21643732},
+    {id="crowbar", room="corredor", x=239.14725387,y=191.01185049},
+    {id="valve", room="banheiro", x=245.11998860,y=196.73136017},
+    {id="collar", room="quintal", x=232.75305244,y=182.12084161}
 }
 
 local function wrapped(text, x, y, width, color, maxLines)

@@ -1,0 +1,5 @@
+Referencia aprovada pelo usuario: fluidez, movimentos, dimensoes e proporcoes.
+Oito comodos metricos; entregador fixo em 1,80m; cameras Blender exportadas.
+Cenas e medidas preservadas em .tools/validated112/.
+Replay de caminhada/corrida/guarda/soco/inventario: lua .tools/check-reference.lua
+A arte desta referencia e a blocagem, anterior ao acabamento 11.3.
