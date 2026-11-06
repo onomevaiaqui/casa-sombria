@@ -16,17 +16,22 @@ local function find(fn,key)
 end
 local function set(k,v)local _,i=find(update,k);debug.setupvalue(update,i,v)end
 local collision=find(update,'walkable')
+local metric=require('metric_rooms')
+local function trigger(room,e,x,y)
+ return not e.world or metric.inOpening(room,x,y,e.world)
+end
 local passage=find(update,'checkPassage')
 local exits=find(passage,'exits')
 local failures=0
 local function check(ok,message)if not ok then print('FAIL '..message);failures=failures+1 end end
 local order={'sala','cozinha','corredor','banheiro','quarto','garagem','quintal','frente'}
+local reachable={}
 for _,room in ipairs(order)do
  set('currentRoom',room)
  for _,e in ipairs(exits[room])do
   local candidates={}
   for py=e.y1,e.y2,1 do for px=e.x1,e.x2,1 do
-   if collision(px,py)then candidates[#candidates+1]={px,py}end
+   if collision(px,py)and trigger(room,e,px,py)then candidates[#candidates+1]={px,py}end
   end end
   check(#candidates>0,room..' -> '..e.to..' inaccessible trigger')
   set('currentRoom',e.to)
@@ -35,13 +40,13 @@ for _,room in ipairs(order)do
  end
  -- Raster flood fill verifies that every exit belongs to the same floor component.
  local valid,queue,visited={},{},{}
- for y=130,236,2 do for x=18,462,2 do
+ for y=18,268,2 do for x=18,462,2 do
   local id=y*500+x
   if collision(x,y)then valid[id]=true end
  end end
  local first=exits[room][1]
  for y=first.y1,first.y2 do for x=first.x1,first.x2 do
-  if x%2==0 and y%2==0 and valid[y*500+x]then queue[1]=y*500+x;break end
+  if x%2==0 and y%2==0 and valid[y*500+x]and trigger(room,first,x,y)then queue[1]=y*500+x;break end
  end;if queue[1]then break end end
  if queue[1]then
   visited[queue[1]]=true;local i=1
@@ -54,11 +59,12 @@ for _,room in ipairs(order)do
   end
   for _,e in ipairs(exits[room])do
    local reached=false
-   for y=e.y1,e.y2 do for x=e.x1,e.x2 do if visited[y*500+x]then reached=true end end end
+   for y=e.y1,e.y2 do for x=e.x1,e.x2 do if visited[y*500+x]and trigger(room,e,x,y)then reached=true end end end
    check(reached,room..' disconnected exit '..e.to)
   end
  else check(false,room..' flood fill seed unavailable')end
  print(room..' reachable floor nodes '..#queue)
+ reachable[room]=visited
 end
 assert(failures==0,failures..' navigation errors')
 print('All 18 triggers, arrival spawns and connected room paths valid')
@@ -67,7 +73,7 @@ for _,room in ipairs(order)do for _,e in ipairs(exits[room])do
  set('currentRoom',room)
  local px,py
  for yy=e.y1,e.y2 do
-  for xx=e.x1,e.x2 do if collision(xx,yy)then px,py=xx,yy;break end end
+  for xx=e.x1,e.x2 do if collision(xx,yy)and trigger(room,e,xx,yy)then px,py=xx,yy;break end end
   if px then break end
  end
  assert(px)
@@ -81,4 +87,15 @@ for _,room in ipairs(order)do for _,e in ipairs(exits[room])do
  checked=checked+1
 end end
 print(checked..' actual camera transitions preserve animation phase and valid arrivals')
+local inv=find(update,'inventory')
+local pickups=find(inv.nearby,'pickups')
+for _,item in ipairs(pickups)do
+ local found=false
+ for id in pairs(reachable[item.room])do
+  local x,y=id%500,math.floor(id/500)
+  if math.abs(x-item.x)<=16 and math.abs(y-item.y)<=13 then found=true;break end
+ end
+ assert(found,item.room..' unreachable item '..item.id)
+end
+print('All collectible items can be approached from connected walkable floor')
 

@@ -1,0 +1,30 @@
+A Ultima Entrega 11.0 - teste de escala fisica
+
+Banheiro e garagem reconstruidos em metros no Blender. O fundo e bitmap
+pre-renderizado; somente o entregador continua em 3D em tempo real.
+As matrizes da camera do render tambem projetam o personagem de 1,80 m.
+
+Banheiro: 2,40 x 3,00 m; box 0,90 x 0,90 x 2,00 m; assento do vaso
+a 0,43 m; borda da pia a 0,85 m. Garagem: 3,40 x 5,70 m; referencia
+do Fusca 4,07 x 1,54 x 1,50 m; bancada a 0,90 m.
+Colisoes usam as mesmas posicoes dos objetos, com raio de 0,25 m.
+Passagens automaticas preservadas. Mascara do carro cobre o personagem
+quando ele passa pelos fundos do veiculo.
+
+Cada fundo completo tem 480 x 270 pixels em tres faixas de 480 x 90,
+43.200 bytes por faixa, abaixo do limite de 46.059 bytes do conversor.
+Os PNGs destes dois comodos usam cores portadoras da paleta antiga.
+Sua aparencia fora do jogo nao representa as cores finais: metric_rooms.lua
+aplica um banco de 191 cores nos indices do bitmap. Nao reconverter estes
+PNGs isoladamente sem preservar esse mapeamento. Os indices 224..255
+continuam reservados ao personagem e interface. Os demais fundos usam
+a paleta anterior, restaurada ao trocar de comodo.
+
+Validacao: conversor oficial de assets, comparacao pixel a pixel das cores
+convertidas, projecao/inversa da camera, colisoes, acesso aos itens e 18
+transicoes. Banheiro e garagem carregados visualmente no Lupinho.
+Ainda falta confirmar no console fisico.
+
+Esta e uma revisao de proporcoes com arte geometrica provisoria nesses
+dois comodos. Os outros seis ambientes mantem a versao anterior e ainda
+precisam da mesma reconstrucao dimensional. O icone permanece inalterado.

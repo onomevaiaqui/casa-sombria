@@ -1,7 +1,9 @@
 local P=require('perspective')
 for room,c in pairs(P.rooms)do
- local head=P.vertex(room,240,c.foot,0,1.852,0,0)
- assert(math.abs(c.foot-head[2]-c.door*1.8/2.1)<1,room..' adult vs door')
+ if not P.metric[room]then
+  local head=P.vertex(room,240,c.foot,0,1.852,0,0)
+  assert(math.abs(c.foot-head[2]-c.door*1.8/2.1)<1,room..' adult vs door')
+ end
  for _,y in ipairs({c.foot,c.foot+25})do
   local x,z=P.ground(room,270,y)
   local sx,sy=P.screen(room,x,z)

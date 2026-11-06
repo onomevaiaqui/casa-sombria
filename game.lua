@@ -1,3 +1,4 @@
+local metric = require("metric_rooms")
 local perspective = require("perspective")
 local navigation = require("navigation")
 -- Teste 3.2: fundo e mascara em bitmap, entregador em 3D.
@@ -106,6 +107,7 @@ if type(ui.grid) == "function" then
     end
 end
 local Palette = {0,1,1024,1057,34,35,1059,1058,1091,3105,2081,3137,2114,3139,3138,4162,2115,36,1060,1093,1094,1092,1127,2116,2148,3173,2149,3172,2182,3206,2183,3207,4161,5186,5219,7233,7267,5221,6276,7300,5253,5287,7301,7335,7367,1128,1129,2186,1163,2185,1164,2187,2184,2217,4264,3241,2218,4297,4298,4331,2221,2222,4332,5288,5321,4330,5354,6344,7401,6378,6412,4366,5388,7435,5389,5423,7469,6446,7503,8257,9313,10338,8324,10371,9381,8358,9382,9415,10405,10438,11463,12417,13442,14466,14499,13509,13543,15591,9449,9482,10473,13544,14600,15623,8459,9483,11529,10507,8492,9516,8493,9549,9550,10540,10574,13577,13610,14601,14634,13645,3313,2292,3379,5457,5490,6480,6513,7536,6514,6547,6546,6580,6614,6647,3545,5625,9584,10608,9617,12721,3677,7705,6714,5692,13877,8827,17602,19649,17637,16615,20705,19716,17671,19717,18727,22786,21798,22855,17704,20808,24935,25992,20152,24412,27582}
+local carSprite
 local bitmap, kitchenBitmap, titleBitmap, sofaBitmap, bitmapPalette, sofaColors
 local roomBitmaps = {}
 local itemSprites = {}
@@ -134,6 +136,7 @@ if type(require) == "function" and type(ui.spr) == "function" then
             if type(name)=="string" and name:sub(1,5)=="item_" then itemSprites[name]=ref end
         end
         sofaBitmap = sprites.sofa105
+        carSprite = sprites.fusca110
         local byColor = {}
         for index, color in ipairs(colors) do byColor[color] = index-1 end
         sofaColors = {}
@@ -1584,7 +1587,7 @@ local exits = {
         {x1=218,x2=238,y1=130,y2=150,dx=0,dy=-1,to="corredor",x=245,y=228},
         {x1=392,x2=448,y1=130,y2=158,dx=0,dy=-1,to="quintal",x=365,y=215},
         {x1=60,x2=146,y1=220,y2=230,dx=0,dy=1,to="frente",x=102,y=195},
-        {x1=320,x2=390,y1=220,y2=230,dx=0,dy=1,to="garagem",x=302,y=197}
+        {x1=320,x2=390,y1=220,y2=230,dx=0,dy=1,to="garagem",x=290.98569552,y=155.35317815}
     },
     cozinha = {
         {x1=202,x2=270,y1=144,y2=151,dx=0,dy=-1,to="sala",x=273,y=158}
@@ -1592,17 +1595,17 @@ local exits = {
     corredor = {
         {x1=210,x2=288,y1=174,y2=185,dx=0,dy=-1,to="sala",x=226,y=160},
         {x1=60,x2=96,y1=190,y2=234,dx=-1,dy=0,to="quarto",x=421,y=228},
-        {x1=403,x2=436,y1=190,y2=234,dx=1,dy=0,to="banheiro",x=77,y=228}
+        {x1=403,x2=436,y1=190,y2=234,dx=1,dy=0,to="banheiro",x=241.81137978,y=219.98346848}
     },
     banheiro = {
-        {x1=36,x2=58,y1=216,y2=234,dx=-1,dy=0,to="corredor",x=380,y=220}
+        {x1=157,x2=284,y1=235,y2=276,dx=0,dy=1,to="corredor",x=380,y=220,world={0.65,1.8,0.85,1.15,-1}}
     },
     quarto = {
         {x1=424,x2=452,y1=184,y2=234,dx=1,dy=0,to="corredor",x=118,y=220}
     },
     garagem = {
-        {x1=268,x2=337,y1=166,y2=186,dx=0,dy=-1,to="sala",x=355,y=211},
-        {x1=180,x2=325,y1=223,y2=235,dx=0,dy=1,to="frente",x=387,y=210}
+        {x1=283,x2=320,y1=147,y2=153,dx=0,dy=-1,to="sala",x=355,y=211,world={2.1,2.85,5.25,5.48,1}},
+        {x1=220,x2=302,y1=242,y2=273,dx=0,dy=1,to="frente",x=387,y=210,world={2.0,2.85,0.5,1.0,-1}}
     },
     quintal = {
         {x1=332,x2=404,y1=165,y2=194,dx=0,dy=-1,to="sala",x=419,y=170},
@@ -1610,12 +1613,13 @@ local exits = {
     },
     frente = {
         {x1=64,x2=135,y1=174,y2=185,dx=0,dy=-1,to="sala",x=105,y=212},
-        {x1=350,x2=440,y1=198,y2=212,dx=0,dy=-1,to="garagem",x=282,y=213},
+        {x1=350,x2=440,y1=198,y2=212,dx=0,dy=-1,to="garagem",x=260.93724232,y=231.89442246},
         {x1=18,x2=35,y1=205,y2=235,dx=-1,dy=0,to="quintal",x=64,y=230}
     }
 }
 
 local function walkable(px,py)
+    if metric.rooms[currentRoom]then return navigation.walkable(currentRoom,px,py)end
     local radius=math.max(2,perspective.scale(currentRoom,py)*0.14)
     local vertical=math.max(1.2,radius*(py-perspective.rooms[currentRoom].horizon)/320)
     return navigation.walkable(currentRoom,px,py)
@@ -1633,6 +1637,10 @@ local function checkPassage(dx,dy,keyDx,keyDy)
     for _, exit in ipairs(exits[currentRoom]) do
         local near = x >= exit.x1 and x <= exit.x2 and y >= exit.y1 and y <= exit.y2
         local towards = (exit.dx ~= 0 and dx*exit.dx > 0) or (exit.dy ~= 0 and dy*exit.dy > 0)
+        if exit.world then
+            near=metric.inOpening(currentRoom,x,y,exit.world)
+            towards=metric.towards(currentRoom,x,y,dx,dy,exit.world)
+        end
         if near then
             inOpening=true
             roomNotice = "PARA "..rooms[exit.to].label
@@ -1653,7 +1661,7 @@ local function checkPassage(dx,dy,keyDx,keyDy)
                     if transitionCarry then
                         local gx,gz=perspective.ground(currentRoom,x,y)
                         local tx,tz=perspective.ground(currentRoom,x+transitionCarry.x,y+transitionCarry.y)
-                        facing=math.atan(-(tx-gx),-(tz-gz))
+                        facing=perspective.facing(currentRoom,tx-gx,tz-gz)
                     end
                     roomNotice = ""
                 else
@@ -1669,7 +1677,7 @@ local aimCancelled = false
 local previousA, previousB, previousY = false, false, false
 
 local function actorScale()
-    return perspective.scale(currentRoom,y)*1.8/1.852
+    return perspective.scale(currentRoom,y,x)*1.8/1.852
 end
 
 local function animationDelta()
@@ -1935,7 +1943,7 @@ function update()
     running=walking and run
     if walking then
         local gx,gz=perspective.ground(currentRoom,x,y)
-        local desired=math.atan(-(gx-oldGX),-(gz-oldGZ))
+        local desired=perspective.facing(currentRoom,gx-oldGX,gz-oldGZ)
         local turn=(desired-facing+math.pi)%(2*math.pi)-math.pi
         local limit=10*animationDelta()
         facing=facing+math.max(-limit,math.min(limit,turn))
@@ -1962,9 +1970,10 @@ function update()
     for i, color in ipairs(native and bitmapPalette or Palette) do ui.palset(i-1, color) end
     ui.palset(240, 0)
     ui.palset(241, 32767)
+    if native and metric.rooms[currentRoom]then metric.applyPalette(bitmapPalette,ui.palset)end
     if native then
         for index, strip in ipairs(strips) do
-            local ok, result = pcall(ui.spr, strip, 0, (index-1)*82)
+            local ok, result = pcall(ui.spr, strip, 0, (index-1)*(metric.rooms[currentRoom] and 90 or 82))
             if not ok or result == false then
                 if currentRoom ~= "sala" then
                     roomBitmaps[currentRoom] = nil
@@ -1987,7 +1996,7 @@ function update()
     end
     ui.rectfill(0,0,479,15,240)
     local motion = walking and (running and " / CORRIDA" or " / PASSOS") or ""
-    ui.print("10.9 "..status..motion,8,3,241)
+    ui.print("11.0 "..(metric.rooms[currentRoom] and "ESCALA / " or "")..status..motion,8,3,241)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do
             if not pcall(ui.grid, patch.x, patch.y, patch.scale, patch.scale, patch.rows) then
@@ -1997,6 +2006,10 @@ function update()
         end
     end
     courier()
+    if currentRoom=="garagem" and carSprite and native then
+        local gx,gy=metric.ground(currentRoom,x,y)
+        if gy>5.15 then ui.spr(carSprite,metric.carMask.x,metric.carMask.y)end
+    end
     if currentRoom=="sala" then
         if native and sofaBitmap and y<=187 and x<230 then
             pcall(ui.spr,sofaBitmap,64,115)

@@ -1,6 +1,7 @@
 -- Initial camera fits to visible door landmarks. Backgrounds are not surveyed 3D.
 -- Model height stays 1.80 m; the camera determines its projected size.
-local P={}
+local metric=require('metric_rooms')
+local P={metric=metric.rooms}
 P.rooms={
  sala={horizon=32,foot=147,door=86,focal=320,cx=240},
  cozinha={horizon=30,foot=151,door=91,focal=320,cx=240},
@@ -12,27 +13,39 @@ P.rooms={
  frente={horizon=35,foot=156,door=80,focal=320,cx=240}
 }
 for _,c in pairs(P.rooms)do c.height=(c.foot-c.horizon)*2.1/c.door end
-function P.scale(room,y)
+function P.scale(room,y,x)
+ if metric.rooms[room]then
+  local gx,gy=metric.ground(room,x or 240,y)
+  local _,head=metric.project(room,gx,gy,1)
+  return math.abs(y-head)
+ end
  local c=P.rooms[room]
  return math.max(.01,(y-c.horizon)/c.height)
 end
 function P.ground(room,x,y)
+ if metric.rooms[room]then return metric.ground(room,x,y)end
  local c=P.rooms[room]
  local z=c.focal/P.scale(room,y)
  return (x-c.cx)*z/c.focal,z
 end
 function P.screen(room,x,z,height)
+ if metric.rooms[room]then return metric.project(room,x,z,height or 0)end
  local c=P.rooms[room]
  z=math.max(.1,z)
  return c.cx+c.focal*x/z,c.horizon+c.focal*(c.height-(height or 0))/z
 end
 function P.vertex(room,x,y,ax,ay,az,facing)
+ if metric.rooms[room]then return metric.vertex(room,x,y,ax,ay,az,facing)end
  local gx,gz=P.ground(room,x,y)
  local s,c=math.sin(facing),math.cos(facing)
  local factor=1.8/1.852
  local right,depth=(ax*c+az*s)*factor,(az*c-ax*s)*factor
  local sx,sy=P.screen(room,gx+right,gz+depth,ay*factor)
  return {math.floor(sx+.5),math.floor(sy+.5),gz+depth}
+end
+function P.facing(room,dx,dy)
+ if metric.rooms[room]then return metric.facing(room,dx,dy)end
+ return math.atan(-dx,-dy)
 end
 function P.move(room,x,y,dx,dy,dt,running,walkable)
  if dx==0 and dy==0 then return x,y,0 end

@@ -1,4 +1,5 @@
 -- Floor polygons and projected ground footprints. Coordinates refer to the bitmap.
+local metric=require('metric_rooms')
 local N={}
 N.rooms={
  sala={floor={{{15,240},{464,240},{439,145},{304,145},{304,130},{247,130},{247,145},{238,145},{238,130},{218,130},{218,149},{15,199}}},
@@ -29,6 +30,7 @@ function N.inside(poly,x,y)
  return result
 end
 function N.walkable(room,x,y)
+ if metric.rooms[room]then return metric.walkable(room,x,y)end
  local r=N.rooms[room];if not r then return false end
  local onFloor=false
  for _,p in ipairs(r.floor)do if N.inside(p,x,y)then onFloor=true;break end end

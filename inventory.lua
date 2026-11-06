@@ -25,12 +25,12 @@ local pickups = {
     {id="door_key", room="quarto", x=285,y=215},
     {id="letter", document=true, room="quarto", x=245,y=217},
     {id="note", document=true, room="cozinha", x=164,y=219},
-    {id="battery", room="garagem", x=347,y=210},
-    {id="remote", room="garagem", x=301,y=202},
-    {id="screwdriver", room="garagem", x=328,y=226},
-    {id="cutters", room="garagem", x=223,y=228},
+    {id="battery", room="garagem", x=308.1921,y=179.2574},
+    {id="remote", room="garagem", x=277.0003,y=231.7362},
+    {id="screwdriver", room="garagem", x=305.0819,y=193.8431},
+    {id="cutters", room="garagem", x=287.4475,y=157.9229},
     {id="crowbar", room="corredor", x=344,y=221},
-    {id="valve", room="banheiro", x=267,y=216},
+    {id="valve", room="banheiro", x=275.4888,y=196.7829},
     {id="collar", room="quintal", x=120,y=223}
 }
 
