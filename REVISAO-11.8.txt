@@ -1,0 +1,21 @@
+REVISAO 11.8 - Garagem mais larga
+
+Garagem ampliada de 3,40 para 4,60 metros de largura; comprimento mantido
+em 5,70 metros. Carro e bancada mantem suas dimensoes originais.
+Carro deslocado 20 cm; bancada e ferramentas acompanham a nova parede.
+Portas alinhadas ao corredor de circulacao, agora com mais espaco util.
+
+Refeitos os fundos das cameras A e B, as matrizes, paletas, mascara do
+carro e profundidade estatica. Ajustados colisoes de carro/rodas, bancada
+e paredes, gatilhos e chegadas de sala/frente, e quatro itens da garagem.
+Altura do personagem, animacoes e velocidades permanecem as aprovadas.
+Os outros sete ambientes preservam exatamente suas cameras e paletas.
+
+Validacao: caminhada e corte de camera testados no Lupinho web; corredor
+central continuo e itens acessiveis; 18 transicoes aprovadas; comparacao
+dos pixels nativos dos dois novos fundos sem indices transparentes.
+Codec oficial: 67 imagens, 205 cores globais; faixas de 43200 bytes,
+abaixo do limite de 46059 bytes por imagem. Modelo Blender atualizado
+arquivado em .tools/garage118/scene.zip com metadados de geometria.
+
+O teste visual e de desempenho no hardware Lupi fisico fica pendente.

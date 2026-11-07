@@ -2,7 +2,7 @@
 local root,record=...
 root=root or '.'
 local names={'sala','cozinha','corredor','quarto','banheiro','garagem','quintal','frente'}
-local spawns={{3.1,1.6},{2.2,1.4},{.9,1.2},{2.6,1.3},{1.25,1.4},{2.35,1.6},{3,1.8},{4,2.2}}
+local spawns={{3.1,1.6},{2.2,1.4},{.9,1.2},{2.6,1.3},{1.25,1.4},{3.1,1.6},{3,1.8},{4,2.2}}
 local function up(fn,key,value)
  for i=1,100 do local n,v=debug.getupvalue(fn,i);if n==key then if value~=nil then debug.setupvalue(fn,i,value)end;return v end end
  error('missing upvalue '..key)
@@ -46,11 +46,13 @@ if record=='record'then
  io.write('}\n')
 else
  local expected=dofile(root..'/.tools/validated112-trace.lua')
+ local garage=dofile(root..'/.tools/garage118/replay.lua')
+ for _,row in ipairs(garage)do for i,old in ipairs(expected)do if old[1]=='garagem'and old[2]==row[2]then expected[i]=row end end end
  for i,row in ipairs(results)do
   for j,v in ipairs(row)do
    if j>=4 then assert(math.abs(v-expected[i][j])<1e-8,row[1]..' changed motion')
    else assert(v==expected[i][j],row[1]..' changed character projection or input')end
   end
  end
- print('Approved 11.2 replay preserved: 8 rooms, 5/30/60 FPS, walk/run/guard/punch/inventory and character triangles')
+ print('Seven rooms preserve approved 11.2 replay; expanded garage matches 11.8 trace at 5/30/60 FPS')
 end
