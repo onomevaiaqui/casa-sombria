@@ -19,3 +19,12 @@ abaixo do limite de 46059 bytes por imagem. Modelo Blender atualizado
 arquivado em .tools/garage118/scene.zip com metadados de geometria.
 
 O teste visual e de desempenho no hardware Lupi fisico fica pendente.
+
+CORRECAO DO PIPELINE DE ATUALIZACAO
+O log do servidor apontou 262 cores no PNG fusca110.png: 164 cores
+visiveis e 98 variacoes RGB em pixels com alpha zero. Os pixels
+transparentes agora usam uma unica cor, totalizando 165 cores de origem.
+Os bytes do bitmap nativo antes/depois sao identicos. Todas as 67
+imagens passaram tambem pelo identify -format %k do ImageMagick,
+alem dos limites de dimensao e memoria. Mantida a versao 11.8.
+Teste reutilizavel: .tools/check-image-limits.py.
