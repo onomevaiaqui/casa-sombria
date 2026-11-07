@@ -1,6 +1,7 @@
 -- Initial camera fits to visible door landmarks. Backgrounds are not surveyed 3D.
 -- Model height stays 1.80 m; the camera determines its projected size.
 local metric=require('metric_rooms')
+local cameras=require('camera117')
 local P={metric=metric.rooms}
 P.rooms={
  sala={horizon=32,foot=147,door=86,focal=320,cx=240},
@@ -51,7 +52,8 @@ function P.projector(room,x,y,facing)
   local rx,ry,dx,dy=metric.basis(room)
   return function(ax,ay,az)
    local right,away=(ax*c+az*s)*factor,(az*c-ax*s)*factor
-   local sx,sy,depth=metric.project(room,gx+rx*right+dx*away,gz+ry*right+dy*away,ay*factor)
+   local sx,sy,depth=cameras.project(room,gx+rx*right+dx*away,gz+ry*right+dy*away,ay*factor)
+   if not sx then sx,sy,depth=metric.project(room,gx+rx*right+dx*away,gz+ry*right+dy*away,ay*factor)end
    return {math.floor(sx+.5),math.floor(sy+.5),depth}
   end
  end
@@ -66,12 +68,16 @@ function P.facing(room,dx,dy)
  return math.atan(-dx,-dy)
 end
 function P.move(room,x,y,dx,dy,dt,running,walkable)
- if dx==0 and dy==0 then return x,y,0 end
+ if dx==0 and dy==0 then cameras.direction(room,0,0,0,0);return x,y,0 end
  local gx,gz=P.ground(room,x,y)
  local tx,tz=P.ground(room,x+dx,y+dy)
  local ux,uz=tx-gx,tz-gz
  local length=math.sqrt(ux*ux+uz*uz)
  if length<1e-9 then return x,y,0 end
+ if cameras.enabled then
+  ux,uz=cameras.captureDirection(room,gx,gz,dx,dy,ux,uz)
+  length=1
+ end
  local distance=(running and 4.1070557323 or 1.7009575856)*math.max(0,math.min(dt,.5))
  ux,uz=ux/length*distance,uz/length*distance
  local n=math.max(1,math.ceil(distance/.025));local moved=0

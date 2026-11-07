@@ -1,0 +1,23 @@
+REVISAO 11.7 - Cameras fixas por zonas
+
+Previa aprovada publicada: oito ambientes, cada um com a vista geral
+original e uma segunda camera fisica mais proxima. Trocas por posicao,
+com limiares diferentes de entrada/saida para evitar cortes repetidos.
+Cada novo bitmap utiliza a matriz da camera Blender correspondente.
+A direcao mantida no controle permanece no mundo durante o corte.
+O proximo comando usa o enquadramento atual.
+
+Preservados: altura de 1,80 m, dimensoes, colisoes, velocidades e clips.
+As cameras gerais antigas continuam como alternativa para nao cortar
+ou perder o personagem ao sair da area coberta pelo novo enquadramento.
+A profundidade estatica auxilia a oclusao; a oclusao por triangulo e
+aproximada e ainda pode exigir ajustes em bordas de moveis.
+
+Validacao: oito ambientes abertos no Lupinho web, corte ida/volta testado
+na sala; zonas, continuidade de direcao, paletas e 18 transicoes testadas.
+Conversor oficial: 67 imagens, 205 cores globais, fundos de 43200 bytes
+por faixa, abaixo do limite de 46059 bytes. Sem adaptadores de navegador,
+seletor de comodos ou comandos de depuracao na versao do console.
+Falta validar desempenho e apresentacao no hardware Lupi fisico.
+
+Referencia: https://www.youtube.com/watch?v=MQBsk0lziys

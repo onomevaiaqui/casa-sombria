@@ -1,5 +1,6 @@
 local frameTime = require("frame_time")
 local metric = require("metric_rooms")
+local cameras=require("camera117")
 local perspective = require("perspective")
 local navigation = require("navigation")
 -- Teste 3.2: fundo e mascara em bitmap, entregador em 3D.
@@ -121,6 +122,7 @@ if type(require) == "function" and type(ui.spr) == "function" then
     if type(sprites) == "table" and sprites.sala75_0 and sprites.sala75_1 and sprites.sala75_2
         and type(colors) == "table" and #colors > 1 and #colors <= 224 then
         bitmap, bitmapPalette = {sprites.sala75_0, sprites.sala75_1, sprites.sala75_2}, colors
+        cameras.setup(sprites,colors)
         if sprites.cozinha76_0 and sprites.cozinha76_1 and sprites.cozinha76_2 then
             kitchenBitmap = {sprites.cozinha76_0, sprites.cozinha76_1, sprites.cozinha76_2}
         end
@@ -1706,7 +1708,7 @@ local function courier()
     table.sort(faces,function(a,b) return a[4]>b[4] end)
     for _, face in ipairs(faces) do
         local a,b,c = face[1],face[2],face[3]
-        ui.trisfill(a[1],a[2],b[1],b[2],c[1],c[2],face[5])
+        if cameras.triangle(currentRoom,a,b,c)then ui.trisfill(a[1],a[2],b[1],b[2],c[1],c[2],face[5])end
     end
 end
 
@@ -1914,12 +1916,14 @@ function update()
     elseif pickup and not aiming then
         status = pickup.document and "B: PEGAR ARQUIVO" or "B: PEGAR ITEM"
     end
-    local strips = roomBitmaps[currentRoom]
+    local cgx,cgy=metric.ground(currentRoom,x,y)
+    cameras.select(currentRoom,cgx,cgy)
+    local strips = cameras.background(currentRoom)or roomBitmaps[currentRoom]
     local native = not not strips
     for i, color in ipairs(native and bitmapPalette or Palette) do ui.palset(i-1, color) end
     ui.palset(240, 0)
     ui.palset(241, 32767)
-    if native and metric.rooms[currentRoom]then metric.applyPalette(bitmapPalette,ui.palset,currentRoom)end
+    if native and metric.rooms[currentRoom]then metric.applyPalette(bitmapPalette,ui.palset,currentRoom);cameras.palette(currentRoom,ui.palset)end
     if native then
         for index, strip in ipairs(strips) do
             local ok, result = pcall(ui.spr, strip, 0, (index-1)*(metric.rooms[currentRoom] and 90 or 82))
@@ -1945,7 +1949,7 @@ function update()
     end
     ui.rectfill(0,0,479,15,240)
     local motion = walking and (running and " / CORRIDA" or " / PASSOS") or ""
-    ui.print("11.6 "..status..motion,8,3,241)
+    ui.print("11.7 "..status..motion,8,3,241)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do
             if not pcall(ui.grid, patch.x, patch.y, patch.scale, patch.scale, patch.rows) then
@@ -1955,11 +1959,11 @@ function update()
         end
     end
     courier()
-    if currentRoom=="garagem" and carSprite and native then
+    if not cameras.active and currentRoom=="garagem" and carSprite and native then
         local gx,gy=metric.ground(currentRoom,x,y)
         if gy>5.15 then ui.spr(carSprite,metric.carMask.x,metric.carMask.y)end
     end
-    if currentRoom=="sala" then
+    if not cameras.active and currentRoom=="sala" then
         local gx,gy=metric.ground(currentRoom,x,y)
         if native and sofaBitmap and gy>3.9 then
             pcall(ui.spr,sofaBitmap,86,119)
