@@ -1,6 +1,8 @@
 local frameTime = require("frame_time")
 local metric = require("metric_rooms")
 local cameras=require("camera117")
+local interactions=require("interactions")
+local subtitles=require("subtitles")
 local perspective = require("perspective")
 local navigation = require("navigation")
 -- Teste 3.2: fundo e mascara em bitmap, entregador em 3D.
@@ -1734,7 +1736,7 @@ end
 local titleOpen, titleChoice, canContinue = true, 1, false
 local titleUp, titleDown, titleConfirm = false, false, false
 inventory = require("inventory").new(itemSprites)
-local notice, noticeFrames = "",0
+local dialogue=subtitles.new()
 
 local settingsOpen, controlsOpen, settingsChoice = false,false,1
 local titleCancel,titleLeft,titleRight = false,false,false
@@ -1781,7 +1783,7 @@ local function drawTitle()
                     aiming,strike,aimCancelled = false,0,false
                     roomNotice = ""
                     inventory:reset()
-                    notice,noticeFrames = "",0
+                    dialogue:close();dialogue.toastTime=0
                 end
                 titleOpen,canContinue = false,true
                 previousB = true
@@ -1851,6 +1853,14 @@ function update()
     local run, guard = held(BTN_F or 12), held(BTN_E or 15)
     local cancel, confirm, attack = a and not previousA, b and not previousB, run and not previousY
     previousA, previousB, previousY = a, b, run
+    local reading=dialogue.active
+    if reading then
+        dialogue:handle(confirm,cancel)
+        dx,dy,run,guard=0,0,false,false
+        confirm,cancel,attack=false,false,false
+        aiming,strike=false,0
+        transitionCarry=nil
+    end
     if not guard then aimCancelled = false end
     if cancel then
         if inventory.visible then
@@ -1902,17 +1912,30 @@ function update()
         step=(step+travelled*2*math.pi/metresPerCycle)%(2*math.pi)
     end
     checkPassage(dx,dy,inputDx,inputDy)
+    local ix,iy=metric.ground(currentRoom,x,y)
+    local interaction=interactions.nearby(currentRoom,ix,iy)
     local status = roomNotice ~= "" and roomNotice or rooms[currentRoom].label
     if aiming then
         status = strike > 0 and "SOCO" or "PUNHOS LEVANTADOS"
-    elseif confirm and not guard then
-        local pickup = inventory:nearby(currentRoom,x,y)
-        notice = pickup and inventory:collect(pickup) or "NADA PARA USAR"
-        noticeFrames = 50
+    elseif confirm and not guard and not reading then
+        if interaction then
+            dialogue:open(interaction.pages)
+            facing=perspective.facing(currentRoom,interaction.lookX,interaction.lookY)
+            walking,running=false,false
+            transitionCarry=nil
+        else
+            local pickup = inventory:nearby(currentRoom,x,y)
+            local result=pickup and inventory:collect(pickup)or "NADA PARA USAR"
+            local messages={['ITEM COLETADO']='Item coletado.',['ARQUIVO COLETADO']='Arquivo coletado.',
+                ['INVENTARIO CHEIO']='O inventário está cheio.',['NADA PARA USAR']='Não há nada para usar aqui.'}
+            dialogue:notify(messages[result]or result)
+        end
     end
     local pickup = inventory:nearby(currentRoom,x,y)
-    if noticeFrames>0 then
-        status,noticeFrames = notice,noticeFrames-1
+    if dialogue.active then
+        status=rooms[currentRoom].label
+    elseif interaction and not aiming then
+        status="B: EXAMINAR QUADROS"
     elseif pickup and not aiming then
         status = pickup.document and "B: PEGAR ARQUIVO" or "B: PEGAR ITEM"
     end
@@ -1949,7 +1972,7 @@ function update()
     end
     ui.rectfill(0,0,479,15,240)
     local motion = walking and (running and " / CORRIDA" or " / PASSOS") or ""
-    ui.print("11.8 "..status..motion,8,3,241)
+    ui.print("11.9 "..status..motion,8,3,241)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do
             if not pcall(ui.grid, patch.x, patch.y, patch.scale, patch.scale, patch.rows) then
@@ -1971,4 +1994,6 @@ function update()
             drawImage(detailedSofa,x-24,x+24)
         end
     end
+    dialogue:tick(animationDelta())
+    dialogue:draw(ui)
 end

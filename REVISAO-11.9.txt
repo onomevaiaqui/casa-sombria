@@ -1,0 +1,20 @@
+REVISAO 11.9 - Inspecao dos quadros e legendas
+
+Na sala, em frente ao sofa e aos quadros, B inicia a inspecao.
+O personagem se volta para a parede e para durante a leitura.
+
+Texto em duas paginas:
+Um quadro representando dois rockeiros e o outro uma mulher na banheira. Léli 2015
+Parece uma ótima pintora
+
+Legendas brancas centralizadas na parte inferior, com contorno escuro,
+sem caixa grande; revelacao gradual. B revela a pagina/avanca/fecha.
+A cancela a leitura sem abrir o inventario. A inspecao pode ser repetida.
+Acentos sao desenhados sobre a fonte ASCII do console, sem novos assets.
+Mensagens de coleta, inventario cheio e ausencia de acao tambem passam
+pelo sistema de legendas; arquivos continuam separados no inventario.
+
+Validacao: inspecao e duas paginas vistas no Lupinho web; teste integrado
+de proximidade, UTF-8/acentos, B mantido, A/cancelar, bloqueio de movimento,
+repeticao, inventario e coleta. Replay anterior, garagem, 18 transicoes e
+limites das 67 imagens preservados. Falta confirmar no Lupi fisico.
