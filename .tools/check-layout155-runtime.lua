@@ -1,6 +1,6 @@
 LEFT,RIGHT,UP,DOWN=0,1,2,3
 local keys={}
-local sprites={};for _,views in pairs(require('camera_data155'))do for _,c in ipairs(views)do for _,v in pairs(c.states)do for i=0,2 do sprites[v.prefix..'_'..i]=true end end end end
+local sprites={};for room in pairs(require('layout140').rooms)do local views=require('camera_data155')[room]; for _,c in ipairs(views)do for _,v in pairs(c.states)do for i=0,2 do sprites[v.prefix..'_'..i]=true end end end end
 for _,name in ipairs({'sala75','cozinha76','corredor100','banheiro100','quarto100','garagem100','quintal100','frente100','titulo103'})do
  for i=0,2 do sprites[name..'_'..i]=name..i end
 end

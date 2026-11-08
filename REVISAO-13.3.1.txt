@@ -1,0 +1,15 @@
+Correcao de memoria na abertura do jogo.
+Base publicada preservada: ca29daf / 13.3.
+Dados de camera carregados por comodo, com liberacao do cache do require.
+Profundidade compactada RLE e descompactada somente para a camera/porta atual.
+Visibilidade armazenada como string em vez de tabelas de numeros.
+Imagens, paleta, escala, colisoes, muros e correcao do portao preservados.
+
+Medicoes em Lua desktop, nao no hardware fisico:
+Antes: pico observado ~15 MB e memoria retida ~9,3 MB nos dados de camera.
+Depois: indice inicial ~5 KB; sala ~465 KB; pior comodo ~1,2 MB.
+Nao representam a memoria total do jogo nem garantem o limite do hardware.
+
+Validacao: 127 estados de profundidade/visibilidade comparados com a base;
+22 transicoes; 42 travessias laterais; 451 chegadas; abertura no Lupinho WASM.
+As melhorias locais da previa 14.0 continuam separadas desta correcao.

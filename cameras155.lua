@@ -1,15 +1,16 @@
 -- Render cameras for the shared house geometry. Logical movement stays metric.
 local data=require('camera_data155')
 local doors=require('doors131')
+local memory=require('memory165')
 local C={data=data,enabled=false,active=true,room=nil,shot=nil}
 local sprites,map
 function C.setup(refs,palette)
  sprites=refs;map={};C.enabled=false
  for i,color in ipairs(palette)do map[color]=i-1 end
- for _,views in pairs(data)do for _,c in ipairs(views)do for _,state in pairs(c.states)do
-  for i=0,2 do assert(refs[state.prefix..'_'..i],'Missing scene bitmap '..state.prefix)end
-  C.enabled=true
- end end end
+ for _,prefix in pairs(data.firstprefix)do
+  for i=0,2 do assert(refs[prefix..'_'..i],'Missing scene bitmap '..prefix)end
+ end
+ C.enabled=true
 end
 local function project(c,x,y,z)
  local q={x,y,z,1};local p={}
@@ -30,13 +31,13 @@ local function state(c)
  return assert(c.states[mask],'Missing room door state '..mask)
 end
 function C.initial(room)
- local c=data[room]and data[room][1];if not c or not sprites then return end
- local s=state(c);return{sprites[s.prefix..'_0'],sprites[s.prefix..'_1'],sprites[s.prefix..'_2']}
+ local prefix=data.firstprefix[room];if not prefix or not sprites then return end
+ return{sprites[prefix..'_0'],sprites[prefix..'_1'],sprites[prefix..'_2']}
 end
 local function clearance(c,x,y)
  local col=math.max(0,math.min(c.visibilityWidth-1,math.floor(x/c.visibilityStep+.5)))
  local row=math.max(0,math.min(c.visibilityHeight-1,math.floor((y-(c.visibilityY0 or 0))/c.visibilityStep+.5)))
- if c.visibility[row*c.visibilityWidth+col+1]~=1 then return -1e6 end
+ if c.visibility:byte(row*c.visibilityWidth+col+1)~=49 then return -1e6 end
  local edge=1e6
  for _,xx in ipairs({x-.2,x+.2})do for _,yy in ipairs({y-.2,y+.2})do for _,z in ipairs({0,1.85})do
   local a,b,depth=project(c,xx,yy,z);if depth<.15 then return-1e6 end
@@ -89,7 +90,7 @@ function C.triangle(room,a,b,c)
  local x,y=(a[1]+b[1]+c[1])/3,(a[2]+b[2]+c[2])/3
  if x<0 or x>=480 or y<0 or y>=270 then return false end
  local s=state(view);local col,row=math.floor(x*s.depthWidth/480),math.floor(y*s.depthHeight/270)
- local z=s.depth:byte(row*s.depthWidth+col+1)*s.depthStep
+ local z=memory.depth(s):byte(row*s.depthWidth+col+1)*s.depthStep
  return(a[3]+b[3]+c[3])/3<=z+.14
 end
 return C
