@@ -30,6 +30,10 @@ local function ground(c,x,y)
  local det=a*e-b*d;return(f*e-b*g)/det,(a*g-f*d)/det
 end
 local function current(room)return data[room]and data[room][C.room==room and C.shot or 1]end
+local function eachColor(st,set)
+ local bank=st.bankPacked
+ for p=1,#bank,4 do local a,b,c,d=bank:byte(p,p+3);set(a+b*256,c+d*256)end
+end
 local function state(c)
  local mask=doors.stateMask(c.doorBits)
  return assert(c.states[mask],'Missing room door state '..mask)
@@ -71,7 +75,7 @@ function C.background(room)
  local s=state(c);return{sprites[s.prefix..'_0'],sprites[s.prefix..'_1'],sprites[s.prefix..'_2']}
 end
 function C.palette(room,set)
- local c=current(room);if c then for _,p in ipairs(state(c).bank)do local i=map[p[1]];if i then set(i,p[2])end end end
+ local c=current(room);if c then eachColor(state(c),function(key,value)local i=map[key];if i then set(i,value)end end) end
 end
 local paletteState,paletteMaster,finalPalette
 function C.nativePalette(room,master,set)
@@ -79,7 +83,7 @@ function C.nativePalette(room,master,set)
  if paletteState~=st or paletteMaster~=master then
   local colors={};for i,v in ipairs(master)do colors[i-1]=v end
   require('metric_rooms').applyPalette(master,function(i,v)colors[i]=v end,room)
-  for _,p in ipairs(st.bank)do local i=map[p[1]];if i then colors[i]=p[2]end end
+  eachColor(st,function(key,value)local i=map[key];if i then colors[i]=value end end)
   finalPalette=colors;paletteState,paletteMaster=st,master
  end
  for i=0,#master-1 do set(i,finalPalette[i])end

@@ -1,0 +1,6 @@
+14.5.1 - Margem de memoria no console
+Compacta as 125 paletas das cameras em pares binarios em vez de milhares de tabelas Lua e constantes numericas. Nenhuma cor ou imagem foi removida.
+Coleta de lixo antecipada (pause 110), sem coleta completa em cada quadro.
+Teste com package ausente: tres voltas nos dez comodos, pico retido 2477.5 KB (~2.42 MiB), contra ~3.85 MiB na 14.5. Sem crescimento continuo nas revisitas.
+260 quadros: paletas e triangulos exatamente iguais. 125 estados e buffers completos; testes de transicao, colisoes, cadeado e combate passaram.
+Valores sao de Lua desktop, excluem memoria nativa/grafica. A eliminacao do erro precisa de confirmacao no console fisico.
