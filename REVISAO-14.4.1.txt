@@ -1,0 +1,4 @@
+14.4.1 - Compatibilidade de paleta no console
+Remove a substituicao de ui.palset e volta a enviar todas as cores necessarias em cada quadro. Nao depende da persistencia da paleta nativa entre quadros.
+Mantem composicao da paleta final, cache de personagem imovel, malha, texturas, colisoes e animacoes.
+Correcao preventiva para tela preta relatada na 14.4. Causa no hardware ainda nao confirmada.

@@ -1,4 +1,3 @@
-local paletteControl=require("palette144");paletteControl.install(ui)
 local frameTime = require("frame_time")
 local metric = require("metric_rooms")
 local cameras=require("cameras168")
@@ -2078,7 +2077,7 @@ function update()
     end
     ui.rectfill(0,0,479,15,240)
     local motion = walking and (running and " / CORRIDA" or " / PASSOS") or ""
-    ui.print("14.4 "..status..motion,8,3,241)
+    ui.print("14.4.1 "..status..motion,8,3,241)
     frameTime.hud(ui)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do
