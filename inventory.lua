@@ -26,7 +26,7 @@ local pickups = {{["id"]='door_key',["room"]='quarto',["x"]=161.05263157894734,[
 
 -- Story progression: the first weapon belongs inside the locked tool shed.
 for i=#pickups,1,-1 do if pickups[i].id=='crowbar'or pickups[i].room=='quintal'then table.remove(pickups,i)end end
-local cx,cy=require('metric_rooms').project('ferramentas',1.5,1.95,0)
+local cx,cy=require('metric_rooms').project('ferramentas',1.30,1.72,0)
 pickups[#pickups+1]={id='crowbar',room='ferramentas',x=cx,y=cy}
 
 local function wrapped(text, x, y, width, color, maxLines)

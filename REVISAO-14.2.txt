@@ -1,0 +1,41 @@
+A ULTIMA ENTREGA - 14.2
+
+Publicacao consolidada das previas locais 13.4 a 14.2 sobre a correcao
+de memoria 13.3.1. Repositorio: onomevaiaqui/casa-sombria.
+
+- Casinha com interior, cadeado numerico 2019 e pe de cabra coletavel.
+- Empunhadura acompanha a palma e a rotacao do pulso na corrida.
+- Guarda preparada e golpe de bastao do FBX, sem o trecho de chute.
+- Golpe com 29 frames a 45 FPS (~0,64s), recuperacao curta e entrada
+  antecipada de Y no final para encadear outro golpe. Sem arma: soco.
+- Cozinha com modelos baixados: geladeira, fogao, balcoes, pia e mesa.
+  Tres cadeiras (duas alinhadas e uma torta), carne estragada e lata.
+- Armarios aereos e exaustor removidos; vista pela sala atualizada.
+- Colisoes, escala metrica, muros, portao e cameras preservados/ajustados.
+
+Memoria:
+- Dados carregados por comodo; uma profundidade descompactada por vez.
+- Pacote limpo: 28 modulos Lua, sem modelos FBX/GLB ou arquivos Blender.
+- Lua desktop com paleta real: ~1009 KB retidos apos abrir, maximo de
+  ~2089 KB retidos nos comodos amostrados. Maior transitorio observado
+  em jogo ~2842 KB. Abertura com coleta pausada para medir alocacoes:
+  ~4909 KB transitorios (limite conservador do teste, nao pico do hardware).
+- Medidas excluem memoria nativa de texturas, motor e sistema operacional;
+  nao garantem o limite do Lupi fisico. Necessario confirmar no aparelho.
+
+Compatibilidade e verificacoes:
+- 397 imagens aceitas pelo image_codec oficial; 205 cores de fundo.
+- Imagens lineares 8bpp; faixas 480x90 de 43200 bytes, abaixo de 46059.
+- Icone GIF 64x32, 12 frames, dentro do canvas maximo 64x64.
+- 125 estados de camera/porta, referencias de bitmaps e profundidades.
+- 22 transicoes; 42 travessias laterais do portao; 451 chegadas em portas.
+- Cadeado, coleta/equipamento, combate, recuperacao e 10 colisoes da cozinha.
+- Pacote exato aberto no Lupinho WASM; API compativel com Lua 5.4.
+
+Testes reproduziveis na raiz:
+lua .tools/check-release142.lua
+lua .tools/check-kitchen168.lua
+lua .tools/check-gate168.lua
+lua .tools/check-memory142.lua
+
+Fontes e licencas em CREDITOS-ASSETS.txt. Raw assets permanecem privados.

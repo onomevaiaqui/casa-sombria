@@ -1,9 +1,11 @@
 local frameTime = require("frame_time")
 local metric = require("metric_rooms")
-local cameras=require("cameras155")
+local cameras=require("cameras168")
 local doors=require("doors131")
 local passagePlacement=require("passage156")
-local shed=require("shed154")
+local codeLock=require("lock158").new()
+local crowbar=require("crowbar160")
+local combat=require("combat164")
 local interactions=require("interactions")
 local subtitles=require("subtitles")
 local perspective = require("perspective")
@@ -128,6 +130,7 @@ if type(require) == "function" and type(ui.spr) == "function" then
         and type(colors) == "table" and #colors > 1 and #colors <= 224 then
         bitmap, bitmapPalette = {sprites.sala75_0, sprites.sala75_1, sprites.sala75_2}, colors
         cameras.setup(sprites,colors)
+        codeLock:setup(sprites,colors)
         if sprites.cozinha76_0 and sprites.cozinha76_1 and sprites.cozinha76_2 then
             kitchenBitmap = {sprites.cozinha76_0, sprites.cozinha76_1, sprites.cozinha76_2}
         end
@@ -1691,19 +1694,23 @@ local function checkPassage(dx,dy,keyDx,keyDy)
 end
 local aimCancelled = false
 local previousA, previousB, previousY = false, false, false
+local queuedStrike=false
 
 local function animationDelta() return frameTime.dt end
 
 local function courier()
-    local clip, position = actorClips.idle, 0
+    local clip, position, clipName = actorClips.idle, 0, "idle"
     if aiming then
         if strike > 0 then
-            clip, position = actorClips.punch, strike-1
+            clip, position = combat.attack(actorClips,inventory and inventory.equipped), strike-1
+            clipName = combat.isBaton(inventory and inventory.equipped)and "swing"or "punch"
         else
-            clip = actorClips.guard
+            clip = combat.guard(actorClips,inventory and inventory.equipped)
+            clipName = combat.isBaton(inventory and inventory.equipped)and "ready"or "guard"
         end
     elseif walking then
         clip = running and actorClips.run or actorClips.walk
+        clipName = running and "run"or "walk"
         position = step/(2*math.pi)*(clip.count-1)
     end
     local frame = math.floor(position)
@@ -1712,14 +1719,17 @@ local function courier()
     local project = perspective.projector(currentRoom,x,y,facing)
     local vertices, faces, hand = {}, {}, nil
     local currentOffset, nextOffset = frame*408*3, nextFrame*408*3
+    local low,span=clip.low or actorLow,clip.span or actorSpan
+    combat.preparePose(clipName,animationDelta())
     for index = 0,407 do
         local first = currentOffset+index*3+1
         local second = nextOffset+index*3+1
         local a,b,c = string.byte(clip.data,first,first+2)
         local d,e,f = string.byte(clip.data,second,second+2)
-        local ax = actorLow[1]+(a+(d-a)*blend)/255*actorSpan[1]
-        local ay = actorLow[2]+(b+(e-b)*blend)/255*actorSpan[2]
-        local az = actorLow[3]+(c+(f-c)*blend)/255*actorSpan[3]
+        local ax = low[1]+(a+(d-a)*blend)/255*span[1]
+        local ay = low[2]+(b+(e-b)*blend)/255*span[2]
+        local az = low[3]+(c+(f-c)*blend)/255*span[3]
+        ax,ay,az=combat.blendVertex(index+1,ax,ay,az)
         if index==207 then hand={ax,ay,az} end
         vertices[index+1]=project(ax,ay,az)
     end
@@ -1737,10 +1747,10 @@ local function courier()
             end
         end
     end
+    local gripSocket=combat.blendSocket(combat.socket(clipName,position))
     if hand and inventory then
         if inventory.equipped=="crowbar" then
-            heldBox(hand[1]-0.015,hand[2]-0.06,hand[3]-0.03,0.03,0.44,0.03)
-            heldBox(hand[1]-0.08,hand[2]+0.35,hand[3]-0.03,0.08,0.03,0.03)
+            crowbar.held(project,gripSocket,faces)
         elseif inventory.equipped=="phone" then
             heldBox(hand[1]-0.035,hand[2]-0.025,hand[3]-0.035,0.07,0.13,0.025)
         end
@@ -1830,6 +1840,7 @@ local function drawTitle()
                     roomNotice = ""
                     inventory:reset()
                     doors.reset()
+                    codeLock:reset()
                     dialogue:close();dialogue.toastTime=0
                 end
                 titleOpen,canContinue = false,true
@@ -1891,9 +1902,18 @@ end
 function update()
     frameTime.sample(ui)
     if titleOpen then drawTitle(); return end
+    if codeLock.active then
+        local a,b,run=held(BTN_G or 13),held(BTN_Z or 4),held(BTN_F or 12)
+        local result=codeLock:input({a=a,b=b,up=held(UP or 1),down=held(DOWN or 3),left=held(LEFT or 4),right=held(RIGHT or 2)},frameTime.dt,doors)
+        previousA,previousB,previousY=a,b,run
+        codeLock:draw(ui)
+        if result=='opened'then dialogue:notify('Cadeado aberto.')end
+        return
+    end
     ui.cls(0)
 
     for i, color in ipairs(actorPalette) do ui.palset(actorInk(i-1), color) end
+    crowbar.palette(ui)
     local dx = (held(RIGHT or 2) and 1 or 0) - (held(LEFT or 4) and 1 or 0)
     local dy = (held(DOWN or 3) and 1 or 0) - (held(UP or 1) and 1 or 0)
     local a, b = held(BTN_G or 13), held(BTN_Z or 4)
@@ -1926,15 +1946,16 @@ function update()
         inventory:draw(bitmapPalette or Palette)
         return
     end
-    local wasAiming = aiming
     aiming = guard and not aimCancelled
     if not aiming then
-        strike = 0
-    elseif wasAiming and attack and strike == 0 then
-        strike = 1
+        strike = 0;queuedStrike=false
+    elseif attack and strike == 0 then
+        strike = 1;queuedStrike=false
     elseif strike > 0 then
-        strike = strike + animationDelta()*60
-        if strike > actorClips.punch.count then strike = 0 end
+        local attackClip=combat.attack(actorClips,inventory.equipped)
+        if attack and combat.isBaton(inventory.equipped)and strike>=attackClip.count-7 then queuedStrike=true end
+        strike = strike + animationDelta()*(attackClip.fps or 60)
+        if strike > attackClip.count then strike=queuedStrike and 1 or 0;queuedStrike=false end
     end
     if guard or cancel then dx, dy = 0, 0 end
     local inputDx,inputDy=dx,dy
@@ -1970,11 +1991,11 @@ function update()
     local nearbyDoor=doors.nearby(currentRoom,ix,iy)
     local status = roomNotice ~= "" and roomNotice or rooms[currentRoom].label
     if aiming then
-        status = inventory.equipped=="crowbar"and(strike>0 and "GOLPE"or "PE DE CABRA")or(strike > 0 and "SOCO" or "PUNHOS LEVANTADOS")
+        status = combat.isBaton(inventory.equipped)and(strike>0 and "GOLPE"or "PE DE CABRA")or(strike > 0 and "SOCO" or "PUNHOS LEVANTADOS")
     elseif confirm and not guard and not reading then
         if nearbyDoor then
             if nearbyDoor.id=="casinha"then
-                local opened,pages=shed.tryOpen(inventory,doors,currentRoom,ix,iy);dialogue:open(pages)
+                codeLock:begin()
             elseif doors.canOpen(nearbyDoor.id,currentRoom,ix,iy)then
                 doors.open(nearbyDoor.id);dialogue:notify(nearbyDoor.id=="jardim_quintal"and "Você abriu o portão."or "Você abriu a porta.")
             else dialogue:notify("Afaste-se um pouco da porta.")end
@@ -2036,7 +2057,7 @@ function update()
     end
     ui.rectfill(0,0,479,15,240)
     local motion = walking and (running and " / CORRIDA" or " / PASSOS") or ""
-    ui.print("13.3.1 "..status..motion,8,3,241)
+    ui.print("14.2 "..status..motion,8,3,241)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do
             if not pcall(ui.grid, patch.x, patch.y, patch.scale, patch.scale, patch.rows) then
@@ -2045,10 +2066,7 @@ function update()
             end
         end
     end
-    if currentRoom=='ferramentas'and not inventory.collected.crowbar then
-        local pts={{1.1,2.52,.91},{1.72,2.52,.91},{1.80,2.44,.91},{1.80,2.35,.91}}
-        for i=1,#pts-1 do local a,b=pts[i],pts[i+1];local ax,ay=cameras.project(currentRoom,a[1],a[2],a[3]);local bx,by=cameras.project(currentRoom,b[1],b[2],b[3]);ui.line(ax,ay,bx,by,246);ui.line(ax,ay-1,bx,by-1,241)end
-    end
+    if currentRoom=='ferramentas'and not inventory.collected.crowbar then crowbar.pickup(cameras,ui)end
     courier()
     if not cameras.active and currentRoom=="garagem" and carSprite and native then
         local gx,gy=metric.ground(currentRoom,x,y)
