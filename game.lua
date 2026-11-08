@@ -1698,6 +1698,7 @@ local queuedStrike=false
 
 local function animationDelta() return frameTime.dt end
 
+local courierVertices,courierFaces,courierPool,courierAccepted={},{},{},{}
 local courierCache
 local courierDoorBits={1,2,4,8,16,32,64,128}
 local function courier()
@@ -1729,7 +1730,9 @@ local function courier()
     local nextFrame = math.min(frame+1,clip.count-1)
     local blend = position-frame
     local project = perspective.projector(currentRoom,x,y,facing)
-    local vertices, faces, hand = {}, {}, nil
+    local vertices,faces,hand=courierVertices,courierFaces,nil
+    for i=#faces,1,-1 do faces[i]=nil end
+    local faceCount=0
     local currentOffset, nextOffset = frame*408*3, nextFrame*408*3
     local low,span=clip.low or actorLow,clip.span or actorSpan
     combat.preparePose(clipName,animationDelta())
@@ -1743,7 +1746,7 @@ local function courier()
         local az = low[3]+(c+(f-c)*blend)/255*span[3]
         ax,ay,az=combat.blendVertex(index+1,ax,ay,az)
         if index==207 then hand={ax,ay,az} end
-        vertices[index+1]=project(ax,ay,az)
+        vertices[index+1]=project(ax,ay,az,vertices[index+1])
     end
     local function heldBox(px,py,pz,w,h,d)
         local points = {}
@@ -1772,11 +1775,14 @@ local function courier()
         local a,b,c = vertices[al+ah*256+1],vertices[bl+bh*256+1],vertices[cl+ch*256+1]
         local area = (b[1]-a[1])*(c[2]-a[2])-(b[2]-a[2])*(c[1]-a[1])
         if area < 0 then
-            faces[#faces+1] = {a,b,c,a[3]+b[3]+c[3],actorInk(ink)}
+            faceCount=faceCount+1
+            local f=courierPool[faceCount]or {};courierPool[faceCount]=f
+            f[1],f[2],f[3],f[4],f[5]=a,b,c,a[3]+b[3]+c[3],actorInk(ink)
+            faces[#faces+1]=f
         end
     end
     table.sort(faces,function(a,b) return a[4]>b[4] end)
-    local accepted={}
+    local accepted=courierAccepted;for i=#accepted,1,-1 do accepted[i]=nil end
     for _,face in ipairs(faces)do
         local a,b,c=face[1],face[2],face[3]
         if visible(a,b,c)then
@@ -2077,7 +2083,7 @@ function update()
     end
     ui.rectfill(0,0,479,15,240)
     local motion = walking and (running and " / CORRIDA" or " / PASSOS") or ""
-    ui.print("14.4.1 "..status..motion,8,3,241)
+    ui.print("14.5 "..status..motion,8,3,241)
     frameTime.hud(ui)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do

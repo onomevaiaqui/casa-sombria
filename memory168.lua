@@ -1,11 +1,15 @@
--- A single decompressed camera/door-state depth buffer, never all states.
+-- Packed run/count pairs; one decoded state and bounded scratch space.
 local M={};local previous,depth
+function M.release()previous=nil;depth=nil end
 function M.depth(s)
  if previous~=s then
-  local parts={};for i=1,#s.depthRle,4 do
-   local n=tonumber(s.depthRle:sub(i,i+1),16);local v=tonumber(s.depthRle:sub(i+2,i+3),16)
-   parts[#parts+1]=string.rep(string.char(v),n)
+  previous=nil;depth=nil
+  local parts,chunk={},{};local packed=s.depthPacked
+  for i=1,#packed,2 do
+   local n,v=packed:byte(i,i+1);chunk[#chunk+1]=string.rep(string.char(v),n)
+   if #chunk==256 then parts[#parts+1]=table.concat(chunk);for j=256,1,-1 do chunk[j]=nil end end
   end
+  if #chunk>0 then parts[#parts+1]=table.concat(chunk)end
   depth=table.concat(parts);previous=s
  end
  return depth

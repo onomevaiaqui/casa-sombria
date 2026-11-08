@@ -4,9 +4,10 @@ local current,views
 setmetatable(D,{__index=function(_,room)
  if room==current then return views end
  if not D.firstprefix[room]then return nil end
- views=nil;current=nil;collectgarbage('collect')
+ views=nil;current=nil;require('memory168').release();collectgarbage('collect')
  local name='camera_mem168_'..room
- local loaded=require(name)
+ local factory=require(name)
+ local loaded=factory()
  -- The physical Lupi sandbox does not expose the package global.
  if type(package)=='table'and type(package.loaded)=='table'then package.loaded[name]=nil end
  current,views=room,loaded

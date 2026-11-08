@@ -1,0 +1,7 @@
+14.5 - Memoria e combate
+Reutiliza buffers dos 408 vertices do personagem, 161 vertices da arma e triangulos; sem alterar malha, texturas, velocidade ou animacao.
+Dados de camera sao fabricados por comodo, evitando reter todas as tabelas quando package nao existe. RLE de profundidade binario sem perda; decodificacao em blocos e liberacao na troca de comodo.
+Testes: 260 quadros com paleta e triangulos exatamente iguais; 125 estados de camera completos; 10000 amostras de projecao/oclusao; transicoes, colisoes, portao, cadeado e combate aprovados.
+Sandbox sem package: 3 voltas nos 10 comodos sem crescimento continuo. Pico Lua retido observado aprox 3.85 MiB; nao inclui memoria nativa/grafica.
+1000 updates de combate com coleta suspensa: alocacoes acumuladas 195851 KB antes, 6383 KB depois (aprox -97%). CPU desktop 1.296s para 0.959s. Nao representa FPS de hardware.
+Contador de FPS mantido. Meta 15 FPS e ausencia de falta de memoria necessitam teste no console fisico.

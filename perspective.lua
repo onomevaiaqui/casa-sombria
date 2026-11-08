@@ -35,14 +35,14 @@ function P.screen(room,x,z,height)
  z=math.max(.1,z)
  return c.cx+c.focal*x/z,c.horizon+c.focal*(c.height-(height or 0))/z
 end
-function P.vertex(room,x,y,ax,ay,az,facing)
+function P.vertex(room,x,y,ax,ay,az,facing,out)
  if metric.rooms[room]then return metric.vertex(room,x,y,ax,ay,az,facing)end
  local gx,gz=P.ground(room,x,y)
  local s,c=math.sin(facing),math.cos(facing)
  local factor=1.8/1.852
  local right,depth=(ax*c+az*s)*factor,(az*c-ax*s)*factor
  local sx,sy=P.screen(room,gx+right,gz+depth,ay*factor)
- return {math.floor(sx+.5),math.floor(sy+.5),gz+depth}
+ out=out or {};out[1],out[2],out[3]=math.floor(sx+.5),math.floor(sy+.5),gz+depth;return out
 end
 function P.projector(room,x,y,facing)
  local gx,gz=P.ground(room,x,y)
@@ -51,17 +51,17 @@ function P.projector(room,x,y,facing)
  if metric.rooms[room]then
   local rx,ry,dx,dy=metric.basis(room)
   local projectWorld=cameras.projector(room)
-  return function(ax,ay,az)
+  return function(ax,ay,az,out)
    local right,away=(ax*c+az*s)*factor,(az*c-ax*s)*factor
    local sx,sy,depth=projectWorld(gx+rx*right+dx*away,gz+ry*right+dy*away,ay*factor)
    if not sx then sx,sy,depth=metric.project(room,gx+rx*right+dx*away,gz+ry*right+dy*away,ay*factor)end
-   return {math.floor(sx+.5),math.floor(sy+.5),depth}
+   out=out or {};out[1],out[2],out[3]=math.floor(sx+.5),math.floor(sy+.5),depth;return out
   end
  end
- return function(ax,ay,az)
+ return function(ax,ay,az,out)
   local right,depth=(ax*c+az*s)*factor,(az*c-ax*s)*factor
   local sx,sy=P.screen(room,gx+right,gz+depth,ay*factor)
-  return {math.floor(sx+.5),math.floor(sy+.5),gz+depth}
+  out=out or {};out[1],out[2],out[3]=math.floor(sx+.5),math.floor(sy+.5),gz+depth;return out
  end
 end
 function P.facing(room,dx,dy)
