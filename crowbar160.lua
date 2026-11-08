@@ -5,9 +5,10 @@ local tris={{17,18,28},{17,28,24},{11,88,106},{106,127,126},{106,126,11},{70,109
 function W.palette(ui)ui.palset(216,74);ui.palset(217,15855);ui.palset(218,18)end
 function W.held(project,socket,faces)
  local p={};for i,v in ipairs(held)do
-  local point={socket[1],socket[2],socket[3]}
-  for axis=1,3 do for k=1,3 do point[k]=point[k]+v[axis]*socket[3+(axis-1)*3+k]end end
-  p[i]=project(point[1],point[2],point[3])
+  local x=socket[1]+v[1]*socket[4]+v[2]*socket[7]+v[3]*socket[10]
+  local y=socket[2]+v[1]*socket[5]+v[2]*socket[8]+v[3]*socket[11]
+  local z=socket[3]+v[1]*socket[6]+v[2]*socket[9]+v[3]*socket[12]
+  p[i]=project(x,y,z)
  end
  for i,t in ipairs(tris)do local a,b,c=p[t[1]],p[t[2]],p[t[3]];faces[#faces+1]={a,b,c,a[3]+b[3]+c[3],i%7==0 and 217 or 218}end
 end

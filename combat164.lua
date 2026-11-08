@@ -67,4 +67,5 @@ function G.blendSocket(socket)
  for k=1,3 do r[k+3]=x[k];r[k+6]=y[k];r[k+9]=z[k]*sign end
  lastSocket=r;return r
 end
+function G.stable()return alpha>=1 end
 return G

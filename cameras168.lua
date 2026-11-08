@@ -73,6 +73,17 @@ end
 function C.palette(room,set)
  local c=current(room);if c then for _,p in ipairs(state(c).bank)do local i=map[p[1]];if i then set(i,p[2])end end end
 end
+local paletteState,paletteMaster,finalPalette
+function C.nativePalette(room,master,set)
+ local c=current(room);if not c then return end;local st=state(c)
+ if paletteState~=st or paletteMaster~=master then
+  local colors={};for i,v in ipairs(master)do colors[i-1]=v end
+  require('metric_rooms').applyPalette(master,function(i,v)colors[i]=v end,room)
+  for _,p in ipairs(st.bank)do local i=map[p[1]];if i then colors[i]=p[2]end end
+  finalPalette=colors;paletteState,paletteMaster=st,master
+ end
+ for i=0,#master-1 do set(i,finalPalette[i])end
+end
 local lastRoom,lastDx,lastDy,ux,uy
 function C.direction(room,gx,gy,dx,dy)
  if dx==0 and dy==0 then lastRoom=nil;return end

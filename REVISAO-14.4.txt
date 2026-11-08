@@ -1,0 +1,11 @@
+A ULTIMA ENTREGA - 14.4
+Objetivo: reduzir o custo por quadro sem reduzir qualidade visual.
+- Paleta final composta por camera/porta e enviada apenas quando uma cor muda.
+- Reutiliza faces ja projetadas e filtradas quando personagem e pose estao imoveis; invalida ao mudar camera, porta, posicao, direcao, animacao ou equipamento.
+- Transformacao rigida do pe de cabra sem tabelas temporarias por vertice.
+- Sem descarte de faces, reducao de malha, textura ou resolucao.
+Validacao: 260 quadros comparados, mesmos pixels; chamadas nativas de paleta de 161720 para 2143. Esse teste nao mede FPS do console.
+Testes passaram: sandbox sem package, 10 comodos, transicoes, colisoes, cadeado 2019, coleta/equipamento e combate.
+Benchmark Lua desktop parado: 1000 updates de 1.070s para 0.064s; nao e FPS de hardware.
+Memoria Lua retida maxima observada: aproximadamente 2.14 MiB; nao inclui memoria nativa/grafica.
+Meta de 15 FPS depende de validacao no Lupi fisico. Contador mantido.

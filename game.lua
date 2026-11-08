@@ -1,3 +1,4 @@
+local paletteControl=require("palette144");paletteControl.install(ui)
 local frameTime = require("frame_time")
 local metric = require("metric_rooms")
 local cameras=require("cameras168")
@@ -1698,8 +1699,9 @@ local queuedStrike=false
 
 local function animationDelta() return frameTime.dt end
 
+local courierCache
+local courierDoorBits={1,2,4,8,16,32,64,128}
 local function courier()
-    local visible=cameras.occlusion(currentRoom)
     local clip, position, clipName = actorClips.idle, 0, "idle"
     if aiming then
         if strike > 0 then
@@ -1714,6 +1716,16 @@ local function courier()
         clipName = running and "run"or "walk"
         position = step/(2*math.pi)*(clip.count-1)
     end
+    local doorMask=doors.stateMask(courierDoorBits)
+    local equipped=inventory and inventory.equipped
+    if courierCache and combat.stable()then
+        local c=courierCache
+        if c.room==currentRoom and c.shot==cameras.shot and c.mask==doorMask and c.x==x and c.y==y and c.facing==facing and c.clip==clip and c.position==position and c.equipped==equipped then
+            for _,face in ipairs(c.faces)do local a,b,c=face[1],face[2],face[3];ui.trisfill(a[1],a[2],b[1],b[2],c[1],c[2],face[5])end
+            return
+        end
+    end
+    local visible=cameras.occlusion(currentRoom)
     local frame = math.floor(position)
     local nextFrame = math.min(frame+1,clip.count-1)
     local blend = position-frame
@@ -1765,10 +1777,15 @@ local function courier()
         end
     end
     table.sort(faces,function(a,b) return a[4]>b[4] end)
-    for _, face in ipairs(faces) do
-        local a,b,c = face[1],face[2],face[3]
-        if visible(a,b,c)then ui.trisfill(a[1],a[2],b[1],b[2],c[1],c[2],face[5])end
+    local accepted={}
+    for _,face in ipairs(faces)do
+        local a,b,c=face[1],face[2],face[3]
+        if visible(a,b,c)then
+            accepted[#accepted+1]=face
+            ui.trisfill(a[1],a[2],b[1],b[2],c[1],c[2],face[5])
+        end
     end
+    courierCache={room=currentRoom,shot=cameras.shot,mask=doorMask,x=x,y=y,facing=facing,clip=clip,position=position,equipped=equipped,faces=accepted}
 end
 
 local function held(button)
@@ -2029,10 +2046,13 @@ function update()
     cameras.select(currentRoom,cgx,cgy)
     local strips = cameras.background(currentRoom)or roomBitmaps[currentRoom]
     local native = not not strips
-    for i, color in ipairs(native and bitmapPalette or Palette) do ui.palset(i-1, color) end
-    ui.palset(240, 0)
-    ui.palset(241, 32767)
-    if native and metric.rooms[currentRoom]then metric.applyPalette(bitmapPalette,ui.palset,currentRoom);cameras.palette(currentRoom,ui.palset)end
+    if native and cameras.enabled and cameras.active then
+        cameras.nativePalette(currentRoom,bitmapPalette,ui.palset)
+    else
+        for i,color in ipairs(native and bitmapPalette or Palette)do ui.palset(i-1,color)end
+        if native and metric.rooms[currentRoom]then metric.applyPalette(bitmapPalette,ui.palset,currentRoom);cameras.palette(currentRoom,ui.palset)end
+    end
+    ui.palset(240,0);ui.palset(241,32767)
     if native then
         for index, strip in ipairs(strips) do
             local ok, result = pcall(ui.spr, strip, 0, (index-1)*(metric.rooms[currentRoom] and 90 or 82))
@@ -2058,7 +2078,7 @@ function update()
     end
     ui.rectfill(0,0,479,15,240)
     local motion = walking and (running and " / CORRIDA" or " / PASSOS") or ""
-    ui.print("14.3 "..status..motion,8,3,241)
+    ui.print("14.4 "..status..motion,8,3,241)
     frameTime.hud(ui)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do
