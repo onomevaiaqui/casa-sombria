@@ -1,7 +1,9 @@
 local frameTime = require("frame_time")
 local metric = require("metric_rooms")
-local cameras=require("cameras153")
+local cameras=require("cameras155")
 local doors=require("doors131")
+local passagePlacement=require("passage156")
+local shed=require("shed154")
 local interactions=require("interactions")
 local subtitles=require("subtitles")
 local perspective = require("perspective")
@@ -1584,7 +1586,8 @@ local rooms = {
     garagem = {label="GARAGEM"},
     quintal = {label="QUINTAL DE TRAS"},
     frente = {label="FRENTE DA CASA"},
-    area = {label="AREA DE ENTRADA"}
+    area = {label="AREA DE ENTRADA"},
+    ferramentas = {label="CASINHA DE FERRAMENTAS"}
 }
 
 -- Each opening records a destination spawn outside its return trigger.
@@ -1640,7 +1643,13 @@ local function checkPassage(dx,dy,keyDx,keyDy)
                         gx=math.max(exit.link.min,math.min(exit.link.max,gx+exit.link.offset))
                         arrivalX,arrivalY=metric.project(exit.to,gx,exit.link.y,0)
                     end
-                    currentRoom,x,y=exit.to,arrivalX,arrivalY
+                    local safeX,safeY=passagePlacement.arrival(metric,doors,exit.to,arrivalX,arrivalY,exit.transfer)
+                    if not safeX then
+                        roomNotice="A passagem está obstruída."
+                        crossing=false;transitionCarry=nil
+                        return
+                    end
+                    currentRoom,x,y=exit.to,safeX,safeY
                     for _,back in ipairs(exits[currentRoom])do
                         if back.to==from then
                             local awayX=x-(back.x1+back.x2)/2
@@ -1961,10 +1970,12 @@ function update()
     local nearbyDoor=doors.nearby(currentRoom,ix,iy)
     local status = roomNotice ~= "" and roomNotice or rooms[currentRoom].label
     if aiming then
-        status = strike > 0 and "SOCO" or "PUNHOS LEVANTADOS"
+        status = inventory.equipped=="crowbar"and(strike>0 and "GOLPE"or "PE DE CABRA")or(strike > 0 and "SOCO" or "PUNHOS LEVANTADOS")
     elseif confirm and not guard and not reading then
         if nearbyDoor then
-            if doors.canOpen(nearbyDoor.id,currentRoom,ix,iy)then
+            if nearbyDoor.id=="casinha"then
+                local opened,pages=shed.tryOpen(inventory,doors,currentRoom,ix,iy);dialogue:open(pages)
+            elseif doors.canOpen(nearbyDoor.id,currentRoom,ix,iy)then
                 doors.open(nearbyDoor.id);dialogue:notify(nearbyDoor.id=="jardim_quintal"and "Você abriu o portão."or "Você abriu a porta.")
             else dialogue:notify("Afaste-se um pouco da porta.")end
             nearbyDoor=nil
@@ -1986,7 +1997,7 @@ function update()
     if dialogue.active then
         status=rooms[currentRoom].label
     elseif nearbyDoor and not aiming then
-        status=nearbyDoor.id=="jardim_quintal"and "B: ABRIR PORTAO"or "B: ABRIR PORTA"
+        status=nearbyDoor.id=="casinha"and "B: EXAMINAR CADEADO"or nearbyDoor.id=="jardim_quintal"and "B: ABRIR PORTAO"or "B: ABRIR PORTA"
     elseif interaction and not aiming then
         status="B: EXAMINAR QUADROS"
     elseif pickup and not aiming then
@@ -2025,7 +2036,7 @@ function update()
     end
     ui.rectfill(0,0,479,15,240)
     local motion = walking and (running and " / CORRIDA" or " / PASSOS") or ""
-    ui.print("13.0 "..status..motion,8,3,241)
+    ui.print("13.3 "..status..motion,8,3,241)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do
             if not pcall(ui.grid, patch.x, patch.y, patch.scale, patch.scale, patch.rows) then
@@ -2033,6 +2044,10 @@ function update()
                 break
             end
         end
+    end
+    if currentRoom=='ferramentas'and not inventory.collected.crowbar then
+        local pts={{1.1,2.52,.91},{1.72,2.52,.91},{1.80,2.44,.91},{1.80,2.35,.91}}
+        for i=1,#pts-1 do local a,b=pts[i],pts[i+1];local ax,ay=cameras.project(currentRoom,a[1],a[2],a[3]);local bx,by=cameras.project(currentRoom,b[1],b[2],b[3]);ui.line(ax,ay,bx,by,246);ui.line(ax,ay-1,bx,by-1,241)end
     end
     courier()
     if not cameras.active and currentRoom=="garagem" and carSprite and native then

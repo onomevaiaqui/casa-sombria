@@ -1,7 +1,7 @@
 -- Initial camera fits to visible door landmarks. Backgrounds are not surveyed 3D.
 -- Model height stays 1.80 m; the camera determines its projected size.
 local metric=require('metric_rooms')
-local cameras=require('cameras153')
+local cameras=require('cameras155')
 local P={metric=metric.rooms}
 P.rooms={
  sala={horizon=32,foot=147,door=86,focal=320,cx=240},

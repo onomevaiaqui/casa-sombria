@@ -1,6 +1,7 @@
 local Inventory = {}
 
 local items = {
+    shed_key = {name="Chave",detail="Chave pequena de um cadeado. A etiqueta diz: FERRAMENTAS.",usable=true},
     car_key = {name="Chave", detail="Chave do carro da garagem. O plastico esta gasto.", usable=true},
     door_key = {name="Chave", detail="Uma etiqueta desbotada diz: GARAGEM.", usable=true},
     lighter = {name="Isqueiro", detail="Isqueiro vermelho. Ainda tem gas.", usable=true},
@@ -11,7 +12,7 @@ local items = {
     valve = {name="Volante", detail="Volante de valvula avulso. Tem um encaixe quadrado.", usable=true},
     screwdriver = {name="Chave Phillips", detail="Ponta cruzada para parafusos pequenos.", usable=true},
     cutters = {name="Corta-cadeado", detail="Mandibulas pesadas para cortar metal fino.", usable=true},
-    crowbar = {name="Pe de cabra", detail="Pequeno e resistente. Serve para fazer alavanca.", equippable=true}
+    crowbar = {name="Pe de cabra", detail="Pesado e resistente. Posso usá-lo como arma ou para fazer alavanca.", equippable=true}
 }
 
 local documents = {
@@ -21,7 +22,12 @@ local documents = {
 }
 
 -- Temporary locations for testing collection; documents use a separate list.
-local pickups = {{["id"]='door_key',["room"]='quarto',["x"]=161.05263157894734,["y"]=171.02564102564102},{["id"]='letter',["document"]=True,["room"]='quarto',["x"]=113.68421052631577,["y"]=214.74358974358972},{["id"]='note',["document"]=True,["room"]='cozinha',["x"]=335.83333333333326,["y"]=205.47619047619048},{["id"]='battery',["room"]='garagem',["x"]=126.95652173913041,["y"]=207.54385964912282},{["id"]='remote',["room"]='garagem',["x"]=126.95652173913041,["y"]=190.1754385964912},{["id"]='screwdriver',["room"]='garagem',["x"]=126.95652173913041,["y"]=197.89473684210526},{["id"]='cutters',["room"]='garagem',["x"]=126.95652173913041,["y"]=168.94736842105263},{["id"]='crowbar',["room"]='corredor',["x"]=214.19354838709677,["y"]=195.0},{["id"]='valve',["room"]='banheiro',["x"]=206.66666666666666,["y"]=195.0},{["id"]='collar',["room"]='quintal',["x"]=240.0,["y"]=197.2}}
+local pickups = {{["id"]='door_key',["room"]='quarto',["x"]=161.05263157894734,["y"]=171.02564102564102},{["id"]='letter',["document"]=true,["room"]='quarto',["x"]=113.68421052631577,["y"]=214.74358974358972},{["id"]='note',["document"]=true,["room"]='cozinha',["x"]=335.83333333333326,["y"]=205.47619047619048},{["id"]='battery',["room"]='garagem',["x"]=126.95652173913041,["y"]=207.54385964912282},{["id"]='remote',["room"]='garagem',["x"]=126.95652173913041,["y"]=190.1754385964912},{["id"]='screwdriver',["room"]='garagem',["x"]=126.95652173913041,["y"]=197.89473684210526},{["id"]='cutters',["room"]='garagem',["x"]=126.95652173913041,["y"]=168.94736842105263},{["id"]='crowbar',["room"]='corredor',["x"]=214.19354838709677,["y"]=195.0},{["id"]='valve',["room"]='banheiro',["x"]=206.66666666666666,["y"]=195.0},{["id"]='collar',["room"]='quintal',["x"]=240.0,["y"]=197.2}}
+
+-- Story progression: the first weapon belongs inside the locked tool shed.
+for i=#pickups,1,-1 do if pickups[i].id=='crowbar'or pickups[i].room=='quintal'then table.remove(pickups,i)end end
+local cx,cy=require('metric_rooms').project('ferramentas',1.5,1.95,0)
+pickups[#pickups+1]={id='crowbar',room='ferramentas',x=cx,y=cy}
 
 local function wrapped(text, x, y, width, color, maxLines)
     local line, count = "", 0
@@ -64,7 +70,7 @@ function Inventory.new(sprites)
     end
 
     function state:icon(id,x,y)
-        local ref = self.sprites["item_"..id]
+        local ref = self.sprites["item_"..(id=="shed_key"and "door_key"or id)]
         if ref and type(ui.spr)=="function" then
             local ok = pcall(ui.spr,ref,x,y)
             if ok then return end
@@ -72,8 +78,11 @@ function Inventory.new(sprites)
         ui.print("+",x+12,y+12,242)
     end
 
+    function state:has(id)for _,v in ipairs(self.bag)do if v==id then return true end end;return false end
+
     function state:use(id,room)
-        if id=="lighter" then
+        if id=="shed_key"then return "Aproxime-se do cadeado da casinha e pressione B."
+        elseif id=="lighter" then
             self.lit = not self.lit
             return self.lit and "O isqueiro esta aceso." or "Apaguei o isqueiro."
         elseif id=="remote" then

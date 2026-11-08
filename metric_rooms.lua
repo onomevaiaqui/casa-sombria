@@ -93,5 +93,6 @@ M.carMask={x=145,y=112}
 M.plan=require('layout140')
 for room,c in pairs(M.plan.rooms)do M.rooms[room]=M.plan.logical[room];boxes[room]=c.boxes;sizes[room]=c.size end
 M.banks.area=M.banks.sala
+M.banks.ferramentas=M.banks.sala
 M.boxes,M.sizes=boxes,sizes
 return M

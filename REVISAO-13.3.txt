@@ -1,0 +1,11 @@
+VERSAO 13.3 - A ULTIMA ENTREGA
+Casinha trancada com cadeado, pe de cabra como primeira arma, pedras no jardim, muros altos e transferencia segura no portao.
+Chave da casinha ainda sem ponto de coleta na historia; a chave provisoria existe somente na previa de teste, nao nesta publicacao.
+PREVIA LOCAL 13.3 - CHEGADA SEGURA NAS PASSAGENS
+Defeito reproduzido: atravessar o portao jardim/quintal pela borda esquerda (x=4.55 ou 4.575) transferia o jogador para dentro do colisor da folha aberta (quintal x=4.27..4.33, y=0..1).
+Nova rotina passage156.lua valida a posicao de destino antes de trocar de comodo. Se necessario, encontra o ponto lateral livre mais proximo dentro da mesma abertura, em passos de 2.5cm; neste portao o ajuste e cerca de 5cm.
+Se toda a faixa estiver bloqueada, mantem o jogador no comodo de origem com mensagem. Busca finita/bounded, sem alterar muros, tamanho da abertura, cameras, assets ou velocidades.
+Regressoes: 42 travessias laterais do portao pelos dois lados; 451 amostras de todas as 22 passagens; destino totalmente bloqueado rejeitado; testes de cadeado, chave e coleta da arma continuam aprovados.
+Mesmos bitmaps e paletas da 13.2 (codec155). Somente logica de transferencia modificada. Sem commit ou push.
+No teste pelo centro da 13.2 nao ocorreu congelamento completo nem erro de console; foi confirmado o bloqueio de colisao nas bordas.
+http://127.0.0.1:8804/?room=frente&x=4.56&y=8.17
