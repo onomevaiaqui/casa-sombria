@@ -1,0 +1,12 @@
+Correcao do erro ao clicar em Iniciar no Lupi fisico:
+camera_data168.lua:9: attempt to index a nil value (global 'package').
+
+O Lupinho expoe a biblioteca package; o ambiente do aparelho nao a expoe.
+A limpeza opcional de package.loaded agora verifica sua disponibilidade.
+O carregador continua mantendo apenas uma referencia direta ao comodo atual.
+Nao foram alteradas imagens, paleta, colisoes, cozinha ou combate da 14.2.
+
+Regressao reproduzida em .tools/check-sandbox1421.lua com package=nil
+antes de carregar game.lua: bootstrap, Iniciar e 10 ambientes passaram.
+125 estados de camera, 22 transicoes, cadeado, arma e combate passaram.
+Validacao no hardware fisico ainda depende do teste do usuario.
