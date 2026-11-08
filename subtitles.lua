@@ -1,4 +1,4 @@
--- Classic bottom-centred subtitles. Accent marks extend the console's ASCII font.
+-- Classic bottom-left subtitles. Accent marks extend the console's ASCII font.
 local S={}
 local accents={
  ['á']={'a','acute'},['é']={'e','acute'},['í']={'i','acute'},['ó']={'o','acute'},['ú']={'u','acute'},
@@ -78,7 +78,7 @@ function S.new()
   local remaining=self.active and math.floor(self.revealed)or math.huge
   local y=244-(#lines-1)*14
   for _,line in ipairs(lines)do
-   local x=math.floor((480-#line*6)/2)
+   local x=32
    drawLine(ui,line,x,y,remaining);remaining=math.max(0,remaining-#line);y=y+14
   end
   if self.active and self.revealed>=self.total and self.clock%1<.7 then

@@ -1,0 +1,13 @@
+PREVIA LOCAL 13.0 - BLOQUEIOS, PORTAO E CAMERAS
+Fechados os tres segmentos verdes: atras da cozinha (x=0,y=9..9.8), fim do corredor (x=11..11.8,y=3), divisoria jardim/quintal (y=0,x=-6.4..0).
+Portao de 1m na divisoria, centro x=-1.6. Abre com B de ambos os lados. Depois de aberto, transicao automatica. Folha aberta tem colisao no quintal.
+Quintal agora representa toda a faixa esquerda da casa (offset -6.4,0; 6.4x9.8), mantendo geometria, proporcoes e posicoes reais dos moveis.
+Rotas pelos fundos sem acesso foram removidas da malha de caminhada; muros e limites mantidos em coordenadas metricas.
+16 cameras frente, 3 quintal, 1 varanda, com enquadramentos descendentes/fechados. Candidatos testados nas bordas para exigir superficies modeladas no quadro. Continuidade de terreno/calcada externa apenas cenografica; nao amplia area jogavel.
+122 estados e 385 bitmaps aceitos pelo codec oficial, 205 cores de fundo, faixas de 43200 bytes abaixo de 46059 bytes.
+Testes aprovados: 20 passagens, bloqueios, abertura do portao dos dois lados, estado compartilhado, colisao da folha aberta e acao B no loop real do jogo.
+Sem commit ou push. Previa Web local; console fisico ainda nao testado.
+http://127.0.0.1:8801/?room=frente&x=4.8&y=8.0
+Moldura obsoleta do antigo acesso removida (3 pecas). Cinco cameras afetadas tiveram bitmap, profundidade e visibilidade regenerados. Teste adicional confirma portao fechado bloqueando passagem e legenda de acao correta.
+
+Publicacao: mesmos Lua e bitmaps da previa aprovada.

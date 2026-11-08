@@ -1,7 +1,7 @@
 local Inventory = {}
 
 local items = {
-    car_key = {name="Chave", detail="Chave de um Fusca ano 76. O plastico esta gasto.", usable=true},
+    car_key = {name="Chave", detail="Chave do carro da garagem. O plastico esta gasto.", usable=true},
     door_key = {name="Chave", detail="Uma etiqueta desbotada diz: GARAGEM.", usable=true},
     lighter = {name="Isqueiro", detail="Isqueiro vermelho. Ainda tem gas.", usable=true},
     phone = {name="Celular", detail="Meu celular. A tela funciona, mas esta sem sinal.", equippable=true},
@@ -21,18 +21,7 @@ local documents = {
 }
 
 -- Temporary locations for testing collection; documents use a separate list.
-local pickups = {
-    {id="door_key", room="quarto", x=271.65287201,y=174.33389769},
-    {id="letter", document=true, room="quarto", x=271.66239863,y=211.34173986},
-    {id="note", document=true, room="cozinha", x=257.46333099,y=199.48463577},
-    {id="battery", room="garagem", x=292.90693897247,y=177.36380956090},
-    {id="remote", room="garagem", x=296.16178015468,y=201.07132821642},
-    {id="screwdriver", room="garagem", x=294.29042612148,y=187.44081349404},
-    {id="cutters", room="garagem", x=290.11120493890,y=157.00032235941},
-    {id="crowbar", room="corredor", x=239.14725387,y=191.01185049},
-    {id="valve", room="banheiro", x=245.11998860,y=196.73136017},
-    {id="collar", room="quintal", x=232.75305244,y=182.12084161}
-}
+local pickups = {{["id"]='door_key',["room"]='quarto',["x"]=161.05263157894734,["y"]=171.02564102564102},{["id"]='letter',["document"]=True,["room"]='quarto',["x"]=113.68421052631577,["y"]=214.74358974358972},{["id"]='note',["document"]=True,["room"]='cozinha',["x"]=335.83333333333326,["y"]=205.47619047619048},{["id"]='battery',["room"]='garagem',["x"]=126.95652173913041,["y"]=207.54385964912282},{["id"]='remote',["room"]='garagem',["x"]=126.95652173913041,["y"]=190.1754385964912},{["id"]='screwdriver',["room"]='garagem',["x"]=126.95652173913041,["y"]=197.89473684210526},{["id"]='cutters',["room"]='garagem',["x"]=126.95652173913041,["y"]=168.94736842105263},{["id"]='crowbar',["room"]='corredor',["x"]=214.19354838709677,["y"]=195.0},{["id"]='valve',["room"]='banheiro',["x"]=206.66666666666666,["y"]=195.0},{["id"]='collar',["room"]='quintal',["x"]=240.0,["y"]=197.2}}
 
 local function wrapped(text, x, y, width, color, maxLines)
     local line, count = "", 0

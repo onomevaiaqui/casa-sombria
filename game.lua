@@ -1,6 +1,7 @@
 local frameTime = require("frame_time")
 local metric = require("metric_rooms")
-local cameras=require("camera117")
+local cameras=require("cameras153")
+local doors=require("doors131")
 local interactions=require("interactions")
 local subtitles=require("subtitles")
 local perspective = require("perspective")
@@ -149,7 +150,7 @@ if type(require) == "function" and type(ui.spr) == "function" then
     end
 end
 
-local x, y, facing, walking, step = 238.483849239, 196.782395152, -0.8, false, 0
+local x, y, facing, walking, step = 274.209522014,194.907653768, -0.8, false, 0
 local actorPalette = {9651,2147,4234,11732,13846,3172,5320,4299,6375,5388,2117,2118,3205,3206,5292,5325,3175,3208,8558,9617,5285,5286,1058,1091,6479,7504,7400,7434,6414,6446}
 local actorTriangles = decode(([=[
 UwDmANQAANQA5gDVABnUANUA7QAJ1ADtAMkACckA7QA5AAfJADkA1AAZ1AA5AFMAGFMAOQBtABhTAG0AbgATUwDcAOYAA9wAUwAbAAQbAFMAbgAE1QDmAOkA
@@ -1582,14 +1583,20 @@ local rooms = {
     quarto = {label="QUARTO"},
     garagem = {label="GARAGEM"},
     quintal = {label="QUINTAL DE TRAS"},
-    frente = {label="FRENTE DA CASA"}
+    frente = {label="FRENTE DA CASA"},
+    area = {label="AREA DE ENTRADA"}
 }
 
 -- Each opening records a destination spawn outside its return trigger.
-local exits = {["sala"]={{["dy"]=-1.24603831363,["y1"]=147,["x1"]=241,["x"]=251.900730568,["to"]="cozinha",["x2"]=261,["y2"]=153,["world"]={2.85,3.35,4.2,4.55,1,2},["y"]=162.488097993,["dx"]=0.345996120574},{["dy"]=-1.19469165542,["y1"]=144,["x1"]=175,["x"]=241.815253758,["to"]="corredor",["x2"]=197,["y2"]=150,["world"]={1,1.5,4.2,4.55,1,2},["y"]=162.529012025,["dx"]=0.916339066885},{["dy"]=-1.30536259366,["y1"]=150,["x1"]=315,["x"]=256.608384911,["to"]="quintal",["x2"]=336,["y2"]=157,["world"]={4.85,5.35,4.2,4.55,1,2},["y"]=155.120038953,["dx"]=-0.328077433196},{["dy"]=2.95579756633,["y1"]=216,["x1"]=131,["x"]=187.072485541,["to"]="frente",["x2"]=165,["y2"]=229,["world"]={1.35,1.85,0.25,0.6,-1,2},["y"]=148.497884221,["dx"]=-1.99348606299},{["dy"]=3.29665849302,["y1"]=227,["x1"]=301,["x"]=272.2760777792418,["to"]="garagem",["x2"]=333,["y2"]=241,["world"]={4.35,4.85,0.25,0.6,-1,2},["y"]=153.66952652518998,["dx"]=0.392561600276}},["frente"]={{["dy"]=-0.812877278029,["y1"]=142,["x1"]=182,["x"]=157.866041205,["to"]="sala",["x2"]=200,["y2"]=146,["world"]={1.75,2.25,5.4,5.75,1,2},["y"]=207.779489942,["dx"]=0.75896591765},{["dy"]=-0.884283511896,["y1"]=146,["x1"]=302,["x"]=272.16801433638886,["to"]="garagem",["x2"]=318,["y2"]=151,["world"]={5.75,6.25,5.4,5.75,1,2},["y"]=217.4679388084052,["dx"]=-0.126834727369},{["dy"]=-0.135568465161,["y1"]=151,["x1"]=121,["x"]=128.637286901,["to"]="quintal",["x2"]=140,["y2"]=158,["world"]={0.25,0.6,3.95,4.45,-1,1},["y"]=195.97585454,["dx"]=-3.03933877943}},["quintal"]={{["dy"]=-1.14028533599,["y1"]=146,["x1"]=249,["x"]=326.987708925,["to"]="sala",["x2"]=268,["y2"]=152,["world"]={3.25,3.75,4.4,4.75,1,2},["y"]=160.585092739,["dx"]=0.287382671458},{["dy"]=-0.27376752036,["y1"]=189,["x1"]=92,["x"]=146.807567833,["to"]="frente",["x2"]=119,["y2"]=201,["world"]={0.25,0.6,0.95,1.45,-1,1},["y"]=155.114816924,["dx"]=-4.2879276254}},["garagem"]={{["dy"]=-1.0061850536069699,["y1"]=146,["x1"]=263,["x"]=314.197726692,["to"]="sala",["x2"]=281,["y2"]=151,["world"]={2.85,3.35,5.1000000000000005,5.45,1,2},["y"]=217.884988804,["dx"]=0.0017043029309320445},{["dy"]=2.9777714744334673,["y1"]=226,["x1"]=257,["x"]=310.535486766,["to"]="frente",["x2"]=287,["y2"]=238,["world"]={2.85,3.35,0.25,0.6,-1,2},["y"]=153.626244975,["dx"]=-0.005043828302973452}},["corredor"]={{["dy"]=-1.53971525462,["y1"]=151,["x1"]=231,["x"]=181.16054683,["to"]="sala",["x2"]=254,["y2"]=157,["world"]={0.65,1.15,3.8,4.15,1,2},["y"]=153.812952484,["dx"]=0.144225798907},{["dy"]=-0.0963419855312,["y1"]=193,["x1"]=201,["x"]=279.549597255,["to"]="quarto",["x2"]=224,["y2"]=207,["world"]={0.25,0.6,1.35,1.85,-1,1},["y"]=195.088824039,["dx"]=-5.37401619314},{["dy"]=0.0730527007789,["y1"]=166,["x1"]=255,["x"]=240.539708877,["to"]="banheiro",["x2"]=272,["y2"]=176,["world"]={1.2,1.55,2.75,3.25,1,1},["y"]=211.613740403,["dx"]=4.70040129641}},["banheiro"]={{["dy"]=4.33410983766,["y1"]=224,["x1"]=219,["x"]=238.725259817,["to"]="corredor",["x2"]=257,["y2"]=241,["world"]={1,1.5,0.25,0.6,-1,2},["y"]=170.493171935,["dx"]=-0.455062066337}},["cozinha"]={{["dy"]=-1.50288565772,["y1"]=151,["x1"]=242,["x"]=249.533787956,["to"]="sala",["x2"]=264,["y2"]=158,["world"]={1.85,2.35,3.6,3.95,1,2},["y"]=156.988171503,["dx"]=0.204800167157}},["quarto"]={{["dy"]=0.205783237553,["y1"]=189,["x1"]=297,["x"]=240.961943531,["to"]="corredor",["x2"]=319,["y2"]=204,["world"]={2.9,3.25,1.35,1.85,1,1},["y"]=200.508625204,["dx"]=5.33358079236}}}
+local exits = require('layout140').exits
+for room in pairs(require('layout140').rooms)do local bg=cameras.initial(room);if bg then roomBitmaps[room]=bg end end
+bitmap,kitchenBitmap=roomBitmaps.sala,roomBitmaps.cozinha
 
 local function walkable(px,py)
-    if metric.rooms[currentRoom]then return navigation.walkable(currentRoom,px,py)end
+    if metric.rooms[currentRoom]then
+        local gx,gy=metric.ground(currentRoom,px,py)
+        return navigation.walkable(currentRoom,px,py)and doors.walkable(currentRoom,gx,gy)
+    end
     local radius=math.max(2,perspective.scale(currentRoom,py)*0.14)
     local vertical=math.max(1.2,radius*(py-perspective.rooms[currentRoom].horizon)/320)
     return navigation.walkable(currentRoom,px,py)
@@ -1614,10 +1621,26 @@ local function checkPassage(dx,dy,keyDx,keyDy)
         if near then
             inOpening=true
             roomNotice = "PARA "..rooms[exit.to].label
+            if doors.blocked(currentRoom,exit.to)then
+                roomNotice=((currentRoom=="frente"and exit.to=="quintal")or(currentRoom=="quintal"and exit.to=="frente"))and "B: ABRIR PORTAO"or "B: ABRIR PORTA"
+                crossing=false
+                return
+            end
             if towards and not crossing then
                 if roomBitmaps[exit.to] then
                     local from=currentRoom
-                    currentRoom,x,y=exit.to,exit.x,exit.y
+                    local arrivalX,arrivalY=exit.x,exit.y
+                    if exit.transfer then
+                        local t=exit.transfer;local gx,gy=metric.ground(currentRoom,x,y)
+                        gx,gy=gx+t.offsetX,gy+t.offsetY
+                        if t.axis==1 then gx=t.normal;gy=math.max(t.low,math.min(t.high,gy))else gy=t.normal;gx=math.max(t.low,math.min(t.high,gx))end
+                        arrivalX,arrivalY=metric.project(exit.to,gx,gy,0)
+                    elseif exit.link then
+                        local gx=metric.ground(currentRoom,x,y)
+                        gx=math.max(exit.link.min,math.min(exit.link.max,gx+exit.link.offset))
+                        arrivalX,arrivalY=metric.project(exit.to,gx,exit.link.y,0)
+                    end
+                    currentRoom,x,y=exit.to,arrivalX,arrivalY
                     for _,back in ipairs(exits[currentRoom])do
                         if back.to==from then
                             local awayX=x-(back.x1+back.x2)/2
@@ -1626,6 +1649,20 @@ local function checkPassage(dx,dy,keyDx,keyDy)
                             if length>0 then transitionCarry={dx=keyDx or dx,dy=keyDy or dy,x=awayX/length,y=awayY/length} end
                             break
                         end
+                    end
+                    if exit.link then
+                        -- A broad opening keeps lateral position; its centre cannot define forward motion.
+                        local gx,gy=metric.ground(currentRoom,x,y)
+                        local px,py=metric.project(currentRoom,gx,gy+exit.link.awayY*.1,0)
+                        local ax,ay=px-x,py-y
+                        local length=math.sqrt(ax*ax+ay*ay)
+                        transitionCarry={dx=keyDx or dx,dy=keyDy or dy,x=ax/length,y=ay/length}
+                    end
+                    if exit.transfer then
+                        local t=exit.transfer;local gx,gy=metric.ground(currentRoom,x,y)
+                        local px,py=metric.project(currentRoom,gx+t.awayX*.1,gy+t.awayY*.1,0)
+                        local ax,ay=px-x,py-y;local n=math.sqrt(ax*ax+ay*ay)
+                        transitionCarry={dx=keyDx or dx,dy=keyDy or dy,x=ax/n,y=ay/n}
                     end
                     crossing=true
                     if transitionCarry then
@@ -1777,12 +1814,13 @@ local function drawTitle()
                 settingsOpen,settingsChoice = true,1
             elseif titleChoice==1 or canContinue then
                 if titleChoice==1 then
-                    currentRoom,x,y,facing = "sala",238.483849239,196.782395152,-0.8
+                    currentRoom,x,y,facing = "sala",274.209522014,194.907653768,-0.8
                     crossing,walking,running,step = false,false,false,0
                     transitionCarry=nil
                     aiming,strike,aimCancelled = false,0,false
                     roomNotice = ""
                     inventory:reset()
+                    doors.reset()
                     dialogue:close();dialogue.toastTime=0
                 end
                 titleOpen,canContinue = false,true
@@ -1898,8 +1936,8 @@ function update()
         else transitionCarry=nil end
     end
     local oldGX,oldGZ=perspective.ground(currentRoom,x,y)
-    local travelled
-    x,y,travelled=perspective.move(currentRoom,x,y,dx,dy,animationDelta(),run,walkable)
+    local travelled,worldMoveX,worldMoveY
+    x,y,travelled,worldMoveX,worldMoveY=perspective.move(currentRoom,x,y,dx,dy,animationDelta(),run,walkable,transitionCarry~=nil)
     walking=travelled>0.00001
     running=walking and run
     if walking then
@@ -1911,14 +1949,27 @@ function update()
         local metresPerCycle=running and 3.0118408704 or 1.7576561718
         step=(step+travelled*2*math.pi/metresPerCycle)%(2*math.pi)
     end
-    checkPassage(dx,dy,inputDx,inputDy)
+    local passageDx,passageDy=dx,dy
+    if worldMoveX then
+        local gx,gy=metric.ground(currentRoom,x,y)
+        local px,py=metric.project(currentRoom,gx+worldMoveX,gy+worldMoveY,0)
+        passageDx,passageDy=px-x,py-y
+    end
+    checkPassage(passageDx,passageDy,inputDx,inputDy)
     local ix,iy=metric.ground(currentRoom,x,y)
     local interaction=interactions.nearby(currentRoom,ix,iy)
+    local nearbyDoor=doors.nearby(currentRoom,ix,iy)
     local status = roomNotice ~= "" and roomNotice or rooms[currentRoom].label
     if aiming then
         status = strike > 0 and "SOCO" or "PUNHOS LEVANTADOS"
     elseif confirm and not guard and not reading then
-        if interaction then
+        if nearbyDoor then
+            if doors.canOpen(nearbyDoor.id,currentRoom,ix,iy)then
+                doors.open(nearbyDoor.id);dialogue:notify(nearbyDoor.id=="jardim_quintal"and "Você abriu o portão."or "Você abriu a porta.")
+            else dialogue:notify("Afaste-se um pouco da porta.")end
+            nearbyDoor=nil
+            roomNotice=""
+        elseif interaction then
             dialogue:open(interaction.pages)
             facing=perspective.facing(currentRoom,interaction.lookX,interaction.lookY)
             walking,running=false,false
@@ -1934,6 +1985,8 @@ function update()
     local pickup = inventory:nearby(currentRoom,x,y)
     if dialogue.active then
         status=rooms[currentRoom].label
+    elseif nearbyDoor and not aiming then
+        status=nearbyDoor.id=="jardim_quintal"and "B: ABRIR PORTAO"or "B: ABRIR PORTA"
     elseif interaction and not aiming then
         status="B: EXAMINAR QUADROS"
     elseif pickup and not aiming then
@@ -1953,7 +2006,7 @@ function update()
             if not ok or result == false then
                 if currentRoom ~= "sala" then
                     roomBitmaps[currentRoom] = nil
-                    currentRoom, x, y, facing = "sala",238.483849239,196.782395152,0
+                    currentRoom, x, y, facing = "sala",274.209522014,194.907653768,0
                     status = "ERRO FUNDO: VOLTA A SALA"
                 else
                     roomBitmaps.sala, bitmap = nil, nil
@@ -1972,7 +2025,7 @@ function update()
     end
     ui.rectfill(0,0,479,15,240)
     local motion = walking and (running and " / CORRIDA" or " / PASSOS") or ""
-    ui.print("11.9 "..status..motion,8,3,241)
+    ui.print("13.0 "..status..motion,8,3,241)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do
             if not pcall(ui.grid, patch.x, patch.y, patch.scale, patch.scale, patch.rows) then
@@ -1989,7 +2042,7 @@ function update()
     if not cameras.active and currentRoom=="sala" then
         local gx,gy=metric.ground(currentRoom,x,y)
         if native and sofaBitmap and gy>3.9 then
-            pcall(ui.spr,sofaBitmap,86,119)
+            pcall(ui.spr,sofaBitmap,117,121)
         elseif not native and y<=159 then
             drawImage(detailedSofa,x-24,x+24)
         end
