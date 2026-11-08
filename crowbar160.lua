@@ -12,9 +12,10 @@ function W.held(project,socket,faces)
  for i,t in ipairs(tris)do local a,b,c=p[t[1]],p[t[2]],p[t[3]];faces[#faces+1]={a,b,c,a[3]+b[3]+c[3],i%7==0 and 217 or 218}end
 end
 function W.pickup(cameras,ui)
+ local visible=cameras.occlusion('ferramentas')
  local p={};for i,v in ipairs(world)do p[i]={cameras.project('ferramentas',v[1],v[2],v[3])}end
  local f={};for i,t in ipairs(tris)do local a,b,c=p[t[1]],p[t[2]],p[t[3]];f[#f+1]={a,b,c,a[3]+b[3]+c[3],i%7==0 and 217 or 218}end
  table.sort(f,function(a,b)return a[4]>b[4]end)
- for _,t in ipairs(f)do local a,b,c=t[1],t[2],t[3];if cameras.triangle('ferramentas',a,b,c)then ui.trisfill(a[1],a[2],b[1],b[2],c[1],c[2],t[5])end end
+ for _,t in ipairs(f)do local a,b,c=t[1],t[2],t[3];if visible(a,b,c)then ui.trisfill(a[1],a[2],b[1],b[2],c[1],c[2],t[5])end end
 end
 return W

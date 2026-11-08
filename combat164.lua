@@ -46,16 +46,16 @@ lastPose={};elapsed=1;alpha=1
 function G.preparePose(name,dt)
  if name~=previousName then
   if previousName and(name=='ready'or previousName=='ready'or previousName=='swing'or name=='run'or previousName=='run'or name=='walk'or previousName=='walk')then
-   fromPose=lastPose;fromSocket=lastSocket;elapsed=0
+   fromPose={};for i,v in ipairs(lastPose)do fromPose[i]={v[1],v[2],v[3]}end;fromSocket=lastSocket;elapsed=0
   else fromPose=nil;fromSocket=nil;elapsed=1 end
  end
- previousName=name;elapsed=elapsed+dt;alpha=math.min(1,elapsed/.18);lastPose={}
+ previousName=name;elapsed=elapsed+dt;alpha=math.min(1,elapsed/.18)
  if alpha>=1 then fromPose=nil;fromSocket=nil end
 end
 function G.blendVertex(i,x,y,z)
  local a=fromPose and fromPose[i]
  if a then x=a[1]+(x-a[1])*alpha;y=a[2]+(y-a[2])*alpha;z=a[3]+(z-a[3])*alpha end
- lastPose[i]={x,y,z};return x,y,z
+ local v=lastPose[i];if v then v[1],v[2],v[3]=x,y,z else lastPose[i]={x,y,z}end;return x,y,z
 end
 function G.blendSocket(socket)
  local r={};for i=1,12 do r[i]=fromSocket and(fromSocket[i]+(socket[i]-fromSocket[i])*alpha)or socket[i]end

@@ -1699,6 +1699,7 @@ local queuedStrike=false
 local function animationDelta() return frameTime.dt end
 
 local function courier()
+    local visible=cameras.occlusion(currentRoom)
     local clip, position, clipName = actorClips.idle, 0, "idle"
     if aiming then
         if strike > 0 then
@@ -1766,7 +1767,7 @@ local function courier()
     table.sort(faces,function(a,b) return a[4]>b[4] end)
     for _, face in ipairs(faces) do
         local a,b,c = face[1],face[2],face[3]
-        if cameras.triangle(currentRoom,a,b,c)then ui.trisfill(a[1],a[2],b[1],b[2],c[1],c[2],face[5])end
+        if visible(a,b,c)then ui.trisfill(a[1],a[2],b[1],b[2],c[1],c[2],face[5])end
     end
 end
 
@@ -2057,7 +2058,8 @@ function update()
     end
     ui.rectfill(0,0,479,15,240)
     local motion = walking and (running and " / CORRIDA" or " / PASSOS") or ""
-    ui.print("14.2.1 "..status..motion,8,3,241)
+    ui.print("14.3 "..status..motion,8,3,241)
+    frameTime.hud(ui)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do
             if not pcall(ui.grid, patch.x, patch.y, patch.scale, patch.scale, patch.rows) then

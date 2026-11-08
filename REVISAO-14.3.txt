@@ -1,0 +1,27 @@
+14.3 - CONTADOR DE FRAMES E OTIMIZACAO SEM REDUCAO VISUAL
+
+HUD no canto superior direito: FPS e F (quadros acumulados, modulo 100000).
+FPS prioritario por ui.stat(7). Se indisponivel e os.time permitido,
+estimativa por tempo real em janela de 2 segundos, marcada com ~.
+Se nenhuma leitura estiver disponivel, mostra --, sem inventar 60 FPS.
+A estimativa de os.time nao altera a velocidade da simulacao.
+
+Otimizacoes:
+- Projecao matricial direta, sem tabelas temporarias por vertice.
+- Camera preparada uma vez por personagem/quadro.
+- Profundidade e estado de porta preparados uma vez, em vez de por triangulo.
+- Buffers de pose reutilizados; copia somente ao iniciar uma transicao.
+- Mesmo tratamento para o pe de cabra coletavel na prateleira.
+
+Resolucao, texturas, cores, malha, animacoes e velocidade mantidas.
+Imagens nao foram alteradas (mesmos 397 assets / 205 cores de fundo).
+Comparacao de 180 quadros: mesmos 119450 triangulos, coordenadas e cores;
+assinatura de desenho 577539369 igual a 14.2.1.
+10000 pontos e testes de oclusao comparados com a versao anterior.
+Microbenchmark Lua desktop de projecao/oclusao: ~83% menos CPU nesse
+trecho isolado. NAO representa ganho geral nem FPS do console fisico.
+
+Memoria Lua desktop aproximada: 1 MB retido apos abrir e ate 2,1 MB
+retidos nos comodos amostrados. Cache por comodo mantido, package opcional.
+Testes de sandbox package=nil, colisoes, portao, transicoes e combate passaram.
+FPS real no Lupi fisico precisa ser observado no novo contador.

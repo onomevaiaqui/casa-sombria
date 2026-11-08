@@ -11,11 +11,17 @@ function C.setup(refs,palette)
  C.enabled=true
 end
 local function project(c,x,y,z)
- local q={x,y,z,1};local p={}
- for i=1,4 do p[i]=0;for k=1,4 do p[i]=p[i]+c.m[i][k]*q[k]end end
+ local m=c.m;local w=m[4][1]*x+m[4][2]*y+m[4][3]*z+m[4][4]
+ local px=m[1][1]*x+m[1][2]*y+m[1][3]*z+m[1][4]
+ local py=m[2][1]*x+m[2][2]*y+m[2][3]*z+m[2][4]
  local v=c.view;local depth=-(v[3][1]*x+v[3][2]*y+v[3][3]*z+v[3][4])
- return(p[1]/p[4]+1)*240,(1-p[2]/p[4])*135,depth
+ return(px/w+1)*240,(1-py/w)*135,depth
 end
+function C.projector(room)
+ local c=data[room]and data[room][C.room==room and C.shot or 1]
+ return function(x,y,z)if c then return project(c,x,y,z)end end
+end
+
 local function ground(c,x,y)
  local m=c.m;local u,v=x/240-1,1-y/135
  local a,b=m[1][1]-u*m[4][1],m[1][2]-u*m[4][2]
@@ -83,12 +89,16 @@ function C.captureDirection(room,gx,gy,dx,dy,wx,wy)
  if a then return a,b end
  local n=math.sqrt(wx*wx+wy*wy);return wx/n,wy/n
 end
-function C.triangle(room,a,b,c)
- local view=current(room);if not view then return true end
- local x,y=(a[1]+b[1]+c[1])/3,(a[2]+b[2]+c[2])/3
- if x<0 or x>=480 or y<0 or y>=270 then return false end
- local s=state(view);local col,row=math.floor(x*s.depthWidth/480),math.floor(y*s.depthHeight/270)
- local z=memory.depth(s):byte(row*s.depthWidth+col+1)*s.depthStep
- return(a[3]+b[3]+c[3])/3<=z+.14
+function C.occlusion(room)
+ local view=current(room);if not view then return function()return true end end
+ local s=state(view);local depth=memory.depth(s);local sx,sy=s.depthWidth/480,s.depthHeight/270
+ local width,step=s.depthWidth,s.depthStep
+ return function(a,b,c)
+  local x,y=(a[1]+b[1]+c[1])/3,(a[2]+b[2]+c[2])/3
+  if x<0 or x>=480 or y<0 or y>=270 then return false end
+  local z=depth:byte(math.floor(y*sy)*width+math.floor(x*sx)+1)*step
+  return(a[3]+b[3]+c[3])/3<=z+.14
+ end
 end
+function C.triangle(room,a,b,c)return C.occlusion(room)(a,b,c)end
 return C

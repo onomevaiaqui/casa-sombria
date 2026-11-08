@@ -50,9 +50,10 @@ function P.projector(room,x,y,facing)
  local factor=1.8/1.852
  if metric.rooms[room]then
   local rx,ry,dx,dy=metric.basis(room)
+  local projectWorld=cameras.projector(room)
   return function(ax,ay,az)
    local right,away=(ax*c+az*s)*factor,(az*c-ax*s)*factor
-   local sx,sy,depth=cameras.project(room,gx+rx*right+dx*away,gz+ry*right+dy*away,ay*factor)
+   local sx,sy,depth=projectWorld(gx+rx*right+dx*away,gz+ry*right+dy*away,ay*factor)
    if not sx then sx,sy,depth=metric.project(room,gx+rx*right+dx*away,gz+ry*right+dy*away,ay*factor)end
    return {math.floor(sx+.5),math.floor(sy+.5),depth}
   end
