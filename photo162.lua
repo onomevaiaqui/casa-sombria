@@ -24,8 +24,7 @@ end
 function P.draw(ui)
  ui.cls(240);ui.palset(240,0);ui.palset(241,32767)
  for i,c in ipairs(texture.palette)do ui.palset(texture.indices[i],c)end
- ui.print('DESENHO INFANTIL',178,14,241)
- local co=math.cos(P.angle);local width=math.max(2,math.floor(224*math.abs(co)));local height=math.floor(150*math.cos(P.tilt));local x,y=math.floor(240-width/2),math.floor(129-height/2)
+ local co=math.cos(P.angle);local width=math.max(2,math.floor(224*math.abs(co)));local height=math.floor(150*math.cos(P.tilt));local x,y=math.floor(240-width/2),math.floor(inspection.centerY-height/2)
  ui.rectfill(x-1,y-1,x+width+1,y+height+1,texture.indices[3])
  if width==224 and height==150 and sprites and sprites[co>0 and 'drawing_front164'or 'drawing_back164']then
   ui.spr(sprites[co>0 and 'drawing_front164'or 'drawing_back164'],x,y)
@@ -36,7 +35,7 @@ function P.draw(ui)
    col=col+n;if col==texture.width then row=row+1;col=0 end
   end
  else ui.rectfill(x,y,x+width,y+height,texture.indices[9])end
- inspection.caption(ui,P.reading,y+8)
+ inspection.caption(ui,P.reading)
  inspection.controls(ui)
 end
 return P

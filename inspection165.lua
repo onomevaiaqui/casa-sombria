@@ -1,11 +1,12 @@
 -- Shared inspection rule: B reads the visible face, never an undiscovered reverse.
-local I={}
+local I={centerY=108,descriptionY=203}
 function I.text(front,back,angle,revealed)
  if back and revealed and math.cos(angle or 0)<-.72 then return back end
  return front
 end
 function I.caption(ui,text,y)
  if not text then return end
+ y=y or I.descriptionY
  local x=240-#text*3
  ui.rectfill(x-8,y,x+#text*6+8,y+18,240)
  ui.print(text,x,y+5,241)
