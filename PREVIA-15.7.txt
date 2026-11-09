@@ -1,0 +1,17 @@
+PREVIA 15.7 - combate e orientacao do inimigo
+
+Corrige a ordem das faces da malha do inimigo, preservando 438 vertices e 802 triangulos.
+Mantem a paleta existente e o custo de geometria.
+Morte do jogador inicia no mesmo update do dano fatal, sem mistura com a pose viva.
+Animacao de morte: frames 76..148 da fonte, 30 amostras a 12 Hz, 2,4 segundos.
+Ataque do inimigo: frames 16..80, velocidade 1,8, recuperacao de 0,3 segundo.
+Teste a 60 Hz: impacto apos 0,550 segundo; proximo impacto apos mais 1,517 segundo.
+Preserva territorio frontal, colisoes, esquiva e vidas: jogador 4, inimigo 5.
+Reduz 89604 bytes de dados de animacao, sem reduzir taxa de amostragem.
+Inclui as otimizacoes e limpeza do menu da previa 15.6.
+
+Validacao local: combate, morte imediata, navegacao, controles, sandbox sem package,
+resposta do movimento e 10000 atualizacoes de estresse passaram.
+Estresse Lua desktop: pico 2833,8 KiB; retencao adicional 0,3 KiB.
+Desenho desktop: aproximadamente 0,43 ms. Nao representa FPS medido no console.
+Necessita teste fisico no Lupi. Previa local, ainda nao publicada.

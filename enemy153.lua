@@ -9,7 +9,7 @@ local vertices,faces,pool={},{},{}
 local triangles={}
 for i=1,#D.triangles,7 do
  local a,b,c,d,e,f,k=D.triangles:byte(i,i+6)
- local n=#triangles;triangles[n+1],triangles[n+2],triangles[n+3],triangles[n+4]=a+b*256+1,e+f*256+1,c+d*256+1,k
+ local n=#triangles;triangles[n+1],triangles[n+2],triangles[n+3],triangles[n+4]=a+b*256+1,c+d*256+1,e+f*256+1,k
 end
 local pa,pb,pc,pd,pe,pf,pg,ph,pi,pj,pk,pl,pm,pn,po,pp
 local projectRoom,projectShot,projectX,projectY,projectAngle,projectScale
@@ -43,7 +43,7 @@ for i=1,#D.triangles/7 do pool[i]={0,0,0,0,0}end
 local function farther(a,b)return a[4]>b[4]end
 local corpseRoom,corpseShot,corpseDoors
 local homeX,homeY=6.45,4.45
-E.speed=2.8;E.runTime=0;E.mode="idle"
+E.attackRate=1.8;E.attackImpact=D.clips.attack.hitTime;E.speed=2.8;E.runTime=0;E.mode="idle"
 local doorBits={1,2,4,8,16,32,64,128}
 local doors=require('doors131')
 local function paint()
@@ -53,7 +53,7 @@ local slots={205,206,207,208,209,210,211,212,213,214,215,219,220,221,222,223}
 local function ink(n)return slots[n+1]end
 function E.palette(ui)for i,color in ipairs(D.palette)do ui.palset(slots[i],color)end end
 function E.reset()
- E.hp=5;E.x,E.y=homeX,homeY;E.state='alive';E.time=0;E.runTime=0;E.attackTime=nil;E.cooldown=1;E.mode='idle';E.moving=false;E.enabled=true;nav.clear();corpseRoom=nil
+ E.hp=5;E.x,E.y=homeX,homeY;E.state='alive';E.time=0;E.runTime=0;E.attackTime=nil;E.cooldown=.15;E.mode='idle';E.moving=false;E.enabled=true;nav.clear();corpseRoom=nil
 end
 function E.toggle()
  E.enabled=not E.enabled
@@ -117,13 +117,14 @@ function E.tick(dt,room,px,py)
  if not present then E.attackTime=nil end
  if life.dead then E.attackTime=nil;return end
  if E.attackTime then
-  local old=E.attackTime;E.attackTime=E.attackTime+dt
-  local impact=D.clips.attack.duration*.37
+  local old=E.attackTime;E.attackTime=E.attackTime+dt*E.attackRate
+  if E.attackTime<E.attackImpact*.5 then E.angle=math.atan(px-E.x,-(py-E.y))end
+  local impact=E.attackImpact
   if not E.attackHit and old<impact and E.attackTime>=impact then
    E.attackHit=true
    if clearAttack(room,px,py)then life.damage()end
   end
-  if E.attackTime>=D.clips.attack.duration then E.attackTime=nil;E.cooldown=1.2 end
+  if E.attackTime>=D.clips.attack.duration then E.attackTime=nil;E.cooldown=.3 end
   return
  end
  if present then

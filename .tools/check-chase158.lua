@@ -7,8 +7,8 @@ dofile('game.lua')
 local function get(k)for i=1,100 do local n,v=debug.getupvalue(update,i);if n==k then return v,i end end;error(k)end
 local function set(k,v)local _,i=get(k);debug.setupvalue(update,i,v)end
 local E=require('enemy153');local L=require('survival158');local N=require('chase_nav158');local M=require('metric_rooms');local C=require('cameras168')
-local D=require('enemy_data155');assert(D.clips.run.count==11 and L.clip.count==71)
-assert(#L.clip.data==71*408*3)
+local D=require('enemy_data155');assert(D.clips.run.count==11 and L.clip.count==30)
+assert(#L.clip.data==30*408*3)
 L.reset();E.reset();assert(L.hp==4 and E.hp==5)
 local hits=0
 for i=1,3000 do
@@ -35,7 +35,7 @@ assert((E.x-8.5)^2+(E.y-5.2)^2<1.5^2,'NPC stuck at tree')
 -- One hit at the attack animation's impact, with dodging and room escape.
 L.reset();E.reset();local px,py=E.x,E.y-1;E.cooldown=0
 E.tick(.01,'frente',px,py);assert(E.attackTime~=nil)
-local impact=D.clips.attack.duration*.37
+local impact=E.attackImpact/E.attackRate+1e-6
 E.tick(impact,'frente',px,py);assert(L.hp==3)
 E.tick(.1,'frente',px,py);assert(L.hp==3,'one attack deals multiple damage')
 L.reset();E.reset();E.cooldown=0;E.tick(.01,'frente',px,py);E.tick(impact,'frente',px,py-4);assert(L.hp==4,'dodged attack still hits')

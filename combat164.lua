@@ -55,6 +55,9 @@ lastPose=poseA;elapsed=1;alpha=1
 local poseCount=0
 local blendDuration=.18
 function G.preparePose(name,dt)
+ if name=='death'then
+  previousName=name;fromPose=nil;fromSocket=nil;elapsed=1;alpha=1;return
+ end
  if name~=previousName then
   local locomotion=name=='walk'or name=='run'
   local wasLocomotion=previousName=='walk'or previousName=='run'
