@@ -1923,10 +1923,12 @@ local function drawTitle()
         ui.rectfill(20,106,258,226,240)
         if controlsOpen then
             ui.print("CONTROLES",34,116,241)
-            ui.print("DIRECIONAL: MOVER",34,134,241)
-            ui.print("Y: CORRER   B: ACAO",34,151,241)
-            ui.print("R: GUARDA  R + Y: SOCO",34,168,241)
-            ui.print("A: MENU / CANCELAR",34,185,241)
+            ui.print("CIMA/BAIXO: AVANCA/RECUA",34,132,241)
+            ui.print("ESQ/DIR: GIRAR",34,147,241)
+            ui.print("Y: CORRER   B: ACAO",34,162,241)
+            ui.print("R: GUARDA  R+Y: ATACAR",34,177,241)
+            ui.print("A: INVENTARIO / CANCELAR",34,192,241)
+            ui.print("B CONFIRMA  A VOLTA",34,211,241)
         else
             ui.print("CONFIGURACOES",34,116,241)
             local options = {"VOLUME < "..volume.."% >","CONTROLES","VOLTAR"}
@@ -1934,7 +1936,6 @@ local function drawTitle()
                 ui.print((settingsChoice==index and "> " or "  ")..text,30,136+(index-1)*22,settingsChoice==index and 241 or 243)
             end
         end
-        ui.print("B CONFIRMA  A VOLTA",30,211,241)
     else
         local options = {"NOVO JOGO","CONTINUAR","CONFIGURACOES"}
         for index,text in ipairs(options) do
@@ -1949,7 +1950,6 @@ local function drawTitle()
         if titleChoice==2 then
             ui.print(canContinue and "Retomar sessao" or "Sem partida nesta sessao",30,193,243)
         end
-        ui.print("B CONFIRMAR   A VOLTAR",22,226,241)
     end
 end
 
@@ -2138,7 +2138,7 @@ function update()
     end
     ui.rectfill(0,0,479,15,240)
     local motion = walking and (running and " / CORRIDA" or " / PASSOS") or ""
-    ui.print("15.5 TESTE "..status..motion,8,3,241)
+    ui.print("15.6 TESTE "..status..motion,8,3,241)
     frameTime.hud(ui)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do

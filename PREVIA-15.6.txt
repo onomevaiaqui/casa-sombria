@@ -1,0 +1,14 @@
+PREVIA LOCAL 15.6 - DESEMPENHO E RESPOSTA
+Render inimigo: coeficientes de camera/posicao combinados em buffers fixos; indices de triangulos decodificados uma vez; calculo de profundidade mantem a mesma ordem aritmetica para empates de faces coplanares.
+1920 assinaturas de triangulos (coordenadas, cores, ordem e quantidade) identicas a 15.5, cobrindo agonia, corrida, ataque e morte em 15 cameras externas.
+Malhas, cores, imagens e dados de animacao nao alterados.
+CPU desktop por desenho: idle .549 -> .432 ms, ataque .537 -> .428 ms, corrida .546 -> .435 ms; reducao media aproximada 21%.
+AI desktop: .0032 -> .0020 ms/update, aproximadamente 38% menor; nao sao FPS nem medidas do hardware Lupi.
+Navegacao: buffers prealocados, cache de celula do alvo e descarte de retangulos distantes antes de testes de colisao. Frequencia/rotas/regras de ataques preservadas.
+Jogador: removidas inversoes redundantes de projecao nos subpassos livres. Mesmos raios de colisao e passo maximo de 2.5 cm.
+Nao ha rampa de aceleracao: velocidades integrais no primeiro quadro, testadas. Mistura idle->andar/correr reduzida de 180 para 60 ms; andar/correr/parar entre 80 ms; transicoes de combate mantidas em 180 ms.
+Velocidades, controles classicos, cadencia de passos e timestep por FPS inalterados.
+Tela inicial sem B confirmar/A voltar; instrucoes apenas no mapa de controles das configuracoes, com layout classico atualizado.
+226684 comparacoes de colisao, movimento, combate, territorio, 4/5 de vida, morte/reinicio e 10000 updates de estresse passaram.
+Estresse: pico Lua 2866.3 KiB, crescimento retido .6 KiB no desktop. Total/FPS no Lupi precisam ser medidos no console.
+Nao publicado no GitHub/Lupi.

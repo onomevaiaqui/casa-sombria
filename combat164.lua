@@ -53,14 +53,18 @@ local poseA,poseB={},{}
 for i=1,408*3 do poseA[i]=0;poseB[i]=0 end
 lastPose=poseA;elapsed=1;alpha=1
 local poseCount=0
+local blendDuration=.18
 function G.preparePose(name,dt)
  if name~=previousName then
+  local locomotion=name=='walk'or name=='run'
+  local wasLocomotion=previousName=='walk'or previousName=='run'
+  blendDuration=locomotion and(previousName=='idle'and .06 or(wasLocomotion and .08 or .18))or(name=='idle'and wasLocomotion and .08 or .18)
   if previousName and(name=='ready'or previousName=='ready'or previousName=='swing'or name=='run'or previousName=='run'or name=='walk'or previousName=='walk')then
    fromPose=lastPose;lastPose=lastPose==poseA and poseB or poseA
    if lastSocket then for i=1,12 do socketFrom[i]=lastSocket[i]end;fromSocket=socketFrom else fromSocket=nil end;elapsed=0
   else fromPose=nil;fromSocket=nil;elapsed=1 end
  end
- previousName=name;elapsed=elapsed+dt;alpha=math.min(1,elapsed/.18)
+ previousName=name;elapsed=elapsed+dt;alpha=math.min(1,elapsed/blendDuration)
  if alpha>=1 then fromPose=nil;fromSocket=nil end
 end
 function G.blendVertex(i,x,y,z)

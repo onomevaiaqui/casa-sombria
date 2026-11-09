@@ -19,6 +19,7 @@ function N.prepare(rooms)
  for _,boxes in pairs(rooms)do for _,b in ipairs(boxes)do N.rects[b]={x=b[1],y=b[3],w=b[2]-b[1],h=b[4]-b[3]}end end
 end
 function N.blocked(x,y,r,b)
+ if x<=b[1]-r or x>=b[2]+r or y<=b[3]-r or y>=b[4]+r then return false end
  circle.x,circle.y,circle.r=x,y,r;N.calls=N.calls+1
  if not overlap(circle,N.rects[b])then return false end
  local nx,ny=math.max(b[1],math.min(b[2],x)),math.max(b[3],math.min(b[4],y))

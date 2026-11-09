@@ -6,6 +6,38 @@ local life=require('survival158')
 local cameras=require('cameras168')
 local D=require('enemy_data155')
 local vertices,faces,pool={},{},{}
+local triangles={}
+for i=1,#D.triangles,7 do
+ local a,b,c,d,e,f,k=D.triangles:byte(i,i+6)
+ local n=#triangles;triangles[n+1],triangles[n+2],triangles[n+3],triangles[n+4]=a+b*256+1,e+f*256+1,c+d*256+1,k
+end
+local pa,pb,pc,pd,pe,pf,pg,ph,pi,pj,pk,pl,pm,pn,po,pp
+local projectRoom,projectShot,projectX,projectY,projectAngle,projectScale
+local depthRow,projectionSine,projectionCosine
+local function prepareProjection(room)
+ local shot=cameras.room==room and cameras.shot or 1
+ if projectRoom==room and projectShot==shot and projectX==E.x and projectY==E.y and projectAngle==E.angle and projectScale==E.scale then return end
+ local view=cameras.data[room][shot];local m,v=view.m,view.view
+ local sine,cosine=math.sin(E.angle),math.cos(E.angle)
+ local scale=E.scale
+ depthRow,projectionSine,projectionCosine=v[3],sine,cosine
+ -- Coefficients use no per-frame tables or closures.
+ local r=m[1];pa,pb,pc,pd=(r[1]*cosine+r[2]*sine)*scale,r[3]*scale,(-r[1]*sine+r[2]*cosine)*scale,r[1]*E.x+r[2]*E.y+r[4]
+ r=m[2];pe,pf,pg,ph=(r[1]*cosine+r[2]*sine)*scale,r[3]*scale,(-r[1]*sine+r[2]*cosine)*scale,r[1]*E.x+r[2]*E.y+r[4]
+ r=m[4];pi,pj,pk,pl=(r[1]*cosine+r[2]*sine)*scale,r[3]*scale,(-r[1]*sine+r[2]*cosine)*scale,r[1]*E.x+r[2]*E.y+r[4]
+ r=v[3];pm,pn,po,pp=(r[1]*cosine+r[2]*sine)*scale,r[3]*scale,(-r[1]*sine+r[2]*cosine)*scale,r[1]*E.x+r[2]*E.y+r[4]
+ projectRoom,projectShot,projectX,projectY,projectAngle,projectScale=room,shot,E.x,E.y,E.angle,E.scale
+end
+local function projectVertex(x,y,z,out)
+ local w=pi*x+pj*y+pk*z+pl
+ out[1]=math.floor(((pa*x+pb*y+pc*z+pd)/w+1)*240+.5)
+ out[2]=math.floor((1-(pe*x+pf*y+pg*z+ph)/w)*135+.5)
+ -- Preserve the original arithmetic for depth sorting, including coplanar ties.
+ local wx=(x*projectionCosine-z*projectionSine)*E.scale
+ local wy=(x*projectionSine+z*projectionCosine)*E.scale
+ local v=depthRow
+ out[3]=-(v[1]*(E.x+wx)+v[2]*(E.y+wy)+v[3]*(y*E.scale)+v[4])
+end
 for i=1,D.vertices do vertices[i]={0,0,0}end
 for i=1,#D.triangles/7 do pool[i]={0,0,0,0,0}end
 local function farther(a,b)return a[4]>b[4]end
@@ -95,8 +127,8 @@ function E.tick(dt,room,px,py)
   return
  end
  if present then
-  local dx,dy=px-E.x,py-E.y;local distance=math.sqrt(dx*dx+dy*dy)
-  if distance<=1.15 then
+  local dx,dy=px-E.x,py-E.y
+  if dx*dx+dy*dy<=1.15^2 then
    E.angle=math.atan(dx,-dy)
    if E.cooldown==0 then E.attackTime=0;E.attackHit=false end
   else moveToward(px,py,dt,px,py,true)end
@@ -106,29 +138,25 @@ function E.draw(room)
  if not E.enabled or room~=E.room then return end
  local doorMask=doors.stateMask(doorBits)
  if E.state=='dead'and corpseRoom==room and corpseShot==cameras.shot and corpseDoors==doorMask then paint();return end
- local project=cameras.projector(room)
+ prepareProjection(room)
  local clip=E.hp<=0 and D.clips.death or(E.attackTime and D.clips.attack or(E.moving and D.clips.run or D.clips.idle))
  local pos=(E.hp<=0 and E.time or(E.attackTime or(E.moving and E.runTime or E.time)))*clip.fps
  local first=math.min(clip.count-1,math.floor(pos));local second=math.min(clip.count-1,first+1)
  local blend=pos-first;local stride=D.vertices*3
  local low,span=clip.low,clip.span
- local sine,cosine=math.sin(E.angle),math.cos(E.angle)
  for i=1,D.vertices do
   local a=first*stride+(i-1)*3+1;local b=second*stride+(i-1)*3+1
   local x,y,z=string.byte(clip.data,a,a+2);local u,v,w=string.byte(clip.data,b,b+2)
   x=low[1]+(x+(u-x)*blend)/255*span[1]
   y=low[2]+(y+(v-y)*blend)/255*span[2]
   z=low[3]+(z+(w-z)*blend)/255*span[3]
-  x,z=(x*cosine-z*sine)*E.scale,(x*sine+z*cosine)*E.scale
-  local sx,sy,depth=project(E.x+x,E.y+z,y*E.scale)
-  if not sx then sx,sy,depth=metric.project(room,E.x+x,E.y+z,y*E.scale)end
-  local out=vertices[i];out[1],out[2],out[3]=math.floor(sx+.5),math.floor(sy+.5),depth
+  projectVertex(x,y,z,vertices[i])
  end
  for i=#faces,1,-1 do faces[i]=nil end
  local count=0;local visible=cameras.occlusion(room)
- for i=1,#D.triangles,7 do
-  local al,ah,bl,bh,cl,ch,color=string.byte(D.triangles,i,i+6)
-  local a,b,c=vertices[al+ah*256+1],vertices[cl+ch*256+1],vertices[bl+bh*256+1]
+ for i=1,#triangles,4 do
+  local a,b,c=vertices[triangles[i]],vertices[triangles[i+1]],vertices[triangles[i+2]]
+  local color=triangles[i+3]
   if (b[1]-a[1])*(c[2]-a[2])-(b[2]-a[2])*(c[1]-a[1])<0 and visible(a,b,c)then
    count=count+1;local f=pool[count]
    f[1],f[2],f[3],f[4],f[5]=a,b,c,a[3]+b[3]+c[3],ink(color);faces[count]=f
@@ -141,8 +169,9 @@ function E.draw(room)
 end
 function E.beforePlayer(room,x,y)
  if room~=E.room or not E.enabled then return false end
- local _,_,ed=cameras.projector(room)(E.x,E.y,0)
- local gx,gy=metric.ground(room,x,y);local _,_,pd=cameras.projector(room)(gx,gy,0)
+ local view=cameras.data[room][cameras.room==room and cameras.shot or 1].view[3]
+ local ed=-(view[1]*E.x+view[2]*E.y+view[4])
+ local gx,gy=metric.ground(room,x,y);local pd=-(view[1]*gx+view[2]*gy+view[4])
  return ed>pd
 end
 return E

@@ -79,9 +79,10 @@ end
 function P.move(room,x,y,dx,dy,dt,running,walkable,baselineInput,worldX,worldY)
  if dx==0 and dy==0 then cameras.direction(room,0,0,0,0);return x,y,0 end
  local gx,gz=P.ground(room,x,y)
- local tx,tz=P.ground(room,x+dx,y+dy)
- local ux,uz=tx-gx,tz-gz
- if worldX then ux,uz=worldX,worldY end
+ local ux,uz
+ if worldX then ux,uz=worldX,worldY else
+  local tx,tz=P.ground(room,x+dx,y+dy);ux,uz=tx-gx,tz-gz
+ end
  local length=math.sqrt(ux*ux+uz*uz)
  if length<1e-9 then return x,y,0 end
  if cameras.enabled and not baselineInput and not worldX then
@@ -91,12 +92,13 @@ function P.move(room,x,y,dx,dy,dt,running,walkable,baselineInput,worldX,worldY)
  local distance=(running and 4.1070557323 or 1.7009575856)*math.max(0,math.min(dt,.5))
  ux,uz=ux/length*distance,uz/length*distance
  local n=math.max(1,math.ceil(distance/.025));local moved=0
+ local stepX,stepY,stepDistance=ux/n,uz/n,distance/n
  for i=1,n do
-  local sx,sy=P.screen(room,gx+ux/n,gz+uz/n)
+  local nx,nz=gx+stepX,gz+stepY
+  local sx,sy=P.screen(room,nx,nz)
   if walkable(sx,sy)then
-   local ng,nh=P.ground(room,sx,sy)
-   moved=moved+math.sqrt((ng-gx)^2+(nh-gz)^2)
-   gx,gz=ng,nh;x,y=sx,sy
+   moved=moved+stepDistance
+   gx,gz=nx,nz;x,y=sx,sy
   else
    -- Slide along a screen-aligned wall without tunnelling through furniture.
    local nx,ny=P.screen(room,gx+ux/n,gz+uz/n)
