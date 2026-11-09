@@ -1,3 +1,4 @@
+local familyPhoto=require('photo162')
 local life=require('survival158')
 local steering=require('steering157')
 local enemy=require('enemy153')
@@ -1958,6 +1959,11 @@ end
 function update()
     frameTime.sample(ui)
     if titleOpen then drawTitle(); return end
+    if familyPhoto.active then
+        familyPhoto.tick(frameTime.dt,held(LEFT or 4),held(RIGHT or 2),held(UP or 1),held(DOWN or 3),held(BTN_Z or 4),held(BTN_G or 13))
+        if familyPhoto.active then familyPhoto.draw(ui)else previousA,previousB=held(BTN_G or 13),held(BTN_Z or 4)end
+        return
+    end
     life.tick(animationDelta())
     if life.dead then
         local action=life.input(held(BTN_G or 13),held(BTN_Z or 4))
@@ -2083,6 +2089,9 @@ function update()
             facing=perspective.facing(currentRoom,interaction.lookX,interaction.lookY)
             walking,running=false,false
             transitionCarry=nil
+        elseif familyPhoto.near(currentRoom,ix,iy)then
+            familyPhoto.begin();walking,running,aiming,strike=false,false,false,0
+            inventory:collect({id='family_photo',document=true})
         else
             local pickup = inventory:nearby(currentRoom,x,y)
             local result=pickup and inventory:collect(pickup)or "NADA PARA USAR"
@@ -2098,6 +2107,8 @@ function update()
         status=nearbyDoor.id=="casinha"and "B: EXAMINAR CADEADO"or nearbyDoor.id=="jardim_quintal"and "B: ABRIR PORTAO"or "B: ABRIR PORTA"
     elseif interaction and not aiming then
         status="B: EXAMINAR QUADROS"
+    elseif familyPhoto.near(currentRoom,ix,iy)and not aiming then
+        status='B: EXAMINAR FOTO'
     elseif pickup and not aiming then
         status = pickup.document and "B: PEGAR ARQUIVO" or "B: PEGAR ITEM"
     end
@@ -2137,7 +2148,7 @@ function update()
     end
     ui.rectfill(0,0,479,15,240)
     local motion = walking and (running and " / CORRIDA" or " / PASSOS") or ""
-    ui.print("15.8 TESTE "..status..motion,8,3,241)
+    ui.print("15.9 TESTE "..status..motion,8,3,241)
     frameTime.hud(ui)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do

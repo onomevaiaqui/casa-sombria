@@ -1,0 +1,11 @@
+Segundo criado-mudo no lado oposto da cama: centro local (3.5, 3.58).
+Colisao [3.25,3.75] x [3.338,3.822]. Cama, cameras e dimensoes preservadas.
+Foto de familia sobre o novo criado-mudo; B examina na posicao (3.5,3.0).
+Direcional gira foto; verso revela exatamente Catarina - 2019. A fecha.
+Foto fica consultavel em Arquivos e nao ocupa os seis espacos de itens.
+Fotografia ficticia criada com geracao de imagem, convertida a 96x72 e 16 cores.
+Textura RLE de 5946 bytes; carregada so durante a primeira inspecao.
+Novos moveis/foto sao pre-renderizados. Substitui 12 faixas existentes de 43200 bytes, sem aumentar quantidade de bitmaps de fundo.
+Profundidade dos quatro estados do quarto atualizada; geometria do jogador/inimigo preservada.
+Validado em Lua 5.5: colisao/acesso, interacao, arquivo, pista oculta, giro, fechamento, memoria de inspecao e sandbox sem package.
+Previa local, sem publicacao no GitHub. FPS e memoria no console fisico ainda precisam de verificacao.

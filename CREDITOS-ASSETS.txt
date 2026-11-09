@@ -8,3 +8,6 @@ Fontes completas e modelos originais mantidos na pasta privada de assets.
 PSX Furniture Free by heyheythere - https://heyheythere.itch.io/psx-furniture-free - CC BY 4.0
 PSX Kitchen and Food Free by heyheythere - https://heyheythere.itch.io/psx-kitchen-and-food-free - CC BY 4.0
 Cozinha: modelos posicionados, redimensionados e renderizados com paleta adaptada.
+
+Foto de familia ficticia (15.9): imagem gerada por IA para este projeto, reduzida a 96x72 / 16 cores na inspecao.
+Segundo criado-mudo: copia do modelo de criado-mudo ja utilizado no quarto, posicionado do outro lado da cama.

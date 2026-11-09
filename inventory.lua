@@ -16,6 +16,7 @@ local items = {
 }
 
 local documents = {
+    family_photo={title='Foto de familia',text='Uma fotografia encontrada no quarto.'},
     order = {title="Pedido de entrega", text="Pedido 37. Uma pizza grande. Entrega na casa 37. Pagamento na entrega. O cliente pediu para insistir na campainha."},
     letter = {title="Carta antiga", text="Achei a carta de voces da faculdade. Nao acredito que ainda guardam o copo. Se forem repetir aquela brincadeira, me esperem. Quero ver se alguem tem coragem."},
     note = {title="Bilhete na cozinha", text="A pizza ja foi pedida. Volto antes de esfriar. Deixei as coisas em cima da mesa. Nao comecem sem mim."}
@@ -47,6 +48,7 @@ function Inventory.new(sprites)
     state.sprites = sprites or {}
 
     function state:reset()
+        require('photo162').reset()
         self.bag = {"car_key","lighter","phone"}
         self.files = {"order"}
         self.collected = {}
@@ -135,7 +137,10 @@ function Inventory.new(sprites)
                     else self.fileSelected=self.fileSelected-1 end
                 end
                 if pressed.down then self.fileSelected=math.min(#self.files,self.fileSelected+1) end
-                if pressed.b then self.mode=self.mode=="read" and "grid" or "read" end
+                if pressed.b then
+                    if self.files[self.fileSelected]=='family_photo'then require('photo162').begin()
+                    else self.mode=self.mode=='read'and 'grid'or 'read'end
+                end
             end
             return
         end
