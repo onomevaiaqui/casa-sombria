@@ -1,10 +1,11 @@
-PREVIA LOCAL 15.4 - CONTROLE DIGITAL RELATIVO A TELA
-Oito direcoes via cruz; diagonais com mesma velocidade linear dos eixos.
-Giro de locomocao 16 rad/s (antes 10); mira parada 20 rad/s.
-R + cruz orienta parado entre golpes; durante golpe a orientacao fica fixa.
-Tentativa bloqueada de andar ainda permite virar para porta/alvo.
-Velocidades, escala, ciclos de passada, colisoes e direcao na troca de camera preservados.
-PC: H + WASD orienta; manter H e apertar L ataca.
-Testes: 8 direcoes de guarda sem deslocamento, giro curto, orientacao fixa durante golpe, giro em colisao e velocidades de andar/correr passaram.
-Combate, memoria, colisao do inimigo e morte tambem passaram.
-Nao publicado no GitHub/Lupi. Controle classico tipo tanque segue opcional.
+PREVIA LOCAL 15.4 - CONTROLE CLASSICO
+Escolha do usuario: cima avanca, baixo recua, esquerda/direita giram o personagem.
+Rotacao de pivo/andando 3.2 rad/s, correndo 2.5 rad/s e guarda 2.6 rad/s.
+Cima + Y corre na velocidade ja validada; recuo usa a velocidade de caminhada e ciclo de passos invertido.
+R mantem a posicao, esquerda/direita orientam entre golpes; durante golpe a orientacao fica fixa.
+Cabecalho, cenarios, escala, combate, inimigo e colisoes preservados.
+Direcao real de frente preservada ao trocar de camera e entre comodos; sem transporte da direcao relativa a tela.
+PC: W avanca, S recua, A/D giram; L corre, H guarda e H+L ataca.
+Testes de locomocao classica, giro parado, guarda, golpe, velocidades e orientacao em todas as cameras/comodos passaram.
+Teste de 10000 updates de combate e colisao/morte do inimigo tambem passou.
+Nao publicado no GitHub/Lupi.

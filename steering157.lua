@@ -1,19 +1,15 @@
--- Digital-pad steering. No analogue-stick dependency or per-frame tables.
-local S={walkRate=16,aimRate=20}
-local perspective=require('perspective')
-local cameras=require('cameras168')
-function S.turn(angle,target,dt,rate)
- local difference=(target-angle+math.pi)%(2*math.pi)-math.pi
- local limit=rate*math.max(0,math.min(dt,.5))
- return angle+math.max(-limit,math.min(limit,difference))
+-- Classic digital tank controls, independent of the active render camera.
+local S={turnRate=3.2,runTurnRate=2.5,aimTurnRate=2.6}
+local metric=require('metric_rooms')
+function S.rotate(angle,horizontal,dt,aiming,running)
+ local rate=aiming and S.aimTurnRate or(running and S.runTurnRate or S.turnRate)
+ return(angle-horizontal*rate*math.max(0,math.min(dt,.5)))%(2*math.pi)
 end
-function S.target(room,x,y,dx,dy)
- if dx==0 and dy==0 then return end
- local gx,gy=perspective.ground(room,x,y)
- local tx,ty=perspective.ground(room,x+dx,y+dy)
- local wx,wy=tx-gx,ty-gy
- if cameras.enabled then wx,wy=cameras.captureDirection(room,gx,gy,dx,dy,wx,wy)end
- if wx*wx+wy*wy<1e-12 then return end
- return perspective.facing(room,wx,wy)
+function S.forward(room,angle)
+ local rx,ry,ax,ay=metric.basis(room)
+ local sine,cosine=math.sin(angle),math.cos(angle)
+ local x,y=-(rx*sine+ax*cosine),-(ry*sine+ay*cosine)
+ local length=math.sqrt(x*x+y*y)
+ return x/length,y/length
 end
 return S

@@ -76,14 +76,15 @@ function P.facing(room,dx,dy)
  if metric.rooms[room]then return metric.facing(room,dx,dy)end
  return math.atan(-dx,-dy)
 end
-function P.move(room,x,y,dx,dy,dt,running,walkable,baselineInput)
+function P.move(room,x,y,dx,dy,dt,running,walkable,baselineInput,worldX,worldY)
  if dx==0 and dy==0 then cameras.direction(room,0,0,0,0);return x,y,0 end
  local gx,gz=P.ground(room,x,y)
  local tx,tz=P.ground(room,x+dx,y+dy)
  local ux,uz=tx-gx,tz-gz
+ if worldX then ux,uz=worldX,worldY end
  local length=math.sqrt(ux*ux+uz*uz)
  if length<1e-9 then return x,y,0 end
- if cameras.enabled and not baselineInput then
+ if cameras.enabled and not baselineInput and not worldX then
   ux,uz=cameras.captureDirection(room,gx,gz,dx,dy,ux,uz)
   length=1
  end

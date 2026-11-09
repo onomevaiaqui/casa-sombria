@@ -1655,6 +1655,7 @@ local function checkPassage(dx,dy,keyDx,keyDy)
                         crossing=false;transitionCarry=nil
                         return
                     end
+                    local headingX,headingY=steering.forward(currentRoom,facing)
                     currentRoom,x,y=exit.to,safeX,safeY
                     for _,back in ipairs(exits[currentRoom])do
                         if back.to==from then
@@ -1680,11 +1681,9 @@ local function checkPassage(dx,dy,keyDx,keyDy)
                         transitionCarry={dx=keyDx or dx,dy=keyDy or dy,x=ax/n,y=ay/n}
                     end
                     crossing=true
-                    if transitionCarry then
-                        local gx,gz=perspective.ground(currentRoom,x,y)
-                        local tx,tz=perspective.ground(currentRoom,x+transitionCarry.x,y+transitionCarry.y)
-                        facing=perspective.facing(currentRoom,tx-gx,tz-gz)
-                    end
+                    -- Preserve the actual world heading, even when walking backwards.
+                    facing=perspective.facing(currentRoom,headingX,headingY)
+                    transitionCarry=nil
                     roomNotice = ""
                 else
                     roomNotice = "FUNDO AUSENTE: "..rooms[exit.to].label
@@ -2022,38 +2021,30 @@ function update()
             enemy.tryHit(currentRoom,gx,gy,facing,combat.isBaton(inventory.equipped))
         end
     end
-    local steerDx,steerDy=dx,dy
-    -- Guard remains stationary; the cross selects where to face between strikes.
-    if aiming and strike==0 and not cancel then
-        local target=steering.target(currentRoom,x,y,steerDx,steerDy)
-        if target then facing=steering.turn(facing,target,animationDelta(),steering.aimRate)end
-    end
-    if guard or cancel then dx, dy = 0, 0 end
     local inputDx,inputDy=dx,dy
-    if dx==0 and dy==0 then crossing=false;transitionCarry=nil end
-    if transitionCarry then
-        if dx==transitionCarry.dx and dy==transitionCarry.dy then
-            dx,dy=transitionCarry.x,transitionCarry.y
-        else transitionCarry=nil end
+    local throttle=-dy
+    local forwardRun=run and throttle>0 and not guard
+    if not cancel and strike==0 then
+        facing=steering.rotate(facing,dx,animationDelta(),aiming,forwardRun)
     end
-    local oldGX,oldGZ=perspective.ground(currentRoom,x,y)
+    if guard or cancel then throttle=0 end
+    transitionCarry=nil
     local travelled,worldMoveX,worldMoveY
-    x,y,travelled,worldMoveX,worldMoveY=perspective.move(currentRoom,x,y,dx,dy,animationDelta(),run,walkable,transitionCarry~=nil)
+    if throttle~=0 then
+        local wx,wy=steering.forward(currentRoom,facing)
+        wx,wy=wx*throttle,wy*throttle
+        x,y,travelled,worldMoveX,worldMoveY=perspective.move(currentRoom,x,y,wx,wy,animationDelta(),forwardRun,walkable,true,wx,wy)
+    else
+        travelled=0
+        if dx==0 then crossing=false end
+    end
     walking=travelled>0.00001
-    running=walking and run
+    running=walking and forwardRun
     if walking then
-        local gx,gz=perspective.ground(currentRoom,x,y)
-        local desired=perspective.facing(currentRoom,gx-oldGX,gz-oldGZ)
-        facing=steering.turn(facing,desired,animationDelta(),steering.walkRate)
         local metresPerCycle=running and 3.0118408704 or 1.7576561718
-        step=(step+travelled*2*math.pi/metresPerCycle)%(2*math.pi)
+        step=(step+travelled*2*math.pi/metresPerCycle*(throttle<0 and -1 or 1))%(2*math.pi)
     end
-    -- A blocked step must still let the player turn toward a door or a target.
-    if not walking and not guard and not cancel and(steerDx~=0 or steerDy~=0)then
-        local target=steering.target(currentRoom,x,y,steerDx,steerDy)
-        if target then facing=steering.turn(facing,target,animationDelta(),steering.walkRate)end
-    end
-    local passageDx,passageDy=dx,dy
+    local passageDx,passageDy=0,0
     if worldMoveX then
         local gx,gy=metric.ground(currentRoom,x,y)
         local px,py=metric.project(currentRoom,gx+worldMoveX,gy+worldMoveY,0)
