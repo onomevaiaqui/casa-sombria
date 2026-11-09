@@ -1,0 +1,11 @@
+{
+  "version": "15.11",
+  "png_count": 399,
+  "shared_opaque_colors": 204,
+  "max_native_bitmap_bytes": 43200,
+  "scenes_proportions_collisions_unchanged_from_15_10": true,
+  "inspection_2000_rotations_retained_growth_below_kib": 8,
+  "gameplay_10000_updates_peak_lua_kib": 2766.7,
+  "gameplay_retained_growth_kib": 0.3,
+  "hardware_measurement": false
+}

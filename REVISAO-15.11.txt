@@ -1,0 +1,13 @@
+A ULTIMA ENTREGA 15.11
+
+Inspecao sem titulo acima do objeto. Papel elevado e descricao abaixo.
+Legenda: DIRECIONAL GIRAR / B LER / A VOLTAR.
+B na frente descreve Um desenho infantil. B no verso, apos revelar assinatura, le Catarina 2019.
+Regra compartilhada para leitura de arquivos e itens; segredos do verso nao substituem a face visivel.
+Novo inventario, monitor sem numeracao/fundo preto e todas as cenas mantidos.
+Nenhum bitmap, proporcao, camera ou colisao alterados desde a 15.10.
+
+Validacao: 399 imagens PNG, 204 cores opacas compartilhadas, maximo 43200 bytes por bitmap (limite 46059). Icone 64x32.
+Lua 5.5: 2000 giros/leituras sem retencao significativa; 10000 updates de combate com pico 2766.7 KiB e crescimento retido 0.3 KiB.
+Testes de inventario, inspecao, sandbox sem package, dez comodos e 451 amostras de passagens aprovados.
+Memoria informada e da Lua no desktop; validar FPS/memoria totais no Lupi fisico.
