@@ -13,9 +13,12 @@ local bx,by=M.project('quarto',3.5,3.58,0);assert(not M.walkable('quarto',bx,by)
 update();keys[BTN_Z or 4]=true;update();assert(P.active,'photo interaction did not open')
 assert(I.files[#I.files]=='family_photo'and #I.bag==3,'photo should be archived outside six slots')
 keys[BTN_Z or 4]=nil;update();assert(not P.found)
+P.tick(.01,false,false,false,false,true,false);assert(P.active and not P.transcription,'B closes or leaks clue before turning')
 texts={};P.draw(ui);assert(not table.concat(texts,' '):find('2019'),'front leaks clue')
 for i=1,30 do P.tick(1/30,false,true,false,false,false,false)end
-assert(P.found,'back clue not discovered');texts={};P.draw(ui);assert(table.concat(texts,' '):find('Catarina %- 2019'))
+assert(P.found,'back clue not discovered');texts={};P.draw(ui);assert(not table.concat(texts,' '):find('Catarina'),'clue transcribed without B')
+P.tick(.01,false,false,false,false,true,false);assert(P.active and P.transcription)
+texts={};P.draw(ui);assert(table.concat(texts,' '):find('Catarina 2019'),'B did not transcribe revealed inscription')
 P.tick(.01,false,false,false,false,false,true);assert(not P.active)
 -- Re-open from the archived photo.
 I:open();I.tab=2;I.focus='files';I.fileSelected=#I.files;I.previous={};I:handle(false,false,false,false,true,'quarto');assert(P.active)

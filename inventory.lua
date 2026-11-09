@@ -17,7 +17,7 @@ local items = {
 }
 
 local documents = {
-    family_photo={title='Foto de familia',text='Uma fotografia encontrada no quarto.'},
+    family_photo={title='Desenho infantil',text='Um desenho encontrado junto da foto no quarto.'},
     order = {title="Pedido de entrega", text="Pedido 37. Uma pizza grande. Entrega na casa 37. Pagamento na entrega. O cliente pediu para insistir na campainha."},
     letter = {title="Carta antiga", text="Achei a carta de voces da faculdade. Nao acredito que ainda guardam o copo. Se forem repetir aquela brincadeira, me esperem. Quero ver se alguem tem coragem."},
     note = {title="Bilhete na cozinha", text="A pizza ja foi pedida. Volto antes de esfriar. Deixei as coisas em cima da mesa. Nao comecem sem mim."}
@@ -215,14 +215,12 @@ function Inventory.new(sprites)
         frame(ui,19,46,148,118)
         ui.print('CONDICAO',29,56,243)
         local hp=require('survival158').hp;local health=hp>=3 and 248 or 249
-        ui.rectfill(28,75,158,111,255)
         ui.line(30,97,46,97,health);ui.line(46,97,51,92,health)
         ui.line(51,92,56,102,health);ui.line(56,102,61,82,health)
         ui.line(61,82,66,105,health);ui.line(66,105,71,97,health)
         ui.line(71,97,95,97,health);ui.line(95,97,100,92,health)
         ui.line(100,92,105,100,health);ui.line(105,100,110,97,health);ui.line(110,97,154,97,health)
         ui.print(hp>=3 and 'ESTAVEL'or(hp==2 and 'ALERTA'or(hp==1 and 'PERIGO'or 'MORTO')),29,120,health)
-        ui.print('VIDA '..hp..'/4',107,120,243)
         ui.print('EQUIPADO',29,145,243)
         local equipped=self.equipped and items[self.equipped]
         ui.print(equipped and equipped.name or 'NENHUM',84,145,241)
@@ -258,7 +256,7 @@ function Inventory.new(sprites)
             local id=self.files[self.fileSelected];local doc=id and documents[id]
             if doc then
                 ui.print(doc.title,29,190,241)
-                if id=='family_photo'then ui.print('B: EXAMINAR FOTOGRAFIA',29,205,243)
+                if id=='family_photo'then ui.print('B: EXAMINAR DESENHO',29,205,243)
                 elseif self.mode=='read'then wrapped(doc.text,29,205,66,243,4)end
             end
         end

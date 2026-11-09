@@ -1,6 +1,6 @@
 {
   "version": "15.10",
-  "images": 397,
+  "images": 399,
   "global_opaque_colors": 204,
   "max_native_image_bytes": 43200,
   "icon_size": [
@@ -9,7 +9,12 @@
   ],
   "icon_frames": 12,
   "geometry_and_collisions_match_approved_photo_preview": true,
-  "lua_desktop_stress_peak_kib": 2752.7,
+  "lua_desktop_stress_peak_kib": 2763.2,
   "retained_growth_kib": 0.3,
-  "hardware_measurement": false
+  "hardware_measurement": false,
+  "inspection_rle_bytes": 6976,
+  "inspection_native_image_bytes_each": 33600,
+  "inspection_native_images": 2,
+  "health_monitor_numeric_text": false,
+  "health_monitor_black_background": false
 }

@@ -3,17 +3,17 @@ A ULTIMA ENTREGA 15.10
 Inventario aprovado: metal gasto/cinza esverdeado/ferrugem, sem cabecalho antigo.
 Seis espacos para itens, arquivos separados, L/R alternam abas e cruz navega.
 B abre usar/equipar, combinar, inspecionar. A cancela o submenu antes de fechar.
-Foto de familia no segundo criado-mudo do quarto, com giro e pista Catarina - 2019 no verso.
+Foto de familia permanece no segundo criado-mudo. Inspecao mostra o desenho fornecido pelo usuario, com giro e inscricao diagonal Catarina 2019 no verso. B transcreve apenas depois de revelar o verso; A fecha.
 Foto fica consultavel em Arquivos, fora dos seis espacos.
 Inclui reacao curta ao dano, alcance de impacto reduzido e otimizacoes aprovadas nas previas 15.6-15.9.
 Sem comando para desativar o inimigo.
 
 MEMORIA/COMPATIBILIDADE
 Tema: 248 bytes de dados das bordas Kenney + primitivas; nenhum novo bitmap.
-Foto: 5946 bytes RLE, 96x72 e 16 cores, carregada na primeira inspecao.
+Desenho: 6976 bytes RLE nas vistas giradas e dois bitmaps de 33600 bytes, exibidos nativamente de frente/verso. Usa 16 cores existentes na paleta; carregamento somente durante inspecao.
 Cenario do quarto substitui faixas existentes; 43200 bytes/faixa, limite 46059.
-Mesmo numero de imagens e mesmas proporcoes/colisoes da previa aprovada 15.9.
+Mais dois bitmaps pequenos de inspecao; mesmas proporcoes e colisoes da previa aprovada 15.9. Monitor sem VIDA 4/4 e sem retangulo preto, com verde claro de maior contraste.
 Validacao PNG/GIF e paleta compartilhada registrada em .tools/release163-validation.json.
-Lua 5.5: 10000 updates de combate, pico 2752.7 KiB e crescimento retido 0.3 KiB.
+Lua 5.5: 10000 updates de combate, pico 2763.2 KiB e crescimento retido 0.3 KiB.
 Testes passaram: 2000 renders do inventario, foto/giro/pista, 125 estados de camera, dez comodos sem package, direcao/velocidades e 451 amostras de passagens.
 Valores de memoria sao de Lua no desktop, nao totais do hardware Lupi; confirmar FPS e memoria no console fisico.

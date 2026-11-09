@@ -22,7 +22,7 @@ keys={[13]=true};update();assert(I.visible);keys={};update();keys={[15]=true};up
 keys={};update();keys={[14]=true};update();assert(I.tab==2,'left shoulder not routed')
 -- UI only uses reserved colors, names stay short until inspection.
 labels={};I.tab=1;I.inspected=false;I.message=nil;I:draw(dofile('.tools/palette142.lua'));local text=table.concat(labels,'|')
-assert(not text:find('PERTENCES')and not text:find('ENTREGA PENDENTE'));assert(text:find('L/R: ABAS'))
+assert(not text:find('PERTENCES')and not text:find('ENTREGA PENDENTE'));assert(text:find('L/R: ABAS'));assert(not text:find('VIDA'),'numeric health remains in monitor')
 for i=240,255 do assert(palette[i])end
 collectgarbage('collect');local before=collectgarbage('count');local peak=before
 for n=1,2000 do I.tab=n%2+1;I:draw(dofile('.tools/palette142.lua'));labels={};peak=math.max(peak,collectgarbage('count'))end
