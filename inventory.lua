@@ -70,6 +70,7 @@ function Inventory.new(sprites)
     end
 
     function state:icon(id,x,y)
+        if id=="crowbar"then require("crowbar160").icon(ui,x,y);return end
         local ref = self.sprites["item_"..(id=="shed_key"and "door_key"or id)]
         if ref and type(ui.spr)=="function" then
             local ok = pcall(ui.spr,ref,x,y)

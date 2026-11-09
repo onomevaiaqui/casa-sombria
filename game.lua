@@ -2037,7 +2037,7 @@ function update()
     local nearbyDoor=doors.nearby(currentRoom,ix,iy)
     local status = roomNotice ~= "" and roomNotice or rooms[currentRoom].label
     if aiming then
-        status = combat.isBaton(inventory.equipped)and(strike>0 and "GOLPE"or "PE DE CABRA")or(strike > 0 and "SOCO" or "PUNHOS LEVANTADOS")
+        status = combat.isBaton(inventory.equipped)and(strike>0 and "GOLPE"or "MACHADINHA")or(strike > 0 and "SOCO" or "PUNHOS LEVANTADOS")
     elseif confirm and not guard and not reading then
         if nearbyDoor then
             if nearbyDoor.id=="casinha"then
@@ -2106,7 +2106,7 @@ function update()
     end
     ui.rectfill(0,0,479,15,240)
     local motion = walking and (running and " / CORRIDA" or " / PASSOS") or ""
-    ui.print("14.7 "..status..motion,8,3,241)
+    ui.print("14.8 "..status..motion,8,3,241)
     frameTime.hud(ui)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do

@@ -1,0 +1,6 @@
+Axe - PSX Zombie Apocalypse Survival Kit
+Autor: EgorZuyev
+Fonte: https://egorzuyev.itch.io/psx-zombie-apocalypse
+Licenca informada pelo autor: CC0
+Adaptacoes: escala, alinhamento da empunhadura, posicao na prateleira, cores de faces e icone de inventario para o Lupi.
+Geometria original preservada: 28 vertices e 52 triangulos.

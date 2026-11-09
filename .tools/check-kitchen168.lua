@@ -70,7 +70,17 @@ for _,name in ipairs({'idle','walk','run','punch','guard','baseball','swing'})do
   local a,b=points[1],points[math.min(80,#points)];local distance=math.sqrt((a[1]-b[1])^2+(a[2]-b[2])^2+(a[3]-b[3])^2)
   referenceDistance=referenceDistance or distance;assert(math.abs(distance-referenceDistance)<.00001,'weapon stretched')
   local nearest=1e9;for _,p in ipairs(points)do nearest=math.min(nearest,math.sqrt((p[1]-socket[1])^2+(p[2]-socket[2])^2+(p[3]-socket[3])^2))end
-  assert(nearest<.05,'grip detached from palm: '..nearest)
+  -- Coarse meshes need not have a vertex exactly at the hand; measure shaft edges too.
+  local triangles
+  for n=1,12 do local key,value=debug.getupvalue(W.held,n);if key=='heldTris'then triangles=value;break end end
+  assert(triangles,'held mesh topology missing')
+  for _,tri in ipairs(triangles)do for e=1,3 do
+   local a,b=points[tri[e]],points[tri[e%3+1]]
+   local dx,dy,dz=b[1]-a[1],b[2]-a[2],b[3]-a[3];local length=dx*dx+dy*dy+dz*dz
+   local t=length>0 and math.max(0,math.min(1,((socket[1]-a[1])*dx+(socket[2]-a[2])*dy+(socket[3]-a[3])*dz)/length))or 0
+   nearest=math.min(nearest,math.sqrt((a[1]+t*dx-socket[1])^2+(a[2]+t*dy-socket[2])^2+(a[3]+t*dz-socket[3])^2))
+  end end
+  assert(nearest<.05,'grip detached from palm surface: '..nearest)
  end
 end
 local keys={};ui.btn=function(i)return keys[i]or false end

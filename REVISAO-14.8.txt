@@ -1,0 +1,11 @@
+14.8 - Machadinha leve e packs gratuitos
+Substitui o pe de cabra pela machadinha Axe do PSX Zombie Apocalypse Survival Kit, de EgorZuyev (CC0).
+Original 28 vertices / 52 triangulos, sem aumentar a malha; comprimento total 0.50m. Conversao offline para Lua e tres cores reservadas, sem carregar FBX ou textura no console.
+Aplicada na mao, na prateleira da casinha e como icone vetorizado da propria malha no inventario, sem adicionar bitmap. Nome e descricao atualizados. ID interno crowbar mantido para compatibilidade com coleta/equipamento e partidas existentes.
+Stable Sword Outward Slash permanece inalterado: 62 quadros a 30 FPS. Cenarios, colisoes, portas e paletas dos fundos preservados.
+Packs baixados e extraidos na pasta Documents/Assets:
+- Ruas e estradas/Kkryy - Retro PSX Street Furniture (13 modelos, CC0, inclui pe de cabra)
+- Armas Brancas/EgorZuyev - PSX Zombie Apocalypse Survival Kit (CC0)
+Validacao: coleta, equipamento, encaixe na superficie do cabo, rigidez, soco sem arma, golpe com arma, cadeia de ataque, 22 transicoes e sandbox sem package passaram. Todos os 125 estados de imagem/profundidade completos.
+10000 atualizacoes de combate: pico Lua 2619.8 KB e crescimento retido 0.5 KB. Benchmark CPU desktop 1000 updates 0.606s; nao representa FPS de hardware. Previa WASM carregou e desenhou a arma.
+Nenhum PNG/GIF ou clipe corporal foi alterado. Resultado de FPS/memoria no Lupi fisico requer teste.
