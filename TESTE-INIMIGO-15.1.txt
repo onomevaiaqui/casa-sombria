@@ -1,0 +1,10 @@
+PREVIA LOCAL 15.1 - NAO PUBLICADA
+Inimigo movido da sala para frente, centro (6.45,4.45), ao lado da arvore em (7.5,5.1).
+Escala uniforme 1.65/1.8: altura de referencia 1.65 m; jogador permanece igual.
+Colisao circular de raio 0.48 m + 0.25 m do jogador, integrada ao callback de movimento existente.
+Colisao segue o ponto de apoio do inimigo; nao a malha deformada de cada frame.
+R+B desliga desenho e colisao para comparacao, mantendo os dados carregados.
+Sem IA, perseguicao ou dano, apenas teste de animacao e renderizacao.
+Lua 5.5 desktop: 10000 updates com ataques, pico 1553.2 KiB, crescimento retido 0.2 KiB.
+720 sondagens da borda e 8 aproximacoes correndo passaram sem tunelamento.
+Testes nao representam desempenho do hardware Lupi.

@@ -1,5 +1,5 @@
 -- Single animated stress-test actor; all FBX skinning is baked offline.
-local E={enabled=true,room='sala',x=2.45,y=2.65,time=0}
+local E={enabled=true,room='frente',x=6.45,y=4.45,time=0,scale=1.65/1.8,radius=.48}
 local metric=require('metric_rooms')
 local cameras=require('cameras168')
 local D=require('enemy_data153')
@@ -8,6 +8,12 @@ for i=1,D.vertices do vertices[i]={0,0,0}end
 for i=1,#D.triangles/7 do pool[i]={0,0,0,0,0}end
 local function farther(a,b)return a[4]>b[4]end
 local function ink(n)return n<16 and 224+n or 226+n end
+-- Circle footprint, summed with the same 0.25 m courier collision radius.
+function E.walkable(room,x,y)
+ if not E.enabled or room~=E.room then return true end
+ local dx,dy=x-E.x,y-E.y;local radius=E.radius+.25
+ return dx*dx+dy*dy>=radius*radius
+end
 function E.tick(dt)E.time=(E.time+dt)%D.duration end
 function E.draw(room)
  if not E.enabled or room~=E.room then return end
@@ -22,8 +28,8 @@ function E.draw(room)
   x=low[1]+(x+(u-x)*blend)/255*span[1]
   y=low[2]+(y+(v-y)*blend)/255*span[2]
   z=low[3]+(z+(w-z)*blend)/255*span[3]
-  local sx,sy,depth=project(E.x+x,E.y+z,y)
-  if not sx then sx,sy,depth=metric.project(room,E.x+x,E.y+z,y)end
+  local sx,sy,depth=project(E.x+x*E.scale,E.y+z*E.scale,y*E.scale)
+  if not sx then sx,sy,depth=metric.project(room,E.x+x*E.scale,E.y+z*E.scale,y*E.scale)end
   local out=vertices[i];out[1],out[2],out[3]=math.floor(sx+.5),math.floor(sy+.5),depth
  end
  for i=#faces,1,-1 do faces[i]=nil end

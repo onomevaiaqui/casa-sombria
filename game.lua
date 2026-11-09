@@ -1603,7 +1603,7 @@ bitmap,kitchenBitmap=roomBitmaps.sala,roomBitmaps.cozinha
 local function walkable(px,py)
     if metric.rooms[currentRoom]then
         local gx,gy=metric.ground(currentRoom,px,py)
-        return navigation.walkable(currentRoom,px,py)and doors.walkable(currentRoom,gx,gy)
+        return navigation.walkable(currentRoom,px,py)and doors.walkable(currentRoom,gx,gy)and enemy.walkable(currentRoom,gx,gy)
     end
     local radius=math.max(2,perspective.scale(currentRoom,py)*0.14)
     local vertical=math.max(1.2,radius*(py-perspective.rooms[currentRoom].horizon)/320)
@@ -2113,7 +2113,7 @@ function update()
     end
     ui.rectfill(0,0,479,15,240)
     local motion = walking and (running and " / CORRIDA" or " / PASSOS") or ""
-    ui.print("15.0 TESTE "..status..motion,8,3,241)
+    ui.print("15.1 TESTE "..status..motion,8,3,241)
     frameTime.hud(ui)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do
@@ -2129,7 +2129,7 @@ function update()
     if enemyBehind then enemy.draw(currentRoom)end
     courier()
     if not enemyBehind then enemy.draw(currentRoom)end
-    if currentRoom=='sala'then
+    if currentRoom==enemy.room then
         ui.rectfill(0,16,245,26,240)
         ui.print('R+B: INIMIGO '..(enemy.enabled and 'ON 658 TRI'or 'OFF'),8,18,241)
     end
