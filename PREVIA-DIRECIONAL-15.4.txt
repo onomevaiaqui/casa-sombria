@@ -1,0 +1,10 @@
+PREVIA LOCAL 15.4 - CONTROLE DIGITAL RELATIVO A TELA
+Oito direcoes via cruz; diagonais com mesma velocidade linear dos eixos.
+Giro de locomocao 16 rad/s (antes 10); mira parada 20 rad/s.
+R + cruz orienta parado entre golpes; durante golpe a orientacao fica fixa.
+Tentativa bloqueada de andar ainda permite virar para porta/alvo.
+Velocidades, escala, ciclos de passada, colisoes e direcao na troca de camera preservados.
+PC: H + WASD orienta; manter H e apertar L ataca.
+Testes: 8 direcoes de guarda sem deslocamento, giro curto, orientacao fixa durante golpe, giro em colisao e velocidades de andar/correr passaram.
+Combate, memoria, colisao do inimigo e morte tambem passaram.
+Nao publicado no GitHub/Lupi. Controle classico tipo tanque segue opcional.

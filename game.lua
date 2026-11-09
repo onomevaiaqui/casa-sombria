@@ -1,3 +1,4 @@
+local steering=require('steering157')
 local enemy=require('enemy153')
 local memoryControl=require('gc150');memoryControl.configure()
 local frameTime = require("frame_time");frameTime.details=true
@@ -2021,6 +2022,12 @@ function update()
             enemy.tryHit(currentRoom,gx,gy,facing,combat.isBaton(inventory.equipped))
         end
     end
+    local steerDx,steerDy=dx,dy
+    -- Guard remains stationary; the cross selects where to face between strikes.
+    if aiming and strike==0 and not cancel then
+        local target=steering.target(currentRoom,x,y,steerDx,steerDy)
+        if target then facing=steering.turn(facing,target,animationDelta(),steering.aimRate)end
+    end
     if guard or cancel then dx, dy = 0, 0 end
     local inputDx,inputDy=dx,dy
     if dx==0 and dy==0 then crossing=false;transitionCarry=nil end
@@ -2037,11 +2044,14 @@ function update()
     if walking then
         local gx,gz=perspective.ground(currentRoom,x,y)
         local desired=perspective.facing(currentRoom,gx-oldGX,gz-oldGZ)
-        local turn=(desired-facing+math.pi)%(2*math.pi)-math.pi
-        local limit=10*animationDelta()
-        facing=facing+math.max(-limit,math.min(limit,turn))
+        facing=steering.turn(facing,desired,animationDelta(),steering.walkRate)
         local metresPerCycle=running and 3.0118408704 or 1.7576561718
         step=(step+travelled*2*math.pi/metresPerCycle)%(2*math.pi)
+    end
+    -- A blocked step must still let the player turn toward a door or a target.
+    if not walking and not guard and not cancel and(steerDx~=0 or steerDy~=0)then
+        local target=steering.target(currentRoom,x,y,steerDx,steerDy)
+        if target then facing=steering.turn(facing,target,animationDelta(),steering.walkRate)end
     end
     local passageDx,passageDy=dx,dy
     if worldMoveX then
@@ -2124,7 +2134,7 @@ function update()
     end
     ui.rectfill(0,0,479,15,240)
     local motion = walking and (running and " / CORRIDA" or " / PASSOS") or ""
-    ui.print("15.3 TESTE "..status..motion,8,3,241)
+    ui.print("15.4 TESTE "..status..motion,8,3,241)
     frameTime.hud(ui)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do
