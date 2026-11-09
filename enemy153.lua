@@ -83,7 +83,7 @@ end
 local function clearAttack(room,px,py)
  if not nav.inArea(room,px,py)or life.dead then return false end
  local dx,dy=px-E.x,py-E.y;local distance=math.sqrt(dx*dx+dy*dy)
- if distance>1.35 then return false end
+ if distance>1.02 then return false end
  if distance>.01 and(dx*math.sin(E.angle)-dy*math.cos(E.angle))/distance<.35 then return false end
  for i=1,4 do local sx,sy=metric.project(E.room,E.x+dx*i/5,E.y+dy*i/5,0);if not metric.walkable(E.room,sx,sy)then return false end end
  return true
@@ -129,7 +129,7 @@ function E.tick(dt,room,px,py)
  end
  if present then
   local dx,dy=px-E.x,py-E.y
-  if dx*dx+dy*dy<=1.15^2 then
+  if dx*dx+dy*dy<=.95^2 then
    E.angle=math.atan(dx,-dy)
    if E.cooldown==0 then E.attackTime=0;E.attackHit=false end
   else moveToward(px,py,dt,px,py,true)end

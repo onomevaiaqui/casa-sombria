@@ -1714,6 +1714,8 @@ local function courier()
     local clip, position, clipName = actorClips.idle, 0, "idle"
     if life.dead then
         clip,position,clipName=life.clip,math.min(life.clip.count-1,life.time*life.clip.fps),'death'
+    elseif life.hitTime then
+        clip,position,clipName=life.hitClip,math.min(life.hitClip.count-1,life.hitTime*life.hitClip.fps),'hit'
     elseif aiming then
         if strike > 0 then
             clip, position = combat.attack(actorClips,inventory and inventory.equipped), strike-1
@@ -1980,7 +1982,8 @@ function update()
     local dy = (held(DOWN or 3) and 1 or 0) - (held(UP or 1) and 1 or 0)
     local a, b = held(BTN_G or 13), held(BTN_Z or 4)
     local run, guard = held(BTN_F or 12), held(BTN_E or 15)
-    if life.dead then dx,dy,a,b,run,guard=0,0,false,false,false,false end
+    if life.dead or life.hitTime then dx,dy,a,b,run,guard=0,0,false,false,false,false end
+    if life.hitTime then aiming,strike,walking,running=false,0,false,false;queuedStrike=false end
     local testCombo=guard and b
     if testCombo and not enemy.combo then enemy.toggle() end
     enemy.combo=testCombo
@@ -2138,7 +2141,7 @@ function update()
     end
     ui.rectfill(0,0,479,15,240)
     local motion = walking and (running and " / CORRIDA" or " / PASSOS") or ""
-    ui.print("15.7 TESTE "..status..motion,8,3,241)
+    ui.print("15.8 TESTE "..status..motion,8,3,241)
     frameTime.hud(ui)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do

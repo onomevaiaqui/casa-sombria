@@ -1,3 +1,4 @@
+local hitSockets=require('player_hit161').sockets
 -- Stable Sword Outward Slash.fbx: original 62-frame clip, 30 FPS; same 408-vertex mesh.
 local G={}
 local alphabet='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
@@ -30,10 +31,10 @@ local function orthonormal(r)
  return r
 end
 function G.socket(name,position,out)
- local frames=sockets[name]or sockets.idle;local i=math.max(0,math.min(#frames-1,position));local k=math.floor(i)+1;local t=i-math.floor(i);local a,b=frames[k],frames[math.min(k+1,#frames)];local result=out or {}
+ local frames=(name=='hit'and hitSockets)or sockets[name]or sockets.idle;local i=math.max(0,math.min(#frames-1,position));local k=math.floor(i)+1;local t=i-math.floor(i);local a,b=frames[k],frames[math.min(k+1,#frames)];local result=out or {}
  for n=1,12 do result[n]=a[n]+(b[n]-a[n])*t end
  -- A fixed palm-local grip follows wrist rotation; no world-axis clamping or roll flips.
- local weight=(name=='idle'or name=='walk'or name=='run')and 1 or 0
+ local weight=(name=='idle'or name=='walk'or name=='run'or name=='hit')and 1 or 0
 
  if weight>0 then
   local rotation,old=gripRotation,rotationScratch;for i=4,12 do old[i]=result[i]end
@@ -55,7 +56,7 @@ lastPose=poseA;elapsed=1;alpha=1
 local poseCount=0
 local blendDuration=.18
 function G.preparePose(name,dt)
- if name=='death'then
+ if name=='death'or name=='hit'then
   previousName=name;fromPose=nil;fromSocket=nil;elapsed=1;alpha=1;return
  end
  if name~=previousName then

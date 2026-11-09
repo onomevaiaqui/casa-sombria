@@ -18,7 +18,7 @@ for i=1,#D.triangles,7 do
  assert(triangles[j]==a+b*256+1 and triangles[j+1]==c+d*256+1 and triangles[j+2]==e+f*256+1,'source face winding reversed')
 end
 L.reset();E.reset();E.cooldown=0
-local px,py=E.x,E.y-1
+local px,py=E.x,E.y-.9
 E.tick(1/60,'frente',px,py);assert(E.attackTime~=nil)
 local elapsed=0
 while L.hp==4 and elapsed<1 do E.tick(1/60,'frente',px,py);elapsed=elapsed+1/60 end
@@ -29,7 +29,7 @@ assert(L.hp==2 and since<1.6,'attack recovery too long')
 assert(L.clip.sourceFirst==76 and L.clip.sourceLast==148 and L.clip.duration==2.4,'death retains idle lead-in')
 -- Lethal enemy impact and death pose must happen in the very same update.
 L.reset();E.reset();for i=1,3 do L.damage()end
-set('titleOpen',false);set('currentRoom','frente');px,py=E.x,E.y-1
+set('titleOpen',false);set('currentRoom','frente');px,py=E.x,E.y-.9
 local sx,sy=M.project('frente',px,py,0);set('x',sx);set('y',sy)
 E.attackTime=E.attackImpact-1/60*E.attackRate*.5;E.attackHit=false;E.angle=0
 update();assert(L.dead and L.hp==0 and L.time==0,'lethal hit delayed')

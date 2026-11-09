@@ -1,0 +1,7 @@
+Reacao Head Hit: frames 7..25, 9 amostras a 12 Hz, 0,6 s, 11016 bytes de vertices.
+Socket da arma acompanha a mao em cada amostra. Sem guarda inicial/retorno de boxe.
+Dano nao fatal interrompe ataque e deslocamento durante a reacao; morte tem prioridade imediata.
+Inimigo inicia ataque a 0,95 m e confirma impacto ate 1,02 m (antes 1,15/1,35 m).
+Preserva cone, obstaculos, colisoes, animacoes de ataque e geometria.
+Testes: reacao, recuperacao, morte, alcance, sandbox e 10000 updates passaram.
+FPS e memoria fisica do Lupi ainda precisam ser medidos. Previa local, nao publicada.

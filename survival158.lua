@@ -1,13 +1,15 @@
 local clip=require('player_death158')
-local L={hp=4,maxHp=4,dead=false,time=0,clip=clip}
-function L.reset()L.hp=4;L.dead=false;L.time=0;L.previousA=true;L.previousB=true end
+local hit=require('player_hit161')
+local L={hitClip=hit,hp=4,maxHp=4,dead=false,time=0,clip=clip}
+function L.reset()L.hp=4;L.dead=false;L.time=0;L.hitTime=nil;L.previousA=true;L.previousB=true end
 function L.damage()
  if L.dead then return false end
  L.hp=math.max(0,L.hp-1)
- if L.hp==0 then L.dead=true;L.time=0;L.previousA=true;L.previousB=true end
+ if L.hp>0 then L.hitTime=0 end
+ if L.hp==0 then L.dead=true;L.time=0;L.hitTime=nil;L.previousA=true;L.previousB=true end
  return true
 end
-function L.tick(dt)if L.dead then L.time=math.min(clip.duration,L.time+dt)end end
+function L.tick(dt)if L.dead then L.time=math.min(clip.duration,L.time+dt)end;if L.hitTime then L.hitTime=L.hitTime+dt;if L.hitTime>=hit.duration then L.hitTime=nil end end end
 function L.input(a,b)
  local action
  if L.dead and L.time>=clip.duration then
