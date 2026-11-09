@@ -1,0 +1,6 @@
+14.9.1 - Encaixe da machadinha na palma
+Problema: os sockets antigos usavam um ponto aproximado do osso da mao, proximo do pulso, em vez da empunhadura da malha. Na pose de guarda a diferenca medida era da ordem de 5 cm.
+Correcao: origens dos sockets recalculadas offline usando cinco vertices da palma da mesma malha de 408 vertices, em cada quadro real dos clipes idle/walk/run/guard/punch/ready/swing. Orientacao do pulso preservada. Corrigido tambem o centro transversal do cabo (aprox 1 mm).
+Mantem a animacao Stable Sword Outward Slash, escala do personagem, velocidade, 52 triangulos, posicao da arma na prateleira, icone e cenarios. Nao adiciona calculos de vertices por quadro.
+Lua 5.5: 644 amostras/interpolacoes dos sockets coincidem com a palma da malha; 91 quadros de transicao continuam alinhados. Coleta, equipamento, rigidez da arma, cadeia de ataques e colisoes passaram.
+10000 updates de combate: pico Lua 1086.6 KB, crescimento retido 0.1 KB (desktop, nao inclui memoria nativa/grafica nem representa FPS do console).
