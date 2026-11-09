@@ -1,0 +1,15 @@
+{
+  "version": "15.13",
+  "png_count": 399,
+  "shared_opaque_colors": 204,
+  "max_bitmap_bytes": 43200,
+  "icon_size": [
+    64,
+    32
+  ],
+  "turn_pose_bytes": 41616,
+  "lua_desktop_stress_peak_kib": 2770.7,
+  "retained_growth_kib": 0.4,
+  "hardware_measurement": false,
+  "existing_images_room_scales_and_movement_rates_unchanged": true
+}

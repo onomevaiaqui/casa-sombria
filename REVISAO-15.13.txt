@@ -1,0 +1,11 @@
+A ULTIMA ENTREGA 15.13 - Publicacao
+Giros Left Turn/Right Turn aplicados ao personagem parado, com sockets da arma e transicoes suaves.
+Movimento da raiz removido no bake offline; a rotacao continua exclusivamente nos controles validados.
+Mesma escala, malha, texturas, proporcoes dos comodos e velocidades.
+13 e 21 amostras com interpolacao; 41616 bytes de poses. Sem FBX ou rig em tempo real.
+Inventario e inspecao da 15.11 preservados. Inclui as regras de progressao da previa 15.12.
+A porta de rolo externa ja bloqueia passagem, mas o modelo visual e o item para abertura ainda nao foram definidos/aplicados.
+Validacao: 399 PNGs, 204 cores opacas compartilhadas, maximo 43200 bytes por bitmap, icone 64x32. Nenhuma imagem alterada desde a 15.11.
+Lua 5.5: 10000 updates com pico 2770.7 KiB e crescimento retido 0.4 KiB.
+Testes de clips/chamadas reais, passos sincronizados ao angulo, rotacao sem deslocamento, transicoes caminhar/correr/guarda/hit, controles, sandbox e bloqueios aprovados.
+Memoria e custo informados sao de testes locais; FPS e consumo total no console Lupi fisico ainda precisam ser conferidos.
