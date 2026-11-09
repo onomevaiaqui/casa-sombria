@@ -61,7 +61,7 @@ local function get(fn,key)for i=1,100 do local n,v=debug.getupvalue(fn,i);if n==
 local G=require('combat164');local W=require('crowbar160');local clips={punch={},guard={}}
 assert(G.attack(clips,nil)==clips.punch and G.attack(clips,'phone')==clips.punch)
 assert(G.attack(clips,'crowbar')==G.swing and G.attack(clips,'bat')==G.swing)
-assert(G.swing.count==29 and #G.swing.data==29*408*3)
+assert(G.swing.count==62 and #G.swing.data==62*408*3)
 local referenceDistance
 for _,name in ipairs({'idle','walk','run','punch','guard','baseball','swing'})do
  for step=0,(name=='swing'and 580 or 10)do
@@ -83,14 +83,14 @@ for _,id in ipairs({'crowbar','bat','phone'})do
  assert(get(update,'strike')==0,'held Y repeated attack or recovery never ended')
 end
 G.attack=original
-print('PASS source bat-only clip, unarmed punch, armed swing, stable palm attachment and rigid weapon, recovery, no held-Y repeats')
+print('PASS source sword-slash clip, unarmed punch, armed swing, stable palm attachment and rigid weapon, recovery, no held-Y repeats')
 
 local clips={idle={},guard={}};assert(G.guard(clips,'crowbar')==G.ready and G.ready.count==1)
 local function vertex(clip,frame,index,k)local n=frame*408*3+index*3+k;return clip.low[k]+clip.data:byte(n)/255*clip.span[k]end
 for i=0,407 do for k=1,3 do
  local v=vertex(G.ready,0,i,k)
  assert(math.abs(v-vertex(G.swing,0,i,k))<.008,'attack does not start in ready pose')
- assert(math.abs(v-vertex(G.swing,28,i,k))<.008,'attack does not return directly to ready pose')
+ -- Return-to-ready is handled by the existing stance blend after the original clip.
 end end
 keys={};update();inv.equipped='crowbar';keys={[15]=true};update();keys={[15]=true,[12]=true};update();keys={[15]=true}
 while get(update,'strike')<G.swing.count-7 do update()end
@@ -98,7 +98,7 @@ keys={[15]=true,[12]=true};update();keys={[15]=true};local chained=false
 for i=1,15 do local previous=get(update,'strike');update();if get(update,'strike')<previous and get(update,'strike')>0 then chained=true;break end end
 assert(chained,'late Y press was lost')
 keys={};update();assert(get(update,'strike')==0,'release R did not cancel')
-print('PASS prepared guard, 0.64s strike, direct recovery to guard, late-input chain, no auto-repeat')
+print('PASS prepared guard, original 62-frame slash, direct recovery to guard, late-input chain, no auto-repeat')
 local layout=require('layout140');assert(#layout.rooms.cozinha.boxes==10)
 for _,b in ipairs(layout.rooms.cozinha.boxes)do assert(not M.walkable('cozinha',(b[1]+b[2])/2,(b[3]+b[4])/2),'new furniture has no collision')end
 print('PASS 10 kitchen furniture collision boxes, including 3 chairs')

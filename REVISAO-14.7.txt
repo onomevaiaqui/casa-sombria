@@ -1,0 +1,7 @@
+14.7 - Movimento Stable Sword Outward Slash
+Substitui somente o ataque e a guarda de arma longa pelo FBX enviado pelo usuario.
+62 quadros a 30 FPS, aproximadamente 2.07 segundos, sem acelerar o movimento. Mesma malha de 408 vertices e escala corporal.
+Posicoes de palma e eixos da mao direita amostrados em todos os quadros; movimento XY da raiz removido para preservar posicao de colisao. Transicao de retorno usa o blend existente.
+Soco, caminhada, corrida, controles, cenarios, paletas, colisoes e otimizacoes 14.6 preservados. Nenhum FBX carregado no console.
+Testes: transicoes, cadeado 2019, coleta/equipamento, rigidez e encaixe da arma, ataque desarmado/armado, fila do proximo golpe, sandbox sem package passaram.
+10000 updates de combate: pico Lua 2745 KB, crescimento retido 0.5 KB; valores desktop, sem memoria nativa/grafica. Performance fisica ainda requer teste.
