@@ -1,3 +1,5 @@
+local inventoryLeftButton=INVENTORY_LEFT or BTN_Q or 14
+local inventoryRightButton=INVENTORY_RIGHT or BTN_E or 15
 local familyPhoto=require('photo162')
 local life=require('survival158')
 local steering=require('steering157')
@@ -1931,7 +1933,8 @@ local function drawTitle()
             ui.print("Y: CORRER   B: ACAO",34,162,241)
             ui.print("R: GUARDA  R+Y: ATACAR",34,177,241)
             ui.print("A: INVENTARIO / CANCELAR",34,192,241)
-            ui.print("B CONFIRMA  A VOLTA",34,211,241)
+            ui.print("L/R: ABAS DO INVENTARIO",34,207,241)
+            ui.print("B CONFIRMA  A VOLTA",34,222,241)
         else
             ui.print("CONFIGURACOES",34,116,241)
             local options = {"VOLUME < "..volume.."% >","CONTROLES","VOLTAR"}
@@ -2003,7 +2006,7 @@ function update()
     if not guard then aimCancelled = false end
     if cancel then
         if inventory.visible then
-            inventory:close()
+            inventory:back()
         else
             inventory:open()
             transitionCarry=nil
@@ -2014,7 +2017,7 @@ function update()
     end
     if inventory.visible then
         walking,running = false,false
-        inventory:handle(held(UP or 1),held(DOWN or 3),held(LEFT or 4),held(RIGHT or 2),b,currentRoom)
+        inventory:handle(held(UP or 1),held(DOWN or 3),held(LEFT or 4),held(RIGHT or 2),b,currentRoom,held(inventoryLeftButton),held(inventoryRightButton))
         inventory:draw(bitmapPalette or Palette)
         return
     end
@@ -2148,7 +2151,7 @@ function update()
     end
     ui.rectfill(0,0,479,15,240)
     local motion = walking and (running and " / CORRIDA" or " / PASSOS") or ""
-    ui.print("15.9 TESTE "..status..motion,8,3,241)
+    ui.print("15.10 TESTE "..status..motion,8,3,241)
     frameTime.hud(ui)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do

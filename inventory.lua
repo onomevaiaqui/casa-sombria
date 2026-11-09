@@ -1,3 +1,4 @@
+local theme=require('inventory_theme163')
 local Inventory = {}
 
 local items = {
@@ -52,7 +53,7 @@ function Inventory.new(sprites)
         self.bag = {"car_key","lighter","phone"}
         self.files = {"order"}
         self.collected = {}
-        self.visible,self.tab,self.focus = false,1,"tabs"
+        self.visible,self.tab,self.focus = false,1,"items"
         self.selected,self.fileSelected = 1,1
         self.mode,self.action,self.inspected,self.message = "grid",1,false,nil
         self.equipped,self.combineSource = nil,nil
@@ -63,6 +64,7 @@ function Inventory.new(sprites)
     function state:open()
         self.visible = true
         self.mode,self.inspected,self.message = "grid",false,nil
+        self.focus=self.tab==1 and "items"or "files"
         self.previous = {}
     end
 
@@ -99,13 +101,18 @@ function Inventory.new(sprites)
         return "Nao ha onde usar este item aqui."
     end
 
-    function state:handle(up,down,left,right,confirm,room)
-        local input = {up=up,down=down,left=left,right=right,b=confirm}
+    function state:handle(up,down,left,right,confirm,room,shoulderLeft,shoulderRight)
+        local input = {up=up,down=down,left=left,right=right,b=confirm,l=shoulderLeft,r=shoulderRight}
         local pressed = {}
         for key,value in pairs(input) do
             pressed[key] = value and not self.previous[key]
         end
         self.previous = input
+        if pressed.l or pressed.r then
+            self.tab=self.tab==1 and 2 or 1;self.focus=self.tab==1 and "items"or "files"
+            self.mode,self.inspected,self.message,self.combineSource="grid",false,nil,nil
+            return
+        end
         if self.mode=="actions" then
             if pressed.up then self.action = (self.action+1)%3+1 end
             if pressed.down then self.action = self.action%3+1 end
@@ -128,33 +135,22 @@ function Inventory.new(sprites)
             return
         end
         if self.tab==2 then
-            if self.focus=="tabs" then
-                if pressed.left or pressed.right then self.tab=1 end
-                if pressed.down then self.focus="files" end
-            else
-                if pressed.up then
-                    if self.fileSelected==1 then self.focus="tabs"
-                    else self.fileSelected=self.fileSelected-1 end
-                end
-                if pressed.down then self.fileSelected=math.min(#self.files,self.fileSelected+1) end
-                if pressed.b then
-                    if self.files[self.fileSelected]=='family_photo'then require('photo162').begin()
-                    else self.mode=self.mode=='read'and 'grid'or 'read'end
-                end
+            self.focus='files'
+            if pressed.up then self.fileSelected=math.max(1,self.fileSelected-1);self.mode='grid'end
+            if pressed.down then self.fileSelected=math.min(#self.files,self.fileSelected+1);self.mode='grid'end
+            if pressed.b and self.files[self.fileSelected]then
+                if self.files[self.fileSelected]=='family_photo'then require('photo162').begin()
+                else self.mode=self.mode=='read'and 'grid'or 'read'end
             end
             return
         end
-        if self.focus=="tabs" then
-            if pressed.left or pressed.right then self.tab=2;self.mode="grid" end
-            if pressed.down then self.focus="items" end
-            return
-        end
+        self.focus='items'
         local old = self.selected
         if pressed.left and (self.selected-1)%3>0 then self.selected=self.selected-1 end
         if pressed.right and (self.selected-1)%3<2 then self.selected=self.selected+1 end
         if pressed.up then
             if self.selected<=3 then
-                if self.mode~="combine" then self.focus="tabs" end
+                -- Top row stays in the grid; shoulders select tabs.
             else self.selected=self.selected-3 end
         end
         if pressed.down and self.selected<=3 then self.selected=self.selected+3 end
@@ -202,81 +198,71 @@ function Inventory.new(sprites)
     end
 
 
+    function state:back()
+        if self.mode~='grid'then self.mode,self.message,self.combineSource='grid',nil,nil
+        else self:close()end
+    end
+
     function state:draw(palette)
-        for i,color in ipairs(palette) do ui.palset(i-1,color) end
-        ui.palset(240,0)
-        ui.palset(241,32767)
-        ui.palset(242,11674)
-        ui.palset(243,1000)
-        ui.palset(244,130)
-        ui.palset(245,16912)
-        ui.palset(246,2146)
-        ui.cls(240)
-        ui.print("INVENTARIO",185,6,241)
-        ui.print((self.tab==1 and "> " or "  ").."ITENS",176,26,self.tab==1 and 242 or 245)
-        ui.print((self.tab==2 and "> " or "  ").."ARQUIVOS",302,26,self.tab==2 and 242 or 245)
-        ui.rect(12,42,145,167,242)
-        ui.print("CONDICAO",24,53,241)
-        local hp=require('survival158').hp
-        ui.print(hp>=3 and 'BEM'or(hp==2 and 'ALERTA'or(hp==1 and 'PERIGO'or 'MORTO')),24,81,hp>=3 and 243 or 244)
-        ui.print('VIDA '..hp..'/4',24,94,241)
-        ui.line(24,72,45,72,243);ui.line(45,72,49,63,243)
-        ui.line(49,63,54,78,243);ui.line(54,78,61,72,243)
-        ui.line(61,72,132,72,243)
-        ui.print("EQUIPADO",24,111,241)
-        if self.equipped then
-            self:icon(self.equipped,60,128)
-        else ui.print("NENHUM",24,140,245) end
+        for i,color in ipairs(palette)do ui.palset(i-1,color)end
+        theme.palette(ui);ui.cls(240)
+        local frame=theme.frame
+        frame(ui,8,8,464,254)
+        frame(ui,19,19,91,19,self.tab==1);frame(ui,114,19,91,19,self.tab==2)
+        ui.print('ITENS',46,24,self.tab==1 and 241 or 243)
+        ui.print('ARQUIVOS',133,24,self.tab==2 and 241 or 243)
+        ui.print('L/R: ABAS',380,25,243)
+        frame(ui,19,46,148,118)
+        ui.print('CONDICAO',29,56,243)
+        local hp=require('survival158').hp;local health=hp>=3 and 248 or 249
+        ui.rectfill(28,75,158,111,255)
+        ui.line(30,97,46,97,health);ui.line(46,97,51,92,health)
+        ui.line(51,92,56,102,health);ui.line(56,102,61,82,health)
+        ui.line(61,82,66,105,health);ui.line(66,105,71,97,health)
+        ui.line(71,97,95,97,health);ui.line(95,97,100,92,health)
+        ui.line(100,92,105,100,health);ui.line(105,100,110,97,health);ui.line(110,97,154,97,health)
+        ui.print(hp>=3 and 'ESTAVEL'or(hp==2 and 'ALERTA'or(hp==1 and 'PERIGO'or 'MORTO')),29,120,health)
+        ui.print('VIDA '..hp..'/4',107,120,243)
+        ui.print('EQUIPADO',29,145,243)
+        local equipped=self.equipped and items[self.equipped]
+        ui.print(equipped and equipped.name or 'NENHUM',84,145,241)
+        frame(ui,19,180,434,69)
         if self.tab==1 then
             for index=1,6 do
-                local x=168+((index-1)%3)*100
-                local y=46+math.floor((index-1)/3)*61
-                local selected = self.selected==index and self.focus~="tabs"
-                if selected then ui.rectfill(x+1,y+1,x+88,y+54,246) end
-                ui.rect(x,y,x+89,y+55,selected and 241 or 242)
+                local x=179+((index-1)%3)*92;local y=46+math.floor((index-1)/3)*59
+                frame(ui,x,y,86,54,self.selected==index)
+                ui.print('0'..index,x+7,y+6,243)
                 local id=self.bag[index]
-                if id then
-                    self:icon(id,x+29,y+8)
-                    if id==self.equipped then ui.print("E",x+76,y+4,243) end
-                end
+                if id then self:icon(id,x+27,y+10);if id==self.equipped then ui.print('E',x+72,y+6,248)end end
             end
-            ui.print(#self.bag.."/6",430,8,241)
-            local id=self.bag[self.selected]
-            local item=id and items[id]
-            ui.rect(12,176,466,228,242)
-            if item then
-                ui.print(item.name,24,184,241)
-                local detail = self.message or (self.inspected and item.detail or "")
-                if self.inspected and id=="remote" and self.remoteReady and not self.message then
-                    detail="Controle com a pilha instalada. O LED acende."
-                end
-                if self.inspected and id=="lighter" and not self.message then
-                    detail = self.lit and "Isqueiro vermelho. Esta aceso." or "Isqueiro vermelho. Ainda tem gas."
-                end
-                wrapped(detail,24,201,53,245,2)
-            elseif self.message then wrapped(self.message,24,201,53,245,2) end
-            if self.mode=="actions" and item then
-                ui.rectfill(279,76,463,155,240)
-                ui.rect(279,76,463,155,242)
-                local actions={item.equippable and "EQUIPAR" or "USAR","COMBINAR","INSPECIONAR"}
-                for index,text in ipairs(actions) do
-                    ui.print((self.action==index and "> " or "  ")..text,290,87+(index-1)*22,self.action==index and 241 or 245)
-                end
+            ui.print(#self.bag..' / 6 ESPACOS',359,169,243)
+            local id=self.bag[self.selected];local item=id and items[id]
+            ui.print(item and item.name or 'VAZIO',29,190,241)
+            local detail=self.message or(self.inspected and item and item.detail or '')
+            if self.inspected and id=='remote'and self.remoteReady and not self.message then detail='Controle com a pilha instalada. O LED acende.'end
+            if self.inspected and id=='lighter'and not self.message then detail=self.lit and 'Isqueiro vermelho. Esta aceso.'or 'Isqueiro vermelho. Ainda tem gas.'end
+            wrapped(detail,29,205,66,243,3)
+            if self.mode=='actions'and item then
+                frame(ui,307,85,140,74,true)
+                ui.print((self.action==1 and '> 'or '  ')..(item.equippable and 'EQUIPAR'or 'USAR'),317,97,self.action==1 and 241 or 243)
+                ui.print((self.action==2 and '> 'or '  ')..'COMBINAR',317,115,self.action==2 and 241 or 243)
+                ui.print((self.action==3 and '> 'or '  ')..'INSPECIONAR',317,133,self.action==3 and 241 or 243)
             end
         else
-            ui.rect(164,44,466,228,242)
-            if self.mode=="read" and self.files[self.fileSelected] then
-                local doc=documents[self.files[self.fileSelected]]
-                ui.print(doc.title,176,54,241)
-                wrapped(doc.text,176,78,34,245,11)
-            else
-                for index,id in ipairs(self.files) do
-                    ui.print((self.fileSelected==index and self.focus~="tabs" and "> " or "  ")..documents[id].title,174,61+(index-1)*23,241)
-                end
-                ui.print("B LER / VOLTAR A LISTA",174,211,245)
+            for index,id in ipairs(self.files)do
+                local y=46+(index-1)*28
+                frame(ui,179,y,274,25,self.fileSelected==index)
+                ui.print(documents[id].title,190,y+8,self.fileSelected==index and 241 or 243)
+            end
+            ui.print('ARQUIVOS NAO OCUPAM ESPACOS',181,169,243)
+            local id=self.files[self.fileSelected];local doc=id and documents[id]
+            if doc then
+                ui.print(doc.title,29,190,241)
+                if id=='family_photo'then ui.print('B: EXAMINAR FOTOGRAFIA',29,205,243)
+                elseif self.mode=='read'then wrapped(doc.text,29,205,66,243,4)end
             end
         end
-        ui.print("A FECHA  B ACOES  CIMA: ABAS",20,235,245)
+        ui.print('A: VOLTAR   B: ACOES   L/R: ITENS / ARQUIVOS',29,251,243)
     end
 
     state:reset()
@@ -284,5 +270,3 @@ function Inventory.new(sprites)
 end
 
 return Inventory
-
-

@@ -11,3 +11,5 @@ Cozinha: modelos posicionados, redimensionados e renderizados com paleta adaptad
 
 Foto de familia ficticia (15.9): imagem gerada por IA para este projeto, reduzida a 96x72 / 16 cores na inspecao.
 Segundo criado-mudo: copia do modelo de criado-mudo ja utilizado no quarto, posicionado do outro lado da cama.
+
+Interface 15.10: UI Pack by Kenney Vleugels (https://kenney-assets.itch.io/ui-pack), CC0. Bordas adaptadas e recoloridas para metal gasto e ferrugem; desenho por primitivas, sem novo bitmap de tela inteira. Licenca em KENNEY-UI-LICENSE.txt.

@@ -1,0 +1,15 @@
+{
+  "version": "15.10",
+  "images": 397,
+  "global_opaque_colors": 204,
+  "max_native_image_bytes": 43200,
+  "icon_size": [
+    64,
+    32
+  ],
+  "icon_frames": 12,
+  "geometry_and_collisions_match_approved_photo_preview": true,
+  "lua_desktop_stress_peak_kib": 2752.7,
+  "retained_growth_kib": 0.3,
+  "hardware_measurement": false
+}
