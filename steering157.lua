@@ -3,7 +3,7 @@ local S={turnRate=3.2,runTurnRate=2.5,aimTurnRate=2.6}
 local metric=require('metric_rooms')
 function S.rotate(angle,horizontal,dt,aiming,running)
  local rate=aiming and S.aimTurnRate or(running and S.runTurnRate or S.turnRate)
- return(angle-horizontal*rate*math.max(0,math.min(dt,.5)))%(2*math.pi)
+ return(angle+horizontal*rate*math.max(0,math.min(dt,.5)))%(2*math.pi)
 end
 function S.forward(room,angle)
  local rx,ry,ax,ay=metric.basis(room)

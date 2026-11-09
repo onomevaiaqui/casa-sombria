@@ -21,10 +21,10 @@ local bx,by=M.ground('frente',get('x'),get('y'));assert(math.abs(bx-9.7)<1e-7 an
 assert(math.cos(get('facing')-startAngle)>.99999,'backpedaling turns actor')
 center();keys={[1]=true};for i=1,15 do update()end
 assert(math.abs(get('x')-x)<1e-8 and math.abs(get('y')-y)<1e-8,'turning translates player')
-assert(math.cos(get('facing')-(startAngle-S.turnRate/4))>.99999,'right rotation sign')
+assert(math.cos(get('facing')-(startAngle+S.turnRate/4))>.99999,'right rotation sign')
 center();keys={[15]=true,[0]=true,[2]=true};for i=1,15 do update()end
 assert(math.abs(get('x')-x)<1e-8 and math.abs(get('y')-y)<1e-8,'guard translates player')
-assert(math.cos(get('facing')-(startAngle+S.aimTurnRate/4))>.99999,'guard cannot rotate')
+assert(math.cos(get('facing')-(startAngle-S.aimTurnRate/4))>.99999,'guard cannot rotate')
 keys={};update();set('facing',.75);keys={[15]=true,[12]=true,[0]=true};update();keys={[15]=true,[0]=true}
 for i=1,15 do update();assert(math.abs(get('facing')-.75)<1e-8,'turns during active swing')end
 center();keys={[2]=true,[12]=true};for i=1,15 do update()end

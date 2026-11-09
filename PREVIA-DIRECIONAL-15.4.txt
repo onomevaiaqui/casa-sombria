@@ -9,3 +9,5 @@ PC: W avanca, S recua, A/D giram; L corre, H guarda e H+L ataca.
 Testes de locomocao classica, giro parado, guarda, golpe, velocidades e orientacao em todas as cameras/comodos passaram.
 Teste de 10000 updates de combate e colisao/morte do inimigo tambem passou.
 Nao publicado no GitHub/Lupi.
+
+Correcao do teste: sentido dos giros invertido conforme observacao do usuario, inclusive em guarda.
