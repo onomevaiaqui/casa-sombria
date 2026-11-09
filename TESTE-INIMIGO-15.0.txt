@@ -1,0 +1,14 @@
+A ULTIMA ENTREGA - 15.0 - TESTE DE DESEMPENHO
+Uma personagem do FBX Zombie Agonizing fornecido pelo usuario, na sala.
+325 vertices / 658 triangulos originais, sem decimacao da malha.
+Animacao de 11.633 s: 141 amostras a 12 Hz com interpolacao por frame.
+137475 bytes de posicoes quantizadas. Skinning e leitura FBX somente offline.
+Cores de faces adaptadas a paleta ja reservada ao jogador; nenhum bitmap alterado.
+R+B alterna o inimigo para comparar FPS/CPU na mesma camera; nao apertar Y junto.
+No PC: H+J. O contador continua exibindo FPS, CPU e memoria Lua quando disponiveis.
+Teste visual de animacao: ainda sem perseguicao, dano, IA ou combate do inimigo.
+O teste OFF desliga o desenho, mas mantem os dados carregados: compara CPU/FPS, nao carga de memoria.
+Validacao Lua 5.5 desktop: 10000 updates com ataques; pico 1228.4 KiB e crescimento retido 0.1 KiB.
+Sandbox sem package: inicializacao e 10 comodos passaram. Previa WASM carregou e desenhou o inimigo.
+Valores de desktop NAO representam FPS nem memoria total do hardware Lupi.
+Medir no console parado e andando, com e sem machadinha, inimigo ON/OFF.

@@ -1,3 +1,4 @@
+local enemy=require('enemy153')
 local memoryControl=require('gc150');memoryControl.configure()
 local frameTime = require("frame_time");frameTime.details=true
 local metric = require("metric_rooms")
@@ -1966,6 +1967,10 @@ function update()
     local dy = (held(DOWN or 3) and 1 or 0) - (held(UP or 1) and 1 or 0)
     local a, b = held(BTN_G or 13), held(BTN_Z or 4)
     local run, guard = held(BTN_F or 12), held(BTN_E or 15)
+    local testCombo=guard and b
+    if testCombo and not enemy.combo then enemy.enabled=not enemy.enabled end
+    enemy.combo=testCombo
+    if testCombo then b=false end
     local cancel, confirm, attack = a and not previousA, b and not previousB, run and not previousY
     previousA, previousB, previousY = a, b, run
     local reading=dialogue.active
@@ -2108,7 +2113,7 @@ function update()
     end
     ui.rectfill(0,0,479,15,240)
     local motion = walking and (running and " / CORRIDA" or " / PASSOS") or ""
-    ui.print("14.9.1 "..status..motion,8,3,241)
+    ui.print("15.0 TESTE "..status..motion,8,3,241)
     frameTime.hud(ui)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do
@@ -2119,7 +2124,15 @@ function update()
         end
     end
     if currentRoom=='ferramentas'and not inventory.collected.crowbar then crowbar.pickup(cameras,ui)end
+    enemy.tick(animationDelta())
+    local enemyBehind=enemy.beforePlayer(currentRoom,x,y)
+    if enemyBehind then enemy.draw(currentRoom)end
     courier()
+    if not enemyBehind then enemy.draw(currentRoom)end
+    if currentRoom=='sala'then
+        ui.rectfill(0,16,245,26,240)
+        ui.print('R+B: INIMIGO '..(enemy.enabled and 'ON 658 TRI'or 'OFF'),8,18,241)
+    end
     if not cameras.active and currentRoom=="garagem" and carSprite and native then
         local gx,gy=metric.ground(currentRoom,x,y)
         if gy>5.15 then ui.spr(carSprite,metric.carMask.x,metric.carMask.y)end
