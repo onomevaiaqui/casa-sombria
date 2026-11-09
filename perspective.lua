@@ -50,6 +50,8 @@ function P.projector(room,x,y,facing)
  local factor=1.8/1.852
  if metric.rooms[room]then
   local rx,ry,dx,dy=metric.basis(room)
+  local combined=cameras.actorProjector(room,gx,gz,s,c,factor,rx,ry,dx,dy)
+  if combined then return combined end
   local projectWorld=cameras.projector(room)
   return function(ax,ay,az,out)
    local right,away=(ax*c+az*s)*factor,(az*c-ax*s)*factor

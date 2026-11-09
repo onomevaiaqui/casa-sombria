@@ -1,0 +1,16 @@
+14.6 - Renderizacao do combate no Lupi
+Gargalos confirmados no codigo: pe de cabra rigidamente desenhado com 161 vertices/318 triangulos por quadro; transformacoes ator/mundo/camera repetidas por vertice; primitivas horizontais sobrescritas mais de uma vez.
+Assets de moveis e cenarios ja sao bitmaps nativos: modelos originais FBX/GLB nao sao carregados durante a partida. O movimento e amostrado de dados compactos com a mesma topologia de 408 vertices, sem resolver o rig FBX em tempo real.
+Correcoes:
+- Pe de cabra na mao: 52 vertices/100 triangulos, reduzido offline no Blender, preservando contorno e espaco local da palma. Mesh da coleta preservada.
+- Matriz de projecao composta uma vez por quadro; mesmo tamanho, camera e interpolacao.
+- Remove apenas pontos/linhas horizontais integralmente sobrescritos por uma primitiva identica posterior, depois da oclusao. Ordem do restante mantida.
+- Coleta de lixo com pause 140 em vez de 110, para evitar iniciar ciclos com apenas 10% de crescimento. Nao forca coleta completa por quadro.
+Validacao:
+260 quadros: 170915 para 114576 chamadas de triangulos (-33%). So poda de primitivas: zero pixels alterados pelo rasterizador de scanlines de referencia. Projecao composta: comandos renderizados identicos.
+LOD da arma: media 10.33 pixels diferentes por quadro; maximo 61 de 129600, em 260 quadros. Cenário, personagem e clipe de movimento preservados.
+CPU desktop: 1000 updates de combate 0.946s antes/0.659s depois (~30% menos); nao representa FPS no console.
+10000 updates de combate com coleta ativa: pico Lua 2650.8 KB, crescimento retido 0.5 KB. Nao inclui memoria grafica/nativa.
+125 estados, sandbox sem package, colisoes, 451 portas, 42 travessias de portao, cadeado 2019, arma rigida e ataques passaram.
+Sem alteracao de PNG/GIF, resolucao ou paleta; cada bitmap continua dentro de 46059 bytes.
+A contribuicao exata do coletor no hardware e a meta de 15 FPS precisam de confirmacao no Lupi fisico.

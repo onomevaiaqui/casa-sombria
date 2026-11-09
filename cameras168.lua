@@ -22,6 +22,21 @@ function C.projector(room)
  return function(x,y,z)if c then return project(c,x,y,z)end end
 end
 
+-- Combine rigid actor/world/camera transforms once, not for each vertex.
+function C.actorProjector(room,gx,gy,sine,cosine,factor,rx,ry,dx,dy)
+ local c=data[room]and data[room][C.room==room and C.shot or 1];if not c then return end
+ local xx,xy=(rx*cosine-dx*sine)*factor,(ry*cosine-dy*sine)*factor
+ local zx,zy=(rx*sine+dx*cosine)*factor,(ry*sine+dy*cosine)*factor
+ local function row(v)return v[1]*xx+v[2]*xy,v[3]*factor,v[1]*zx+v[2]*zy,v[1]*gx+v[2]*gy+v[4]end
+ local a,b,d,e=row(c.m[1]);local f,g,h,i=row(c.m[2]);local j,k,l,m=row(c.m[4]);local n,o,p,q=row(c.view[3])
+ return function(x,y,z,out)
+  local w=j*x+k*y+l*z+m
+  local sx=((a*x+b*y+d*z+e)/w+1)*240
+  local sy=(1-(f*x+g*y+h*z+i)/w)*135
+  out=out or {};out[1],out[2],out[3]=math.floor(sx+.5),math.floor(sy+.5),-(n*x+o*y+p*z+q)
+  return out
+ end
+end
 local function ground(c,x,y)
  local m=c.m;local u,v=x/240-1,1-y/135
  local a,b=m[1][1]-u*m[4][1],m[1][2]-u*m[4][2]

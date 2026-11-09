@@ -67,7 +67,7 @@ for _,name in ipairs({'idle','walk','run','punch','guard','baseball','swing'})do
  for step=0,(name=='swing'and 580 or 10)do
   local socket=G.socket(name,step/10);local points={}
   W.held(function(x,y,z)points[#points+1]={x,y,z};return{x,y,z+10}end,socket,{})
-  local a,b=points[1],points[80];local distance=math.sqrt((a[1]-b[1])^2+(a[2]-b[2])^2+(a[3]-b[3])^2)
+  local a,b=points[1],points[math.min(80,#points)];local distance=math.sqrt((a[1]-b[1])^2+(a[2]-b[2])^2+(a[3]-b[3])^2)
   referenceDistance=referenceDistance or distance;assert(math.abs(distance-referenceDistance)<.00001,'weapon stretched')
   local nearest=1e9;for _,p in ipairs(points)do nearest=math.min(nearest,math.sqrt((p[1]-socket[1])^2+(p[2]-socket[2])^2+(p[3]-socket[3])^2))end
   assert(nearest<.05,'grip detached from palm: '..nearest)

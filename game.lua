@@ -1,5 +1,5 @@
 -- Collect earlier to leave headroom in the physical console Lua heap.
-pcall(collectgarbage,'setpause',110)
+pcall(collectgarbage,'setpause',140)
 pcall(collectgarbage,'setstepmul',200)
 local frameTime = require("frame_time")
 local metric = require("metric_rooms")
@@ -1703,6 +1703,7 @@ local function animationDelta() return frameTime.dt end
 
 local courierVertices,courierFaces,courierPool,courierAccepted={},{},{},{}
 local courierCache
+local overwrittenLines,prunedFaces={},{}
 -- Reserve renderer buffers before play, avoiding first-attack table growth.
 for i=1,408 do courierVertices[i]={0,0,0}end
 for i=1,#actorTriangles/7 do courierPool[i]={0,0,0,0,0}end
@@ -1791,11 +1792,27 @@ local function courier()
     local accepted=courierAccepted;for i=#accepted,1,-1 do accepted[i]=nil end
     for _,face in ipairs(faces)do
         local a,b,c=face[1],face[2],face[3]
-        if visible(a,b,c)then
-            accepted[#accepted+1]=face
-            ui.trisfill(a[1],a[2],b[1],b[2],c[1],c[2],face[5])
-        end
+        if visible(a,b,c)then accepted[#accepted+1]=face end
     end
+    -- A later identical horizontal primitive covers every pixel of the earlier one.
+    -- Process visible faces back-to-front; retain original painter order for the rest.
+    for key in pairs(overwrittenLines)do overwrittenLines[key]=nil end
+    for i=#prunedFaces,1,-1 do prunedFaces[i]=nil end
+    local keep=prunedFaces
+    for i=#accepted,1,-1 do
+        local f=accepted[i];local a,b,c=f[1],f[2],f[3];local retain=true
+        if a[2]==b[2]and b[2]==c[2]then
+            local lo,hi=math.min(a[1],b[1],c[1]),math.max(a[1],b[1],c[1])
+            if lo>=0 and hi<480 and a[2]>=0 and a[2]<270 then
+                local key=(a[2]*480+lo)*480+hi
+                if overwrittenLines[key]then retain=false else overwrittenLines[key]=true end
+            end
+        end
+        if retain then keep[#keep+1]=f end
+    end
+    for i=#accepted,1,-1 do accepted[i]=nil end
+    for i=#keep,1,-1 do local f=keep[i];accepted[#accepted+1]=f;local a,b,c=f[1],f[2],f[3];ui.trisfill(a[1],a[2],b[1],b[2],c[1],c[2],f[5])end
+    frameTime.drawn=#accepted
     courierCache={room=currentRoom,shot=cameras.shot,mask=doorMask,x=x,y=y,facing=facing,clip=clip,position=position,equipped=equipped,faces=accepted}
 end
 
@@ -2089,7 +2106,7 @@ function update()
     end
     ui.rectfill(0,0,479,15,240)
     local motion = walking and (running and " / CORRIDA" or " / PASSOS") or ""
-    ui.print("14.5.2 "..status..motion,8,3,241)
+    ui.print("14.6 "..status..motion,8,3,241)
     frameTime.hud(ui)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do
