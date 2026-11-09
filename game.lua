@@ -1,3 +1,4 @@
+local life=require('survival158')
 local steering=require('steering157')
 local enemy=require('enemy153')
 local memoryControl=require('gc150');memoryControl.configure()
@@ -1711,7 +1712,9 @@ for i=1,#actorTriangles/7 do courierPool[i]={0,0,0,0,0}end
 local courierDoorBits={1,2,4,8,16,32,64,128}
 local function courier()
     local clip, position, clipName = actorClips.idle, 0, "idle"
-    if aiming then
+    if life.dead then
+        clip,position,clipName=life.clip,math.min(life.clip.count-1,life.time*life.clip.fps),'death'
+    elseif aiming then
         if strike > 0 then
             clip, position = combat.attack(actorClips,inventory and inventory.equipped), strike-1
             clipName = combat.isBaton(inventory and inventory.equipped)and "swing"or "punch"
@@ -1771,7 +1774,7 @@ local function courier()
         end
     end
     local gripSocket=combat.blendSocket(combat.socket(clipName,position,courierRawSocket),courierSocket)
-    if hand and inventory then
+    if hand and inventory and not life.dead then
         if inventory.equipped=="crowbar" then
             crowbar.held(project,gripSocket,faces)
         elseif inventory.equipped=="phone" then
@@ -1888,6 +1891,7 @@ local function drawTitle()
                     transitionCarry=nil
                     aiming,strike,aimCancelled = false,0,false
                     roomNotice = ""
+                    life.reset();enemy.reset()
                     inventory:reset()
                     doors.reset()
                     codeLock:reset()
@@ -1952,6 +1956,14 @@ end
 function update()
     frameTime.sample(ui)
     if titleOpen then drawTitle(); return end
+    life.tick(animationDelta())
+    if life.dead then
+        local action=life.input(held(BTN_G or 13),held(BTN_Z or 4))
+        if action=='retry'then
+            life.reset();enemy.reset();currentRoom='frente';x,y=metric.project('frente',9.7,3.2,0)
+            aiming,strike,walking,running=false,0,false,false;crossing=false;transitionCarry=nil;previousA,previousB,previousY=true,true,true
+        elseif action=='menu'then titleOpen=true;canContinue=false;return end
+    end
     if codeLock.active then
         local a,b,run=held(BTN_G or 13),held(BTN_Z or 4),held(BTN_F or 12)
         local result=codeLock:input({a=a,b=b,up=held(UP or 1),down=held(DOWN or 3),left=held(LEFT or 4),right=held(RIGHT or 2)},frameTime.dt,doors)
@@ -1968,6 +1980,7 @@ function update()
     local dy = (held(DOWN or 3) and 1 or 0) - (held(UP or 1) and 1 or 0)
     local a, b = held(BTN_G or 13), held(BTN_Z or 4)
     local run, guard = held(BTN_F or 12), held(BTN_E or 15)
+    if life.dead then dx,dy,a,b,run,guard=0,0,false,false,false,false end
     local testCombo=guard and b
     if testCombo and not enemy.combo then enemy.toggle() end
     enemy.combo=testCombo
@@ -2125,7 +2138,7 @@ function update()
     end
     ui.rectfill(0,0,479,15,240)
     local motion = walking and (running and " / CORRIDA" or " / PASSOS") or ""
-    ui.print("15.4 TESTE "..status..motion,8,3,241)
+    ui.print("15.5 TESTE "..status..motion,8,3,241)
     frameTime.hud(ui)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do
@@ -2145,7 +2158,7 @@ function update()
     if not enemyBehind then enemy.draw(currentRoom)end
     if currentRoom==enemy.room then
         ui.rectfill(0,16,245,26,240)
-        ui.print('R+B: INIMIGO '..(enemy.enabled and ('HP '..enemy.hp..'/2 '..(enemy.hp<=0 and 'MORTO'or(enemy.attackTime and 'ATAQUE'or 'ON')))or 'OFF'),8,18,241)
+        ui.print('R+B: INIMIGO '..(enemy.enabled and ('HP '..enemy.hp..'/5 '..(enemy.hp<=0 and 'MORTO'or(enemy.attackTime and 'ATAQUE'or 'ON')))or 'OFF'),8,18,241)
     end
     if not cameras.active and currentRoom=="garagem" and carSprite and native then
         local gx,gy=metric.ground(currentRoom,x,y)
@@ -2161,4 +2174,5 @@ function update()
     end
     dialogue:tick(animationDelta())
     dialogue:draw(ui)
+    life.hud(ui)
 end

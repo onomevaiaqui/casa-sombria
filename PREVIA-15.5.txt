@@ -1,0 +1,17 @@
+PREVIA LOCAL 15.5 - PERSEGUICAO E SOBREVIVENCIA
+Inimigo: Zombie Running.fbx, mesma malha e material da 15.3, corrida em lugar precalculada a 12 Hz (11 amostras), cadencia ligada a distancia percorrida.
+438 vertices / 802 triangulos; sem textura por pixel ou skinning no runtime.
+Territorio: frente da casa (room frente, limites do jardim frontal), sem casa, varanda, garagem ou quintal traseiro.
+Detecta ao entrar nesse territorio; trata-se de area de deteccao, nao de cone angular.
+Persegue a 2.8 m/s, contorna obstaculos e retorna para perto da arvore ao jogador sair do territorio.
+Grafo de folga de 860 bytes calculado offline. BFS reutiliza buffers e atualiza no maximo a cada 0.6 s quando o alvo muda.
+Raio de colisao 0.48 m para o inimigo; movimento subdividido e sem sobrepor o jogador.
+Jogador: 4 de vida; 1 de dano por ataque inimigo acertado, no impacto da animacao, com verificacao de alcance, direcao e obstaculo. Esquivar ou sair da area evita o acerto.
+Inimigo: 5 de vida; cinco acertos validos iniciam a animacao Zombie Dying.
+Dying.fbx corresponde exatamente a malha do entregador (408 vertices / 812 triangulos; bind identico ao Walking.fbx).
+Morte do jogador: 71 amostras a 12 Hz, 86904 bytes; animacao nao repete; controles travados; depois B tenta novamente e A volta ao menu.
+Inventario mostra vida e condicao atualizadas. HUD: vida 4/4 e inimigo 5/5.
+Controle classico e sentidos da 15.4 preservados.
+Testes de territorio, obstaculos, salas seguras, retorno, impactos, esquiva, 4/5 de vida, morte e reinicio passaram.
+10000 updates de estresse: pico Lua 2813.8 KiB, crescimento retido -31.8 KiB no desktop; nao e medicao de memoria total nem FPS do console.
+Nenhuma imagem nativa mudou. Ainda nao publicado no GitHub/Lupi.

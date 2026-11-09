@@ -1,6 +1,8 @@
 -- Single animated stress-test actor; all FBX skinning is baked offline.
-local E={enabled=true,room='frente',x=6.45,y=4.45,time=0,scale=1.65/1.8,radius=.48,hp=2,state="alive",attackTime=nil,cooldown=0,angle=0}
+local E={enabled=true,room='frente',x=6.45,y=4.45,time=0,scale=1.65/1.8,radius=.48,hp=5,state="alive",attackTime=nil,cooldown=0,angle=0}
 local metric=require('metric_rooms')
+local nav=require('chase_nav158')
+local life=require('survival158')
 local cameras=require('cameras168')
 local D=require('enemy_data155')
 local vertices,faces,pool={},{},{}
@@ -8,6 +10,8 @@ for i=1,D.vertices do vertices[i]={0,0,0}end
 for i=1,#D.triangles/7 do pool[i]={0,0,0,0,0}end
 local function farther(a,b)return a[4]>b[4]end
 local corpseRoom,corpseShot,corpseDoors
+local homeX,homeY=6.45,4.45
+E.speed=2.8;E.runTime=0;E.mode="idle"
 local doorBits={1,2,4,8,16,32,64,128}
 local doors=require('doors131')
 local function paint()
@@ -16,9 +20,12 @@ end
 local slots={205,206,207,208,209,210,211,212,213,214,215,219,220,221,222,223}
 local function ink(n)return slots[n+1]end
 function E.palette(ui)for i,color in ipairs(D.palette)do ui.palset(slots[i],color)end end
+function E.reset()
+ E.hp=5;E.x,E.y=homeX,homeY;E.state='alive';E.time=0;E.runTime=0;E.attackTime=nil;E.cooldown=1;E.mode='idle';E.moving=false;E.enabled=true;nav.clear();corpseRoom=nil
+end
 function E.toggle()
  E.enabled=not E.enabled
- if E.enabled and E.hp<=0 then E.hp=2;E.state='alive';E.time=0;E.attackTime=nil;E.cooldown=1 end
+ if E.enabled and E.hp<=0 then E.reset()end
 end
 function E.tryHit(room,x,y,facing,baton)
  if not E.enabled or room~=E.room or E.hp<=0 then return false end
@@ -41,27 +48,67 @@ function E.walkable(room,x,y)
  local dx,dy=x-E.x,y-E.y;local radius=E.radius+.25
  return dx*dx+dy*dy>=radius*radius
 end
+local function clearAttack(room,px,py)
+ if not nav.inArea(room,px,py)or life.dead then return false end
+ local dx,dy=px-E.x,py-E.y;local distance=math.sqrt(dx*dx+dy*dy)
+ if distance>1.35 then return false end
+ if distance>.01 and(dx*math.sin(E.angle)-dy*math.cos(E.angle))/distance<.35 then return false end
+ for i=1,4 do local sx,sy=metric.project(E.room,E.x+dx*i/5,E.y+dy*i/5,0);if not metric.walkable(E.room,sx,sy)then return false end end
+ return true
+end
+local function moveToward(tx,ty,dt,px,py,playerPresent)
+ local wx,wy=nav.waypoint(E.x,E.y,tx,ty,dt);if not wx then return end
+ local dx,dy=wx-E.x,wy-E.y;local length=math.sqrt(dx*dx+dy*dy);if length<.01 then return end
+ E.angle=math.atan(dx,-dy)
+ local distance=math.min(length,E.speed*dt);local steps=math.max(1,math.ceil(distance/.04))
+ dx,dy=dx/length*distance/steps,dy/length*distance/steps
+ local moved=0
+ for i=1,steps do
+  local nx,ny=E.x+dx,E.y+dy
+  if not nav.canStand(nx,ny)then nav.clear();break end
+  if playerPresent and(nx-px)^2+(ny-py)^2<(E.radius+.25)^2 then break end
+  E.x,E.y=nx,ny;moved=moved+distance/steps
+ end
+ E.moving=moved>.0001
+ if E.moving then E.runTime=(E.runTime+moved/2.1*D.clips.run.duration)%D.clips.run.duration end
+end
 function E.tick(dt,room,px,py)
  if not E.enabled then return end
+ E.moving=false
  if E.state=='dying'then E.time=math.min(D.clips.death.duration,E.time+dt);if E.time>=D.clips.death.duration then E.state='dead'end;return end
  if E.state=='dead'then return end
  E.time=(E.time+dt)%D.clips.idle.duration
  E.cooldown=math.max(0,E.cooldown-dt)
+ local present=nav.inArea(room,px,py)and not life.dead
+ local mode=present and 'chase'or 'return'
+ if mode~=E.mode then nav.clear();E.mode=mode end
+ if not present then E.attackTime=nil end
+ if life.dead then E.attackTime=nil;return end
  if E.attackTime then
-  E.attackTime=E.attackTime+dt
+  local old=E.attackTime;E.attackTime=E.attackTime+dt
+  local impact=D.clips.attack.duration*.37
+  if not E.attackHit and old<impact and E.attackTime>=impact then
+   E.attackHit=true
+   if clearAttack(room,px,py)then life.damage()end
+  end
   if E.attackTime>=D.clips.attack.duration then E.attackTime=nil;E.cooldown=1.2 end
- elseif room==E.room and E.cooldown==0 then
-  local dx,dy=px-E.x,py-E.y
-  if dx*dx+dy*dy<1.5^2 then E.attackTime=0;E.angle=math.atan(dx,-dy)end
+  return
  end
+ if present then
+  local dx,dy=px-E.x,py-E.y;local distance=math.sqrt(dx*dx+dy*dy)
+  if distance<=1.15 then
+   E.angle=math.atan(dx,-dy)
+   if E.cooldown==0 then E.attackTime=0;E.attackHit=false end
+  else moveToward(px,py,dt,px,py,true)end
+ elseif(E.x-homeX)^2+(E.y-homeY)^2>.15^2 then moveToward(homeX,homeY,dt,px,py,false)end
 end
 function E.draw(room)
  if not E.enabled or room~=E.room then return end
  local doorMask=doors.stateMask(doorBits)
  if E.state=='dead'and corpseRoom==room and corpseShot==cameras.shot and corpseDoors==doorMask then paint();return end
  local project=cameras.projector(room)
- local clip=E.hp<=0 and D.clips.death or(E.attackTime and D.clips.attack or D.clips.idle)
- local pos=(E.hp<=0 and E.time or(E.attackTime or E.time))*clip.fps
+ local clip=E.hp<=0 and D.clips.death or(E.attackTime and D.clips.attack or(E.moving and D.clips.run or D.clips.idle))
+ local pos=(E.hp<=0 and E.time or(E.attackTime or(E.moving and E.runTime or E.time)))*clip.fps
  local first=math.min(clip.count-1,math.floor(pos));local second=math.min(clip.count-1,first+1)
  local blend=pos-first;local stride=D.vertices*3
  local low,span=clip.low,clip.span
