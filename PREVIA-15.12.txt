@@ -1,0 +1,8 @@
+Progressao local, ainda nao publicada.
+Porta da frente: bloqueada enquanto inimigo vivo, com aviso para buscar defesa.
+Porta corredor/garagem: abre somente pelo lado da garagem e destranca para ambos os lados. Mensagem pelo corredor: Parece estar trancada pelo outro lado.
+Porta externa da garagem: passagem bloqueada nos dois sentidos; abertura aguardando futuro item encontrado do lado de fora. Nenhum item foi inventado ou posicionado. API progression167.releaseGarage disponivel para o futuro puzzle.
+Rota cozinha/quintal/jardim preservada para buscar arma e enfrentar inimigo.
+Nenhum bitmap ou proporcao de movel alterados. Visual da porta de rolo ainda aguarda escolha do asset; a abertura antiga continua visivel nesta previa logica.
+Assets de referencia encontrados: Innerscene Roll-Up Garage Door CC0 e 3DAssets Greybox roller shutter CC0. Downloads diretos retornaram HTTP 403; nao foram integrados.
+Teste real de cinco golpes libera porta principal. Testes de trancas/abertura lateral/reset e sandbox de dez comodos passaram.

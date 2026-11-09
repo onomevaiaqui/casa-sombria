@@ -1,3 +1,4 @@
+local progression=require('progression167')
 local inventoryLeftButton=INVENTORY_LEFT or BTN_Q or 14
 local inventoryRightButton=INVENTORY_RIGHT or BTN_E or 15
 local familyPhoto=require('photo162')
@@ -1634,7 +1635,7 @@ local function checkPassage(dx,dy,keyDx,keyDy)
         if near then
             inOpening=true
             roomNotice = "PARA "..rooms[exit.to].label
-            if doors.blocked(currentRoom,exit.to)then
+            if progression.blockedPassage(currentRoom,exit.to,enemy)or doors.blocked(currentRoom,exit.to)then
                 roomNotice=((currentRoom=="frente"and exit.to=="quintal")or(currentRoom=="quintal"and exit.to=="frente"))and "B: ABRIR PORTAO"or "B: ABRIR PORTA"
                 crossing=false
                 return
@@ -2080,7 +2081,9 @@ function update()
         status = combat.isBaton(inventory.equipped)and(strike>0 and "GOLPE"or "MACHADINHA")or(strike > 0 and "SOCO" or "PUNHOS LEVANTADOS")
     elseif confirm and not guard and not reading then
         if nearbyDoor then
-            if nearbyDoor.id=="casinha"then
+            local refusal=progression.message(nearbyDoor.id,currentRoom,enemy,doors)
+            if refusal then dialogue:notify(refusal)
+            elseif nearbyDoor.id=="casinha"then
                 codeLock:begin()
             elseif doors.canOpen(nearbyDoor.id,currentRoom,ix,iy)then
                 doors.open(nearbyDoor.id);dialogue:notify(nearbyDoor.id=="jardim_quintal"and "Você abriu o portão."or "Você abriu a porta.")
@@ -2107,7 +2110,7 @@ function update()
     if dialogue.active then
         status=rooms[currentRoom].label
     elseif nearbyDoor and not aiming then
-        status=nearbyDoor.id=="casinha"and "B: EXAMINAR CADEADO"or nearbyDoor.id=="jardim_quintal"and "B: ABRIR PORTAO"or "B: ABRIR PORTA"
+        status=nearbyDoor.id=="casinha"and "B: EXAMINAR CADEADO"or nearbyDoor.id=="garagem_externa"and "B: EXAMINAR PORTA DE ROLO"or nearbyDoor.id=="jardim_quintal"and "B: ABRIR PORTAO"or "B: ABRIR PORTA"
     elseif interaction and not aiming then
         status="B: EXAMINAR QUADROS"
     elseif familyPhoto.near(currentRoom,ix,iy)and not aiming then
@@ -2151,7 +2154,7 @@ function update()
     end
     ui.rectfill(0,0,479,15,240)
     local motion = walking and (running and " / CORRIDA" or " / PASSOS") or ""
-    ui.print("15.11 TESTE "..status..motion,8,3,241)
+    ui.print("15.12 TESTE "..status..motion,8,3,241)
     frameTime.hud(ui)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do

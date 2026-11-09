@@ -4,6 +4,7 @@ D.list={{["id"]='quarto',["label"]='QUARTO',["bit"]=1,["asset"]=4,["hinge"]={8.5
 table.insert(D.list,{id='jardim_quintal',label='PORTAO DO QUINTAL',bit=64,asset=0,hinge={-2.1,0},closed=0,open=90,ends={frente={x=4.8,y=8.6,axis=2},quintal={x=4.8,y=0,axis=2}},openBoxes={quintal={4.27,4.33,0,1}}})
 D.list[5].ends.quintal.y=6.3
 table.insert(D.list,{id='casinha',label='CASINHA DE FERRAMENTAS',bit=128,asset=0,hinge={-5.05,6.5},closed=0,open=-95,ends={quintal={x=1.8,y=6.5,axis=2},ferramentas={x=1.5,y=0,axis=2}},openBoxes={quintal={1.23,1.4,5.6,6.5}}})
+table.insert(D.list,{id='garagem_externa',label='PORTA DE ROLO',bit=256,asset=0,ends={garagem={x=3.2,y=0,axis=2},frente={x=14.4,y=5.9,axis=2}}})
 function D.reset()D.opened={}end
 function D.open(id)D.opened[id]=true end
 function D.isOpen(id)return not not D.opened[id]end
