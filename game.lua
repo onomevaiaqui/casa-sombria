@@ -1703,6 +1703,9 @@ local function animationDelta() return frameTime.dt end
 
 local courierVertices,courierFaces,courierPool,courierAccepted={},{},{},{}
 local courierCache
+-- Reserve renderer buffers before play, avoiding first-attack table growth.
+for i=1,408 do courierVertices[i]={0,0,0}end
+for i=1,#actorTriangles/7 do courierPool[i]={0,0,0,0,0}end
 local courierDoorBits={1,2,4,8,16,32,64,128}
 local function courier()
     local clip, position, clipName = actorClips.idle, 0, "idle"
@@ -2086,7 +2089,7 @@ function update()
     end
     ui.rectfill(0,0,479,15,240)
     local motion = walking and (running and " / CORRIDA" or " / PASSOS") or ""
-    ui.print("14.5.1 "..status..motion,8,3,241)
+    ui.print("14.5.2 "..status..motion,8,3,241)
     frameTime.hud(ui)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do

@@ -42,20 +42,27 @@ end
 
 -- Blend only combat stance changes; walking/running cadence is untouched.
 local previousName,lastPose,lastSocket,fromPose,fromSocket,elapsed,alpha
-lastPose={};elapsed=1;alpha=1
+local poseA,poseB={},{}
+-- Fixed flat buffers: switching stance must not allocate 408 vertex tables.
+for i=1,408*3 do poseA[i]=0;poseB[i]=0 end
+lastPose=poseA;elapsed=1;alpha=1
+local poseCount=0
 function G.preparePose(name,dt)
  if name~=previousName then
   if previousName and(name=='ready'or previousName=='ready'or previousName=='swing'or name=='run'or previousName=='run'or name=='walk'or previousName=='walk')then
-   fromPose={};for i,v in ipairs(lastPose)do fromPose[i]={v[1],v[2],v[3]}end;fromSocket=lastSocket;elapsed=0
+   fromPose=lastPose;lastPose=lastPose==poseA and poseB or poseA
+   fromSocket=lastSocket;elapsed=0
   else fromPose=nil;fromSocket=nil;elapsed=1 end
  end
  previousName=name;elapsed=elapsed+dt;alpha=math.min(1,elapsed/.18)
  if alpha>=1 then fromPose=nil;fromSocket=nil end
 end
 function G.blendVertex(i,x,y,z)
- local a=fromPose and fromPose[i]
- if a then x=a[1]+(x-a[1])*alpha;y=a[2]+(y-a[2])*alpha;z=a[3]+(z-a[3])*alpha end
- local v=lastPose[i];if v then v[1],v[2],v[3]=x,y,z else lastPose[i]={x,y,z}end;return x,y,z
+ local p=(i-1)*3
+ if fromPose and i<=poseCount then x=fromPose[p+1]+(x-fromPose[p+1])*alpha;y=fromPose[p+2]+(y-fromPose[p+2])*alpha;z=fromPose[p+3]+(z-fromPose[p+3])*alpha end
+ lastPose[p+1],lastPose[p+2],lastPose[p+3]=x,y,z
+ if i>poseCount then poseCount=i end
+ return x,y,z
 end
 function G.blendSocket(socket)
  local r={};for i=1,12 do r[i]=fromSocket and(fromSocket[i]+(socket[i]-fromSocket[i])*alpha)or socket[i]end

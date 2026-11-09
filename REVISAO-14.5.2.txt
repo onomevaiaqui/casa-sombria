@@ -1,0 +1,6 @@
+14.5.2 - Entrada na guarda e primeiros ataques
+Substitui as copias de 408 tabelas de vertices a cada troca de postura por dois buffers planos fixos. Prealoca buffers de projecao e triangulos antes da partida, incluindo pe de cabra.
+Mantem a postura, interpolacao, golpe de 0.64s, recuperacao e comandos aprovados. Nenhuma textura ou triangulo foi removido.
+260 quadros com paletas e triangulos identicos. 1000 transicoes de postura sem alocacao de tabelas de vertices. Combate: alocacao acumulada de 6383 para 4188 KB por 1000 updates (~34% menos).
+Sandbox sem package, 125 estados de camera, transicoes e combate passaram. Pico retido em tres voltas pelos comodos ~2.54 MiB; buffers fixos aumentam um pouco a memoria retida para reduzir picos na primeira acao.
+Medicoes de Lua desktop, nao de FPS do console. Resultado no Lupi fisico precisa ser confirmado.
