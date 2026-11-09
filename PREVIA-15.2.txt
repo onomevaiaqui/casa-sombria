@@ -1,0 +1,16 @@
+PREVIA LOCAL 15.2 - NAO PUBLICADA
+Inimigo perto da arvore, mesma escala de referencia 1.65 m e colisao circular de 0.48 m.
+16 tons extraidos da textura original em slots 205..215 e 219..223: jogador, fundo e arma preservados.
+Detalhe offline em 48 faces da cabeca: 438 vertices e 802 triangulos, contra 812 do jogador.
+Ainda usa cores por face, nao a textura 512x512 integral em cada pixel. Amostras locais preservam mais detalhes.
+Sem FBX/rig/skinning no runtime. Agonia, ataque e morte precalculados a 12 Hz e interpolados.
+Dados de animacao: 314046 bytes (agora inclui ataque e morte); nenhuma imagem nativa alterada.
+R+Y: ataque do jogador; alcance, direcao, obstaculos e um impacto por golpe conferidos.
+Dois golpes validos iniciam Zombie Dying. Morte nao repete; corpo permanece no ultimo quadro e deixa de bloquear.
+Zombie Attack inicia em proximidade (1.5 m) e tem pausa de 1.2 s. Ataque inimigo apenas visual, sem dano ao jogador nesta previa.
+R+B: liga/desliga; desligar e ligar depois da morte restaura o inimigo. PC: H+J.
+PC: H+L para atacar; manter H durante o golpe, soltar L e apertar de novo para outro ataque.
+Corpo morto reutiliza geometria projetada enquanto camera e portas nao mudam.
+Lua 5.5 desktop: 10000 updates com ataques, pico 1594.5 KiB, crescimento retido 1.0 KiB.
+720 testes radiais, 8 aproximacoes correndo, 2 ataques reais via input, clips, paleta, reset e 10 comodos em sandbox sem package passaram.
+Previa WASM: validado 2 HP -> 1 HP -> 0 HP e corpo no chao. FPS e memoria do hardware Lupi ainda nao medidos.

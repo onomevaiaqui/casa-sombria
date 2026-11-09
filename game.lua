@@ -1697,6 +1697,7 @@ end
 local aimCancelled = false
 local previousA, previousB, previousY = false, false, false
 local queuedStrike=false
+local enemyHitThisSwing=false
 
 local function animationDelta() return frameTime.dt end
 
@@ -1968,7 +1969,7 @@ function update()
     local a, b = held(BTN_G or 13), held(BTN_Z or 4)
     local run, guard = held(BTN_F or 12), held(BTN_E or 15)
     local testCombo=guard and b
-    if testCombo and not enemy.combo then enemy.enabled=not enemy.enabled end
+    if testCombo and not enemy.combo then enemy.toggle() end
     enemy.combo=testCombo
     if testCombo then b=false end
     local cancel, confirm, attack = a and not previousA, b and not previousB, run and not previousY
@@ -1999,6 +2000,7 @@ function update()
         inventory:draw(bitmapPalette or Palette)
         return
     end
+    local oldStrike=strike
     aiming = guard and not aimCancelled
     if not aiming then
         strike = 0;queuedStrike=false
@@ -2009,6 +2011,15 @@ function update()
         if attack and combat.isBaton(inventory.equipped)and strike>=attackClip.count-7 then queuedStrike=true end
         strike = strike + animationDelta()*(attackClip.fps or 60)
         if strike > attackClip.count then strike=queuedStrike and 1 or 0;queuedStrike=false end
+    end
+    if strike<=1 or strike<oldStrike then enemyHitThisSwing=false end
+    if strike>0 and not enemyHitThisSwing then
+        local clip=combat.attack(actorClips,inventory.equipped)
+        if strike>=math.floor(clip.count*.35) then
+            enemyHitThisSwing=true
+            local gx,gy=metric.ground(currentRoom,x,y)
+            enemy.tryHit(currentRoom,gx,gy,facing,combat.isBaton(inventory.equipped))
+        end
     end
     if guard or cancel then dx, dy = 0, 0 end
     local inputDx,inputDy=dx,dy
@@ -2113,7 +2124,7 @@ function update()
     end
     ui.rectfill(0,0,479,15,240)
     local motion = walking and (running and " / CORRIDA" or " / PASSOS") or ""
-    ui.print("15.1 TESTE "..status..motion,8,3,241)
+    ui.print("15.2 TESTE "..status..motion,8,3,241)
     frameTime.hud(ui)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do
@@ -2124,14 +2135,16 @@ function update()
         end
     end
     if currentRoom=='ferramentas'and not inventory.collected.crowbar then crowbar.pickup(cameras,ui)end
-    enemy.tick(animationDelta())
+    local playerGX,playerGY=metric.ground(currentRoom,x,y)
+    enemy.tick(animationDelta(),currentRoom,playerGX,playerGY)
+    enemy.palette(ui)
     local enemyBehind=enemy.beforePlayer(currentRoom,x,y)
     if enemyBehind then enemy.draw(currentRoom)end
     courier()
     if not enemyBehind then enemy.draw(currentRoom)end
     if currentRoom==enemy.room then
         ui.rectfill(0,16,245,26,240)
-        ui.print('R+B: INIMIGO '..(enemy.enabled and 'ON 658 TRI'or 'OFF'),8,18,241)
+        ui.print('R+B: INIMIGO '..(enemy.enabled and ('HP '..enemy.hp..'/2 '..(enemy.hp<=0 and 'MORTO'or(enemy.attackTime and 'ATAQUE'or 'ON')))or 'OFF'),8,18,241)
     end
     if not cameras.active and currentRoom=="garagem" and carSprite and native then
         local gx,gy=metric.ground(currentRoom,x,y)
