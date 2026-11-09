@@ -41,6 +41,9 @@ function M.vertex(room,sx,sy,ax,ay,az,facing)
 end
 local boxes={sala={{0.08,0.98,1.25,3.65},{0.15,0.85,0.25,0.95},{4.05,4.65,0.5,1.1},{4.205,4.775,1.725,3.175}},cozinha={{0.15,1.55,1.1,2},{0.63,1.07,0.58,1.02},{0.63,1.07,2.08,2.52},{3.1,3.8,1,4.1}},corredor={},quarto={{0.2,1.58,1.6,3.48},{2.65,3.4,2.2,3.8},{0.15,1.25,0.15,0.75}},banheiro={{0.08,0.98,2,2.9},{1.64,2.06,2.18,2.9},{1.86,2.4,1.23,1.87}},garagem={{0.31,2.25,0.965,5.035},{3.98,4.58,2.3,4.7}},quintal={{0.45,2.15,2.8,4.3},{4.7,5.9,3.3,4.5}},frente={{0.6,1.4,1.2,2},{6.5,7.3,1.2,2}}}
 local sizes={sala={4.8,4.8},cozinha={3.8,4.2},corredor={1.8,4.4},quarto={3.5,3.9},banheiro={2.4,3},garagem={4.6,5.7},quintal={6.4,5},frente={8,6}}
+local nativeCollision=require('native150')
+local floorOffsets={}
+for i=0,15 do floorOffsets[#floorOffsets+1]=.25*math.cos(i*math.pi/8);floorOffsets[#floorOffsets+1]=.25*math.sin(i*math.pi/8)end
 function M.walkable(room,sx,sy)
  local x,y=M.ground(room,sx,sy);if not x then return false end
  local r=.25;local size=sizes[room]
@@ -50,15 +53,19 @@ function M.walkable(room,sx,sy)
  if x<r or y<minY or x>size[1]-r or y>maxY then return false end
  local floor=M.plan.rooms[room].floor
  if floor then
-  for i=0,15 do
-   local px,py=x+r*math.cos(i*math.pi/8),y+r*math.sin(i*math.pi/8);local inside=false
+  for i=1,#floorOffsets,2 do
+   local px,py=x+floorOffsets[i],y+floorOffsets[i+1];local inside=false
    for _,b in ipairs(floor)do if px>=b[1]-1e-8 and px<=b[2]+1e-8 and py>=b[3]-1e-8 and py<=b[4]+1e-8 then inside=true end end
    if not inside then return false end
   end
  end
+ if nativeCollision.enabled then
+  for _,b in ipairs(boxes[room])do if nativeCollision.blocked(x,y,r,b)then return false end end
+ else
  for _,b in ipairs(boxes[room])do
   local nx,ny=math.max(b[1],math.min(b[2],x)),math.max(b[3],math.min(b[4],y))
   if (x-nx)^2+(y-ny)^2<r*r then return false end
+ end
  end
  local hx,hy=M.project(room,x,y,1.8)
  if sx<12 or sx>468 or sy<18 or sy>268 or hx<12 or hx>468 or hy<18 or hy>268 then return false end
@@ -94,5 +101,6 @@ M.plan=require('layout140')
 for room,c in pairs(M.plan.rooms)do M.rooms[room]=M.plan.logical[room];boxes[room]=c.boxes;sizes[room]=c.size end
 M.banks.area=M.banks.sala
 M.banks.ferramentas=M.banks.sala
+nativeCollision.prepare(boxes)
 M.boxes,M.sizes=boxes,sizes
 return M

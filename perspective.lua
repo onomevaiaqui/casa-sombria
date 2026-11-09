@@ -44,7 +44,7 @@ function P.vertex(room,x,y,ax,ay,az,facing,out)
  local sx,sy=P.screen(room,gx+right,gz+depth,ay*factor)
  out=out or {};out[1],out[2],out[3]=math.floor(sx+.5),math.floor(sy+.5),gz+depth;return out
 end
-function P.projector(room,x,y,facing)
+local function makeProjector(room,x,y,facing)
  local gx,gz=P.ground(room,x,y)
  local s,c=math.sin(facing),math.cos(facing)
  local factor=1.8/1.852
@@ -65,6 +65,12 @@ function P.projector(room,x,y,facing)
   local sx,sy=P.screen(room,gx+right,gz+depth,ay*factor)
   out=out or {};out[1],out[2],out[3]=math.floor(sx+.5),math.floor(sy+.5),gz+depth;return out
  end
+end
+local projectRoom,projectX,projectY,projectFacing,projectCameraRoom,projectShot,projectEnabled,projectActive,cachedProjector
+function P.projector(room,x,y,facing)
+ if cachedProjector and projectRoom==room and projectX==x and projectY==y and projectFacing==facing and projectCameraRoom==cameras.room and projectShot==cameras.shot and projectEnabled==cameras.enabled and projectActive==cameras.active then return cachedProjector end
+ projectRoom,projectX,projectY,projectFacing,projectCameraRoom,projectShot,projectEnabled,projectActive=room,x,y,facing,cameras.room,cameras.shot,cameras.enabled,cameras.active
+ cachedProjector=makeProjector(room,x,y,facing);return cachedProjector
 end
 function P.facing(room,dx,dy)
  if metric.rooms[room]then return metric.facing(room,dx,dy)end

@@ -85,9 +85,10 @@ function C.select(room,x,y)
  return true
 end
 function C.project(room,x,y,z)local c=current(room);if c then return project(c,x,y,z)end end
+local backgroundRefs={}
 function C.background(room)
  local c=current(room);if not c or not sprites then return end
- local s=state(c);return{sprites[s.prefix..'_0'],sprites[s.prefix..'_1'],sprites[s.prefix..'_2']}
+ local s=state(c);backgroundRefs[1],backgroundRefs[2],backgroundRefs[3]=sprites[s.prefix..'_0'],sprites[s.prefix..'_1'],sprites[s.prefix..'_2'];return backgroundRefs
 end
 function C.palette(room,set)
  local c=current(room);if c then eachColor(state(c),function(key,value)local i=map[key];if i then set(i,value)end end) end
@@ -119,16 +120,21 @@ function C.captureDirection(room,gx,gy,dx,dy,wx,wy)
  if a then return a,b end
  local n=math.sqrt(wx*wx+wy*wy);return wx/n,wy/n
 end
+local occlusionState,occlusionFunction
+local function alwaysVisible()return true end
 function C.occlusion(room)
- local view=current(room);if not view then return function()return true end end
- local s=state(view);local depth=memory.depth(s);local sx,sy=s.depthWidth/480,s.depthHeight/270
+ local view=current(room);if not view then return alwaysVisible end
+ local s=state(view);if occlusionState==s then return occlusionFunction end
+ local depth=memory.depth(s);local sx,sy=s.depthWidth/480,s.depthHeight/270
  local width,step=s.depthWidth,s.depthStep
- return function(a,b,c)
+ occlusionState=s
+ occlusionFunction=function(a,b,c)
   local x,y=(a[1]+b[1]+c[1])/3,(a[2]+b[2]+c[2])/3
   if x<0 or x>=480 or y<0 or y>=270 then return false end
   local z=depth:byte(math.floor(y*sy)*width+math.floor(x*sx)+1)*step
   return(a[3]+b[3]+c[3])/3<=z+.14
  end
+ return occlusionFunction
 end
 function C.triangle(room,a,b,c)return C.occlusion(room)(a,b,c)end
 return C

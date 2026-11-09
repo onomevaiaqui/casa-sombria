@@ -1,7 +1,5 @@
--- Collect earlier to leave headroom in the physical console Lua heap.
-pcall(collectgarbage,'setpause',140)
-pcall(collectgarbage,'setstepmul',200)
-local frameTime = require("frame_time")
+local memoryControl=require('gc150');memoryControl.configure()
+local frameTime = require("frame_time");frameTime.details=true
 local metric = require("metric_rooms")
 local cameras=require("cameras168")
 local doors=require("doors131")
@@ -1703,6 +1701,7 @@ local function animationDelta() return frameTime.dt end
 
 local courierVertices,courierFaces,courierPool,courierAccepted={},{},{},{}
 local courierCache
+local courierHand,courierRawSocket,courierSocket={},{},{}
 local overwrittenLines,prunedFaces={},{}
 -- Reserve renderer buffers before play, avoiding first-attack table growth.
 for i=1,408 do courierVertices[i]={0,0,0}end
@@ -1752,7 +1751,7 @@ local function courier()
         local ay = low[2]+(b+(e-b)*blend)/255*span[2]
         local az = low[3]+(c+(f-c)*blend)/255*span[3]
         ax,ay,az=combat.blendVertex(index+1,ax,ay,az)
-        if index==207 then hand={ax,ay,az} end
+        if index==207 then courierHand[1],courierHand[2],courierHand[3]=ax,ay,az;hand=courierHand end
         vertices[index+1]=project(ax,ay,az,vertices[index+1])
     end
     local function heldBox(px,py,pz,w,h,d)
@@ -1769,7 +1768,7 @@ local function courier()
             end
         end
     end
-    local gripSocket=combat.blendSocket(combat.socket(clipName,position))
+    local gripSocket=combat.blendSocket(combat.socket(clipName,position,courierRawSocket),courierSocket)
     if hand and inventory then
         if inventory.equipped=="crowbar" then
             crowbar.held(project,gripSocket,faces)
@@ -1813,7 +1812,10 @@ local function courier()
     for i=#accepted,1,-1 do accepted[i]=nil end
     for i=#keep,1,-1 do local f=keep[i];accepted[#accepted+1]=f;local a,b,c=f[1],f[2],f[3];ui.trisfill(a[1],a[2],b[1],b[2],c[1],c[2],f[5])end
     frameTime.drawn=#accepted
-    courierCache={room=currentRoom,shot=cameras.shot,mask=doorMask,x=x,y=y,facing=facing,clip=clip,position=position,equipped=equipped,faces=accepted}
+    courierCache=courierCache or {}
+    local cache=courierCache
+    cache.room,cache.shot,cache.mask,cache.x,cache.y,cache.facing=currentRoom,cameras.shot,doorMask,x,y,facing
+    cache.clip,cache.position,cache.equipped,cache.faces=clip,position,equipped,accepted
 end
 
 local function held(button)
@@ -2106,7 +2108,7 @@ function update()
     end
     ui.rectfill(0,0,479,15,240)
     local motion = walking and (running and " / CORRIDA" or " / PASSOS") or ""
-    ui.print("14.8 "..status..motion,8,3,241)
+    ui.print("14.9 "..status..motion,8,3,241)
     frameTime.hud(ui)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do
