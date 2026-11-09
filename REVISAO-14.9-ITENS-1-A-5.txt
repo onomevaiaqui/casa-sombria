@@ -1,5 +1,5 @@
-14.9 LOCAL - Itens 1 a 5 da revisao do firmware 0.6.8
-Base: 14.8 (8a48c61). Ainda nao publicado.
+14.9 - Itens 1 a 5 da revisao do firmware 0.6.8
+Base: 14.8 (8a48c61). Publicacao autorizada apos conclusao e validacao dos itens 1 a 5.
 1 Diagnostico: FPS, CPU, memoria Lua e maior amostra de memoria; HUD atualizado a cada 10 quadros, sem alterar timestep/movimento. L=Lua em KiB, P=maior amostra observada, GG=coletor geracional, GI=incremental, N=colisao nativa ativa, L final=fallback Lua. CPU -- significa indisponivel no simulador. P nao e o pico de todas as alocacoes internas do quadro.
 2 Coletor: API param/pause/stepmul para Lua 5.5, fallback legacy. API/modo/configuracao ficam explicitamente consultaveis em gc150. Configurado geracional apos comparacao desktop, sem coleta completa forcada por quadro. Coleta na troca de comodo preservada.
 3 Piso: os mesmos 16 deslocamentos circulares sao precalculados uma vez; nenhuma trigonometria repetida por verificacao. Nenhuma mudanca no raio, mobilia ou limites.
