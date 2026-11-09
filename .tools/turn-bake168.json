@@ -1,0 +1,26 @@
+{
+  "left": {
+    "source": "Left Turn.fbx",
+    "frames": [
+      1.0,
+      29.0
+    ],
+    "samples": 13,
+    "bytes": 15912,
+    "yaw_degrees": 122.56012316267692,
+    "rest_vertex_difference": 2.0013686582012938e-07,
+    "scale": 1.852
+  },
+  "right": {
+    "source": "Right Turn.fbx",
+    "frames": [
+      1.0,
+      50.0
+    ],
+    "samples": 21,
+    "bytes": 25704,
+    "yaw_degrees": -175.07059605155692,
+    "rest_vertex_difference": 2.0013686582012938e-07,
+    "scale": 1.852
+  }
+}

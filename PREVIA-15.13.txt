@@ -1,0 +1,11 @@
+Giros Left Turn.fbx e Right Turn.fbx fornecidos pelo usuario.
+Malha original preservada: 408 vertices; diferenca maxima da pose de referencia ~2e-7 m.
+Bake offline sem deslocamento de raiz e sem giro de raiz duplicado. Escala 1.852 preservada.
+13 amostras para esquerda e 21 para direita, com interpolacao; 41616 bytes de poses e sockets da mao.
+Curva angular da fonte sincroniza os passos com a rotacao real dos controles, sem mudar velocidades.
+Giro parado: esquerda/direita usam seus respectivos clips. Caminhada, corrida, guarda, ataque, hit e morte mantem prioridade.
+A arma acompanha o socket do punho e as transicoes usam mistura de 80 ms.
+Mesmas imagens, proporcoes e colisoes da previa 15.12.
+Testes aprovados: clips realmente renderizados, giro sem deslocamento, taxa 3.2 rad/s preservada, soltura/voltas/troca de lado, velocidades, transicoes de comodo, golpe/hit e sandbox sem package.
+Memoria Lua desktop: 10000 updates, pico 2770.7 KiB e crescimento retido 0.4 KiB. Nao e medicao de hardware.
+Previa local, ainda nao publicada no GitHub nem validada no Lupi fisico.

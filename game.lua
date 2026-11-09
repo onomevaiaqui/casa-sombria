@@ -1,3 +1,4 @@
+local turning=require('turn168')
 local progression=require('progression167')
 local inventoryLeftButton=INVENTORY_LEFT or BTN_Q or 14
 local inventoryRightButton=INVENTORY_RIGHT or BTN_E or 15
@@ -1732,6 +1733,9 @@ local function courier()
         clip = running and actorClips.run or actorClips.walk
         clipName = running and "run"or "walk"
         position = step/(2*math.pi)*(clip.count-1)
+    elseif turning.direction~=0 then
+        clip,position=turning.clip(),turning.position
+        clipName=turning.direction<0 and 'turnLeft'or 'turnRight'
     end
     local doorMask=doors.stateMask(courierDoorBits)
     local equipped=inventory and inventory.equipped
@@ -2017,6 +2021,7 @@ function update()
         aimCancelled = guard
     end
     if inventory.visible then
+        turning.stop()
         walking,running = false,false
         inventory:handle(held(UP or 1),held(DOWN or 3),held(LEFT or 4),held(RIGHT or 2),b,currentRoom,held(inventoryLeftButton),held(inventoryRightButton))
         inventory:draw(bitmapPalette or Palette)
@@ -2046,6 +2051,7 @@ function update()
     local inputDx,inputDy=dx,dy
     local throttle=-dy
     local forwardRun=run and throttle>0 and not guard
+    local previousFacing=facing
     if not cancel and strike==0 then
         facing=steering.rotate(facing,dx,animationDelta(),aiming,forwardRun)
     end
@@ -2062,6 +2068,8 @@ function update()
     end
     walking=travelled>0.00001
     running=walking and forwardRun
+    local angularDelta=math.atan(math.sin(facing-previousFacing),math.cos(facing-previousFacing))
+    turning.tick(dx,not walking and not aiming and strike==0 and not life.dead and not life.hitTime and not cancel,angularDelta)
     if walking then
         local metresPerCycle=running and 3.0118408704 or 1.7576561718
         step=(step+travelled*2*math.pi/metresPerCycle*(throttle<0 and -1 or 1))%(2*math.pi)
@@ -2154,7 +2162,7 @@ function update()
     end
     ui.rectfill(0,0,479,15,240)
     local motion = walking and (running and " / CORRIDA" or " / PASSOS") or ""
-    ui.print("15.12 TESTE "..status..motion,8,3,241)
+    ui.print("15.13 TESTE "..status..motion,8,3,241)
     frameTime.hud(ui)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do

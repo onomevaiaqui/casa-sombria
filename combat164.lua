@@ -1,3 +1,4 @@
+local turnData=require('turn_data168')
 local hitSockets=require('player_hit161').sockets
 -- Stable Sword Outward Slash.fbx: original 62-frame clip, 30 FPS; same 408-vertex mesh.
 local G={}
@@ -31,10 +32,10 @@ local function orthonormal(r)
  return r
 end
 function G.socket(name,position,out)
- local frames=(name=='hit'and hitSockets)or sockets[name]or sockets.idle;local i=math.max(0,math.min(#frames-1,position));local k=math.floor(i)+1;local t=i-math.floor(i);local a,b=frames[k],frames[math.min(k+1,#frames)];local result=out or {}
+ local frames=(name=='hit'and hitSockets)or(name=='turnLeft'and turnData.left.sockets)or(name=='turnRight'and turnData.right.sockets)or sockets[name]or sockets.idle;local i=math.max(0,math.min(#frames-1,position));local k=math.floor(i)+1;local t=i-math.floor(i);local a,b=frames[k],frames[math.min(k+1,#frames)];local result=out or {}
  for n=1,12 do result[n]=a[n]+(b[n]-a[n])*t end
  -- A fixed palm-local grip follows wrist rotation; no world-axis clamping or roll flips.
- local weight=(name=='idle'or name=='walk'or name=='run'or name=='hit')and 1 or 0
+ local weight=(name=='idle'or name=='walk'or name=='run'or name=='hit'or name=='turnLeft'or name=='turnRight')and 1 or 0
 
  if weight>0 then
   local rotation,old=gripRotation,rotationScratch;for i=4,12 do old[i]=result[i]end
@@ -60,10 +61,13 @@ function G.preparePose(name,dt)
   previousName=name;fromPose=nil;fromSocket=nil;elapsed=1;alpha=1;return
  end
  if name~=previousName then
+  local pivot=name=='turnLeft'or name=='turnRight'
+  local wasPivot=previousName=='turnLeft'or previousName=='turnRight'
   local locomotion=name=='walk'or name=='run'
   local wasLocomotion=previousName=='walk'or previousName=='run'
   blendDuration=locomotion and(previousName=='idle'and .06 or(wasLocomotion and .08 or .18))or(name=='idle'and wasLocomotion and .08 or .18)
-  if previousName and(name=='ready'or previousName=='ready'or previousName=='swing'or name=='run'or previousName=='run'or name=='walk'or previousName=='walk')then
+  if pivot or wasPivot then blendDuration=.08 end
+  if previousName and(pivot or wasPivot or name=='ready'or previousName=='ready'or previousName=='swing'or name=='run'or previousName=='run'or name=='walk'or previousName=='walk')then
    fromPose=lastPose;lastPose=lastPose==poseA and poseB or poseA
    if lastSocket then for i=1,12 do socketFrom[i]=lastSocket[i]end;fromSocket=socketFrom else fromSocket=nil end;elapsed=0
   else fromPose=nil;fromSocket=nil;elapsed=1 end
