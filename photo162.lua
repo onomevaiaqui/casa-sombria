@@ -1,17 +1,22 @@
+local inspection=require('inspection165')
 -- Environmental photo inspection; no 3D model or per-frame allocations.
 local P={active=false,angle=0,tilt=0,found=false,transcription=false,previousB=true,previousA=true}
 local texture,sprites
 function P.near(room,x,y)return room=='quarto'and (x-3.5)^2+(y-3.0)^2<.58^2 end
-function P.begin()P.active=true;P.angle=0;P.tilt=0;P.previousA=true;P.previousB=true;P.transcription=false;texture=require('photo_texture162');sprites=require('sprites');return true end
-function P.reset()P.active=false;P.found=false;P.transcription=false;texture=nil end
+function P.begin()P.active=true;P.angle=0;P.tilt=0;P.previousA=true;P.previousB=true;P.transcription=false;P.reading=nil;texture=require('photo_texture162');sprites=require('sprites');return true end
+function P.reset()P.active=false;P.found=false;P.transcription=false;P.reading=nil;texture=nil end
 function P.tick(dt,left,right,up,down,confirm,cancel)
+ if left or right or up or down then P.reading=nil;P.transcription=false end
  P.angle=(P.angle+((right and 1 or 0)-(left and 1 or 0))*dt*3.4)%(2*math.pi)
  P.tilt=math.max(-.65,math.min(.65,P.tilt+((down and 1 or 0)-(up and 1 or 0))*dt*1.8))
  if not left and not right then
   if P.angle<.16 or P.angle>2*math.pi-.16 then P.angle=0 elseif math.abs(P.angle-math.pi)<.16 then P.angle=math.pi end
  end
  if math.cos(P.angle)<-.72 then P.found=true end
- if confirm and not P.previousB and P.found then P.transcription=not P.transcription end
+ if confirm and not P.previousB then
+  P.reading=inspection.text('Um desenho infantil.','Catarina 2019',P.angle,P.found)
+  P.transcription=P.reading=='Catarina 2019'
+ end
  local close=cancel and not P.previousA
  P.previousA,P.previousB=cancel,confirm
  if close then P.active=false;texture=nil;return true end
@@ -31,11 +36,7 @@ function P.draw(ui)
    col=col+n;if col==texture.width then row=row+1;col=0 end
   end
  else ui.rectfill(x,y,x+width,y+height,texture.indices[9])end
- if P.transcription and P.found then
-  ui.rectfill(162,y+8,320,y+26,240)
-  ui.print('Catarina 2019',188,y+13,241)
- end
- ui.print(P.found and 'B: LER INSCRICAO'or 'Um desenho infantil.',P.found and 182 or 160,220,241)
- ui.print('DIRECIONAL: GIRAR   A: VOLTAR',124,248,241)
+ inspection.caption(ui,P.reading,y+8)
+ inspection.controls(ui)
 end
 return P

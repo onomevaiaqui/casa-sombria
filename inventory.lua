@@ -1,3 +1,4 @@
+local inspection=require('inspection165')
 local theme=require('inventory_theme163')
 local Inventory = {}
 
@@ -236,7 +237,7 @@ function Inventory.new(sprites)
             ui.print(#self.bag..' / 6 ESPACOS',359,169,243)
             local id=self.bag[self.selected];local item=id and items[id]
             ui.print(item and item.name or 'VAZIO',29,190,241)
-            local detail=self.message or(self.inspected and item and item.detail or '')
+            local detail=self.message or(self.inspected and item and inspection.text(item.detail,item.reverseDetail,0,false)or '')
             if self.inspected and id=='remote'and self.remoteReady and not self.message then detail='Controle com a pilha instalada. O LED acende.'end
             if self.inspected and id=='lighter'and not self.message then detail=self.lit and 'Isqueiro vermelho. Esta aceso.'or 'Isqueiro vermelho. Ainda tem gas.'end
             wrapped(detail,29,205,66,243,3)
@@ -257,7 +258,7 @@ function Inventory.new(sprites)
             if doc then
                 ui.print(doc.title,29,190,241)
                 if id=='family_photo'then ui.print('B: EXAMINAR DESENHO',29,205,243)
-                elseif self.mode=='read'then wrapped(doc.text,29,205,66,243,4)end
+                elseif self.mode=='read'then wrapped(inspection.text(doc.text,doc.reverseText,0,false),29,205,66,243,4)end
             end
         end
         ui.print('A: VOLTAR   B: ACOES   L/R: ITENS / ARQUIVOS',29,251,243)
