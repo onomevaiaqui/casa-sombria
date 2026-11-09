@@ -43,3 +43,13 @@ end
 local wx,wy=S.forward('frente',.6);local shot=C.shot
 for n=1,#C.data.frente do C.shot=n;local xx,yy=S.forward('frente',.6);assert(xx==wx and yy==wy)end;C.shot=shot
 print('PASS classic up/down, reverse cadence, left/right pivots, guard rotation, strike lock, walk/run speeds and world heading across cameras/rooms')
+
+for _,sign in ipairs({1,-1})do
+ keys={};set('currentRoom','sala');set('crossing',false);set('transitionCarry',nil)
+ local x,y=M.project('sala',2.4,4.7,0);set('x',x);set('y',y);set('facing',M.facing('sala',0,sign))
+ local tx,ty=M.project('sala',2.4,4.8,0)
+ get('checkPassage')(tx-x,ty-y,0,-sign)
+ assert(get('currentRoom')=='cozinha','open passage did not transfer')
+ local wx,wy=S.forward('cozinha',get('facing'));assert(wy*sign>.9999,'passage reverses world facing')
+end
+print('PASS actual sala/cozinha passage preserves facing both forward and backwards')
