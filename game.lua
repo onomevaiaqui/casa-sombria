@@ -1984,10 +1984,6 @@ function update()
     local run, guard = held(BTN_F or 12), held(BTN_E or 15)
     if life.dead or life.hitTime then dx,dy,a,b,run,guard=0,0,false,false,false,false end
     if life.hitTime then aiming,strike,walking,running=false,0,false,false;queuedStrike=false end
-    local testCombo=guard and b
-    if testCombo and not enemy.combo then enemy.toggle() end
-    enemy.combo=testCombo
-    if testCombo then b=false end
     local cancel, confirm, attack = a and not previousA, b and not previousB, run and not previousY
     previousA, previousB, previousY = a, b, run
     local reading=dialogue.active
@@ -2161,7 +2157,7 @@ function update()
     if not enemyBehind then enemy.draw(currentRoom)end
     if currentRoom==enemy.room then
         ui.rectfill(0,16,245,26,240)
-        ui.print('R+B: INIMIGO '..(enemy.enabled and ('HP '..enemy.hp..'/5 '..(enemy.hp<=0 and 'MORTO'or(enemy.attackTime and 'ATAQUE'or 'ON')))or 'OFF'),8,18,241)
+        ui.print('INIMIGO '..(enemy.enabled and ('HP '..enemy.hp..'/5 '..(enemy.hp<=0 and 'MORTO'or(enemy.attackTime and 'ATAQUE'or 'ON')))or 'OFF'),8,18,241)
     end
     if not cameras.active and currentRoom=="garagem" and carSprite and native then
         local gx,gy=metric.ground(currentRoom,x,y)
