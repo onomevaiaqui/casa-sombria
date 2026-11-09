@@ -1,4 +1,4 @@
-PREVIA LOCAL 15.4 - CONTROLE CLASSICO
+VERSAO 15.4 - CONTROLE CLASSICO
 Escolha do usuario: cima avanca, baixo recua, esquerda/direita giram o personagem.
 Rotacao de pivo/andando 3.2 rad/s, correndo 2.5 rad/s e guarda 2.6 rad/s.
 Cima + Y corre na velocidade ja validada; recuo usa a velocidade de caminhada e ciclo de passos invertido.
@@ -8,6 +8,6 @@ Direcao real de frente preservada ao trocar de camera e entre comodos; sem trans
 PC: W avanca, S recua, A/D giram; L corre, H guarda e H+L ataca.
 Testes de locomocao classica, giro parado, guarda, golpe, velocidades e orientacao em todas as cameras/comodos passaram.
 Teste de 10000 updates de combate e colisao/morte do inimigo tambem passou.
-Nao publicado no GitHub/Lupi.
+Preparada para publicacao em onomevaiaqui/casa-sombria.
 
 Correcao do teste: sentido dos giros invertido conforme observacao do usuario, inclusive em guarda.

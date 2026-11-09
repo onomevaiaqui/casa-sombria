@@ -1,0 +1,11 @@
+15.4 - CONTROLE CLASSICO NO DIRECIONAL EM CRUZ
+Cima avanca na direcao do personagem; baixo recua mantendo sua orientacao.
+Esquerda e direita giram, com sentido corrigido apos teste do usuario.
+Y + cima corre; baixo permanece na caminhada, com ciclo de passada invertido.
+R mantem parado; esquerda/direita orientam antes do golpe. R + Y ataca.
+Orientacao fica fixa durante o golpe, sem rotacao no meio da animacao.
+Direcao no mundo preservada nas mudancas de camera e passagens de comodos, inclusive recuando.
+Velocidades de caminhar/correr, proporcoes, colisoes e aparencia do inimigo da 15.3 preservadas.
+Sem alteracao nos PNGs, paleta de imagens ou arquivos de animacao.
+Validacoes Lua 5.5: controle, velocidades, passagens, 10 comodos sem package, colisao e combate do inimigo.
+O desempenho do console fisico precisa ser conferido no Lupi.
