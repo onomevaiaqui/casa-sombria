@@ -1,3 +1,4 @@
+local shutter=require('shutter169')
 local turning=require('turn168')
 local progression=require('progression167')
 local inventoryLeftButton=INVENTORY_LEFT or BTN_Q or 14
@@ -139,6 +140,7 @@ if type(require) == "function" and type(ui.spr) == "function" then
         and type(colors) == "table" and #colors > 1 and #colors <= 224 then
         bitmap, bitmapPalette = {sprites.sala75_0, sprites.sala75_1, sprites.sala75_2}, colors
         cameras.setup(sprites,colors)
+        shutter.setup(sprites)
         codeLock:setup(sprites,colors)
         if sprites.cozinha76_0 and sprites.cozinha76_1 and sprites.cozinha76_2 then
             kitchenBitmap = {sprites.cozinha76_0, sprites.cozinha76_1, sprites.cozinha76_2}
@@ -2155,6 +2157,7 @@ function update()
             end
         end
     end
+    if native then shutter.draw(cameras,currentRoom,ui.spr) end
     local fine = false
     if not native then
         drawImage(detailedBackground, 0, 479)
@@ -2162,7 +2165,7 @@ function update()
     end
     ui.rectfill(0,0,479,15,240)
     local motion = walking and (running and " / CORRIDA" or " / PASSOS") or ""
-    ui.print("15.13 TESTE "..status..motion,8,3,241)
+    ui.print("15.14 TESTE "..status..motion,8,3,241)
     frameTime.hud(ui)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do

@@ -1,0 +1,11 @@
+A ULTIMA ENTREGA 15.14 - PORTA DE ROLO VISIVEL
+
+Corrige a porta da garagem: o bloqueio logico da 15.13 existia, mas o vao continuava aberto no bitmap.
+Acrescenta cortina de aco, guias laterais e caixa do rolo nas cameras da frente e da garagem.
+Recortes renderizados offline na geometria metrica da casa, respeitando a oclusao de paredes e carro.
+Usa exatamente o banco de cores de cada camera/estado, sem novos poligonos durante o jogo.
+Preserva cameras, escala do personagem, carro, movimentacao, colisoes e regras de desbloqueio.
+A porta exterior continua exigindo um item futuro. O acesso interno continua trancado pelo outro lado.
+A API de liberacao existente retira a cortina e conserva guias/caixa.
+A porta usa sprites recortados, sempre abaixo de 46059 bytes por imagem, sem novo fundo inteiro.
+Validacao local nao substitui teste fisico no console Lupi.
