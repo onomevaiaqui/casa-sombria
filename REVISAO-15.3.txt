@@ -1,0 +1,10 @@
+15.3 - MOFO E UMIDADE
+Visual escolhido: vestido verde acinzentado, manchas amplas de umidade na barra e gola, pele fria e pes sujos.
+Cores calculadas offline, 16 tons nos slots ja reservados ao inimigo.
+438 vertices / 802 triangulos. Geometria e bytes das 3 animacoes identicos a previa 15.2.
+Inclui ataque por proximidade, morte apos dois acertos, corpo persistente e colisao enquanto vivo.
+Mesma posicao perto da arvore e escala de referencia 1.65 m.
+Ataque inimigo ainda visual: nao aplica dano ao jogador nesta versao de teste.
+R+Y: atacar, mantendo R. R+B: liga/desliga; depois de morto desligar/ligar restaura para outro teste.
+PC: H+L atacar, H+J liga/desliga. FPS/CPU/memoria no HUD.
+Nenhuma nova imagem para a memoria grafica. Nenhuma operacao de textura ou skinning por pixel em Lua.
