@@ -1,0 +1,10 @@
+15.5 - PERSEGUICAO E SOBREVIVENCIA
+Inimigo corre e persegue apenas na frente da casa, contornando obstaculos.
+Nao entra na casa, varanda, garagem ou quintal traseiro; retorna a arvore quando o jogador sai do territorio.
+Jogador: 4 acertos fatais. Inimigo: 5 acertos fatais.
+Corrida do inimigo, morte do inimigo e morte do entregador usam os FBX fornecidos e dados precalculados.
+HUD e inventario exibem vida. Morte trava comandos, executa a animacao e permite B tentar novamente ou A menu.
+Controle classico da 15.4 mantido.
+Validacoes Lua 5.5: perseguicao, territorio, salas seguras, obstaculos, esquiva, impactos, morte, reinicio e 10 comodos no sandbox sem package.
+Estresse de 10000 updates: pico Lua 2813.8 KiB, crescimento retido -31.8 KiB no desktop.
+Nenhuma imagem nativa alterada. Memoria total e FPS no hardware Lupi precisam de teste no console.
