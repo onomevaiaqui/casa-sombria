@@ -1,3 +1,4 @@
+local deathScreen=require('death171')
 local shutter=require('shutter169')
 local turning=require('turn168')
 local progression=require('progression167')
@@ -2165,7 +2166,7 @@ function update()
     end
     ui.rectfill(0,0,479,15,240)
     local motion = walking and (running and " / CORRIDA" or " / PASSOS") or ""
-    ui.print("15.15 TESTE "..status..motion,8,3,241)
+    ui.print("15.16 TESTE "..status..motion,8,3,241)
     frameTime.hud(ui)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do
@@ -2201,5 +2202,16 @@ function update()
     end
     dialogue:tick(animationDelta())
     dialogue:draw(ui)
+    if life.dead then
+        local set=deathScreen.palette(ui,life)
+        if native and cameras.enabled and cameras.active then
+            cameras.nativePalette(currentRoom,bitmapPalette,set)
+        else
+            for i,color in ipairs(native and bitmapPalette or Palette)do set(i-1,color)end
+            if native and metric.rooms[currentRoom]then metric.applyPalette(bitmapPalette,set,currentRoom);cameras.palette(currentRoom,set)end
+        end
+        for i,color in ipairs(actorPalette)do set(actorInk(i-1),color)end
+        crowbar.palette(deathScreen.proxy);enemy.palette(deathScreen.proxy)
+    end
     life.hud(ui)
 end

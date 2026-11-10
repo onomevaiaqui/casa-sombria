@@ -18,10 +18,7 @@ function L.input(a,b)
  L.previousA,L.previousB=a,b;return action
 end
 function L.hud(ui)
+ if L.dead then require('death171').draw(ui,L);return end
  ui.rectfill(0,28,139,38,240);ui.print('VIDA '..L.hp..'/4',8,30,241)
- if L.dead and L.time>=clip.duration then
-  ui.rectfill(102,88,378,180,240);ui.print('VOCE MORREU',192,106,241)
-  ui.print('B: TENTAR NOVAMENTE',142,132,241);ui.print('A: MENU INICIAL',154,152,241)
- end
 end
 return L

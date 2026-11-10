@@ -1,0 +1,9 @@
+TELA DE MORTE 15.16
+VOCE MORREU aparece durante a queda, sem esperar o fim da animacao.
+Fade suave de 2.4 segundos pela paleta RGB555; fundo permanece visivel com 18% de luminosidade.
+Sem bitmap adicional, render target, transparencia, malha ou loop por pixel.
+Texto usa somente os indices UI 240/241, sem alterar as cores do personagem.
+B tenta novamente e A volta ao menu, liberados apenas ao terminar a queda e com nova pressionada.
+Preserva dano 1.2 da machadinha, soco 0.8, inimigo 4 HP e porta de rolo.
+Testes locais: fade progressivo, entrada de morte imediata, controles, reset, memoria limitada e sandbox sem package.
+Estresse 10000 atualizacoes: pico Lua desktop 2855.6 KiB; crescimento retido 0.2 KiB. Nao equivale a memoria/FPS do hardware.
