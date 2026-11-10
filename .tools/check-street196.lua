@@ -9,7 +9,7 @@ local function set(key,v)local _,i=get(key);debug.setupvalue(update,i,v)end
 assert(get('titleOpen')==true,'release must open normal title')
 update();keys={[BTN_Z]=true};update();keys={};update();assert(not get('titleOpen'),'new game failed')
 local M=require('metric_rooms');local function exitHouse()
- set('currentRoom','frente');local x,y=M.project('frente',9.7,-.08,0);set('x',x);set('y',y);set('streetCooldown',0);set('crossing',false);set('transitionCarry',nil);update();assert(get('streetMode'),'house to street');return get('street')
+ set('currentRoom','frente');local x,y=M.project('frente',9.7,-.08,0);set('x',x);set('y',y);set('streetCooldown',0);set('crossing',false);set('transitionCarry',nil);update();assert(get('streetMode'),'house to street');for i=1,3 do update()end;assert(not get('pendingStreet'),'staged loading incomplete');return get('street')
 end
 local S=exitHouse();assert(package.loaded.actor_data==nil,'duplicate actor animation data loaded')
 -- Inventory remains usable outside the house.

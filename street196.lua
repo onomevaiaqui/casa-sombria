@@ -71,9 +71,9 @@ local function walkable(px,py)
  end
  return true
 end
-local vertices,faces,facePool={},{},{}
-for i=1,408 do vertices[i]={0,0,0}end
+local vertices,faces,facePool
 local function ink(i)return i<16 and 224+i or 226+i end
+local function farther(a,b)return a[4]>b[4]end
 local function drawActor(clip,phase)
  local frame=math.floor(phase);local nextFrame=math.min(frame+1,clip.count-1);local blend=phase-frame;local low,span=clip.low or actor.low,clip.span or actor.span;local sn,cs=math.sin(angle),math.cos(angle);local factor=1.8/1.852
  for i=0,407 do
@@ -91,7 +91,7 @@ local function drawActor(clip,phase)
   local a,b,c=vertices[al+ah*256+1],vertices[bl+bh*256+1],vertices[cl+ch*256+1]
   if a[3]>.2 and b[3]>.2 and c[3]>.2 and (b[1]-a[1])*(c[2]-a[2])-(b[2]-a[2])*(c[1]-a[1])<0 then local n=#faces+1;local f=facePool[n];if not f then f={};facePool[n]=f end;f[1],f[2],f[3],f[4],f[5]=a,b,c,a[3]+b[3]+c[3],ink(color);faces[n]=f end
  end
- table.sort(faces,function(a,b)return a[4]>b[4]end)
+ table.sort(faces,farther)
  for _,f in ipairs(faces)do ui.trisfill(f[1][1],f[1][2],f[2][1],f[2][2],f[3][1],f[3][2],f[5])end
 end
 function M.update(paused)
@@ -121,18 +121,27 @@ function M.update(paused)
  for i,v in ipairs(palette)do ui.palset(i-1,v)end
  for i,v in ipairs(actor.palette)do ui.palset(ink(i-1),v)end
  ui.palset(240,0);ui.palset(241,32767)
- for i=0,2 do ui.spr(sprites['street_'..cameras[shot].name..'_'..i],0,i*90)end
+ for i=0,2 do
+  local name='street_'..cameras[shot].name..'_'..i;local ref=assert(sprites[name],'Fundo ausente: '..name)
+  local result=ui.spr(ref,0,i*90);assert(result~=false,'Falha ao desenhar: '..name)
+ end
  local clip=actor.clips.idle;local phase=0
  if moved>0 then
   clip=run and actor.clips.run or actor.clips.walk
   step=(step+moved/(run and 3.0118408704 or 1.7576561718))%1;phase=step*(clip.count-1)
  end
  drawActor(clip,phase)
- ui.rectfill(0,0,479,13,240);ui.print('15.19 RUA / '..cameras[shot].name,5,3,241)
+ ui.rectfill(0,0,479,13,240);ui.print('15.20 RUA / '..cameras[shot].name,5,3,241)
  if noticeTime>0 then noticeTime=noticeTime-dt;ui.rectfill(0,247,479,269,240);ui.print(notice,8,253,241)end
  if help then ui.rectfill(80,80,405,190,240);ui.print('TESTE DE CENARIO E COLISOES',92,94,241);ui.print('Cruz: avancar, recuar e girar',92,116,241);ui.print('Y: correr   B: examinar',92,138,241);ui.print('A: fechar esta ajuda',92,160,241)end
 end
-function M.setup(sharedActor,refs)actor,sprites=sharedActor,refs end
+function M.setup(sharedActor,refs,buffers)
+ assert(sharedActor and refs and buffers,'Dados incompletos da rua')
+ for _,c in ipairs(cameras)do for i=0,2 do local name='street_'..c.name..'_'..i;assert(refs[name],'Fundo ausente: '..name)end end
+ actor,sprites=sharedActor,refs
+ vertices,faces,facePool=buffers.vertices,buffers.faces,buffers.pool
+ assert(#vertices==408 and #facePool>=#actor.triangles/7,'Buffer 3D incompleto')
+end
 M.selectCamera=selectCamera;M.clearance=clearance;M.walkable=walkable
 function M.position()return x,y,angle,shot end
 function M.reset(px,py,a)x,y,angle=px,py,a or 0;shot=1;noticeTime=0;previousA,previousB=true,true end

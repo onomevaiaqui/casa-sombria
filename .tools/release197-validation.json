@@ -1,0 +1,70 @@
+{
+  "version": "15.20",
+  "hardware_failure_reproduced_locally": false,
+  "hardware_root_cause_confirmed": false,
+  "changes": [
+    "release old room/camera/depth and collect garbage before requiring street",
+    "separate transition into three frame-boundary stages",
+    "share the existing 408-vertex and triangle buffers",
+    "invalidate house render cache on return",
+    "validate all 27 street references before first draw",
+    "recover from Lua/sprite errors to house with subtitle"
+  ],
+  "graphics_changed": false,
+  "street_10000_frames_peak_kib": 1747.4,
+  "street_retained_growth_kib": 0.7,
+  "previous_street_peak_kib": 1859.4,
+  "house_rooms_observed_peak_kib": 2512.0,
+  "chase_combat_observed_peak_kib": 2867.9,
+  "hardware_measurement": false,
+  "lua_55_package_nil_test": true,
+  "missing_sprite_recovery_test": true,
+  "draw_failure_recovery_test": true,
+  "native_bitmaps_unchanged": true,
+  "tests": [
+    {
+      "test": "check-transition197.lua",
+      "passed": true
+    },
+    {
+      "test": "check-sandbox-memory145.lua",
+      "passed": true
+    },
+    {
+      "test": "check-chase-memory158.lua",
+      "passed": true
+    },
+    {
+      "test": "check-shutter169.lua",
+      "passed": true
+    },
+    {
+      "test": "check-progression167.lua",
+      "passed": true
+    },
+    {
+      "test": "check-kitchen168.lua",
+      "passed": true
+    },
+    {
+      "test": "check-inventory163.lua",
+      "passed": true
+    },
+    {
+      "test": "check-photo162.lua",
+      "passed": true
+    },
+    {
+      "test": "check-death171.lua",
+      "passed": true
+    },
+    {
+      "test": "check-turns168.lua",
+      "passed": true
+    },
+    {
+      "test": "check-balance170.lua",
+      "passed": true
+    }
+  ]
+}

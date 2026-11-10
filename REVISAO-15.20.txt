@@ -1,0 +1,11 @@
+A ULTIMA ENTREGA 15.20 - transicao casa/rua
+A 15.19 carregava o modulo da rua antes de liberar os dados da camera da casa, ainda no quadro de desenho da casa. Agora a transicao usa quadros separados: liberar camera/depth e coletar memoria; carregar/validar modulo e sprites; posicionar jogador. Ha indicacao PREPARANDO RUA 1/3, 2/3 e 3/3.
+Vertices, faces e pool de triangulos da rua reutilizam os buffers ja reservados para o entregador da casa. Ao voltar, invalida-se o cache de desenho da casa para recalcular a projecao.
+Falhas Lua e de referencia/desenho dos sprites retornam para dentro do terreno e mostram uma mensagem, em vez de propagar o erro sem recuperacao. Falhas nativas do firmware/encerramento por falta total de memoria nao podem ser interceptadas pelo Lua.
+Nenhuma imagem, paleta, iluminacao, vegetacao, material, proporcao ou colisao foi alterada nesta correcao.
+
+VALIDACAO
+10000 quadros da rua + 20 idas/voltas: pico Lua desktop observado 1747.4 KiB (antes 1859.4 KiB); crescimento retido 0.7 KiB. Falta de sprite durante carga e falha de desenho: recuperacao para a casa validada. Tambem testado com package=nil.
+Passaram os testes de menu/novo jogo, inventario externo, ambas as saidas, retorno circular, reentrada, portas de rolo, progressao, 22 passagens internas, cozinha, cadeado, arma, foto, morte, giros e danos. Teste no navegador sem erros.
+Simulacao adicional com heap Lua limitado e metadados de sprites mais completos: ambas as versoes passam com 3.25 MiB; isso nao e especificacao de memoria do console e nao reproduziu o fechamento exato relatado no hardware.
+A causa exata do fechamento no Lupi fisico ainda nao foi confirmada; a correcao reduz sobreposicao de memoria na transicao e melhora o diagnostico. Memoria total/FPS e encerramentos nativos precisam de validacao no console.

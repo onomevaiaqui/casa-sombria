@@ -1970,11 +1970,12 @@ local function drawTitle()
 end
 
 local streetMode,streetCooldown=false,0
+local pendingStreet
 local street
 local function ensureStreet()
  if not street then
   street=require('street196')
-  street.setup({palette=actorPalette,triangles=actorTriangles,clips=actorClips,low=actorLow,span=actorSpan},sceneSprites)
+  street.setup({palette=actorPalette,triangles=actorTriangles,clips=actorClips,low=actorLow,span=actorSpan},sceneSprites,{vertices=courierVertices,faces=courierFaces,pool=courierPool})
  end
  return street
 end
@@ -2004,6 +2005,31 @@ function update()
         return
     end
     streetCooldown=math.max(0,streetCooldown-frameTime.dt)
+    if pendingStreet then
+        -- A frame boundary separates house rendering, release, require and first street draw.
+        ui.cls(240);ui.palset(240,0);ui.palset(241,32767)
+        ui.print('15.20 - PREPARANDO RUA '..pendingStreet.phase..'/3',95,125,241)
+        frameTime.hud(ui)
+        if pendingStreet.phase==1 then
+            cameras.release();courierCache=nil
+            for i=#courierFaces,1,-1 do courierFaces[i]=nil end
+            for i=#courierAccepted,1,-1 do courierAccepted[i]=nil end
+            for i=#prunedFaces,1,-1 do prunedFaces[i]=nil end
+            for key in pairs(overwrittenLines)do overwrittenLines[key]=nil end
+            collectgarbage('collect');pendingStreet.phase=2
+        elseif pendingStreet.phase==2 then
+            local ok,err=pcall(ensureStreet)
+            if ok then pendingStreet.phase=3 else
+                street=nil;streetMode=false;pendingStreet=nil
+                x,y=metric.project('frente',9.7,.8,0);facing=math.pi
+                dialogue:notify('Nao foi possivel carregar a rua: '..tostring(err));streetCooldown=2
+            end
+        else
+            street.reset(pendingStreet.x,pendingStreet.y,pendingStreet.angle)
+            pendingStreet=nil;collectgarbage('collect')
+        end
+        return
+    end
     if streetMode then
         local a,b=held(BTN_G or 13),held(BTN_Z or 4)
         if a and not previousA then
@@ -2014,10 +2040,16 @@ function update()
             inventory:handle(held(UP or 1),held(DOWN or 3),held(LEFT or 4),held(RIGHT or 2),b,currentRoom,held(inventoryLeftButton),held(inventoryRightButton))
             inventory:draw(bitmapPalette or Palette);return
         end
-        street.update(false);life.hud(ui);frameTime.hud(ui)
+        local ok,err=pcall(street.update,false)
+        if not ok then
+            streetMode=false;courierCache=nil;streetCooldown=2
+            x,y=metric.project('frente',9.7,.8,0);facing=math.pi
+            dialogue:notify('Falha ao exibir a rua: '..tostring(err));return
+        end
+        life.hud(ui);frameTime.hud(ui)
         local sx,sy,sa=street.position()
         if streetCooldown==0 and sx< -4.5 and ((sy>2.65 and sy<3.95)or(sy>6.65 and sy<9.35))then
-            streetMode=false;currentRoom='frente';x,y=metric.project('frente',sy+6.4,-sx-4.2,0)
+            streetMode=false;courierCache=nil;currentRoom='frente';x,y=metric.project('frente',sy+6.4,-sx-4.2,0)
             facing=metric.facing('frente',-math.cos(sa),-math.sin(sa));crossing=false;transitionCarry=nil;streetCooldown=1
         end
         return
@@ -2197,7 +2229,7 @@ function update()
     end
     ui.rectfill(0,0,479,15,240)
     local motion = walking and (running and " / CORRIDA" or " / PASSOS") or ""
-    ui.print("15.19 TESTE "..status..motion,8,3,241)
+    ui.print("15.20 TESTE "..status..motion,8,3,241)
     frameTime.hud(ui)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do
@@ -2249,8 +2281,8 @@ function update()
         local gx,gy=metric.ground('frente',x,y)
         if streetCooldown==0 and ((gx>9.15 and gx<10.25)or(gx>13.1 and gx<15.7))and gy<.05 then
             local lx,ly=steering.forward('frente',facing)
-            ensureStreet().reset(-4.2-gy,gx-6.4,math.atan(-ly,-lx))
-            streetMode=true;streetCooldown=1;cameras.release()
+            pendingStreet={phase=1,x=-4.2-gy,y=gx-6.4,angle=math.atan(-ly,-lx)}
+            streetMode=true;streetCooldown=1
         end
     end
 end
