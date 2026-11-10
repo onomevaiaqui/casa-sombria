@@ -1,0 +1,6 @@
+VERSAO NORMAL PARA CONTINUAR O DESENVOLVIMENTO NO LUPI
+Sem final temporario CONTINUA, fade branco ou retorno da demo.
+Derrotar o inimigo libera a porta principal e a partida continua normalmente.
+Saude do inimigo 3; dano da machadinha 1.2; dano do soco 0.8.
+Mantem tela de morte, animacoes de giro, inventario, porta de rolo, cameras, proporcoes e colisoes.
+O pacote itch.io com final continua separado; nenhum arquivo demo_ending esta nesta versao.
