@@ -1,0 +1,6 @@
+A ULTIMA ENTREGA 15.21 - dependencia de paleta da rua
+O video do console na 15.20 mostrou o erro real: /street196.lua:5, module street_palette not found. A recuperacao da 15.20 retornou para a casa; a morte posterior veio de ataques do inimigo, nao de um encerramento nesse trecho do video.
+Os mesmos 205 valores de cores foram incorporados diretamente em street196.lua. street_palette.lua foi retirado do pacote; o carregamento da rua nao depende mais desse arquivo. A causa de o servico nao o ter enviado ao console nao foi confirmada.
+Nenhum PNG/GIF, cor, material, vegetacao, camera, colisao, escala ou animacao foi alterado.
+Validacao: comparacao dos 205 valores com o commit anterior; carregamento com modulo street_palette explicitamente bloqueado, package=nil, 10000 quadros e 20 ciclos de casa/rua; falhas de sprite continuam recuperaveis. Pico observado no Lua desktop da rua: 1747.8 KiB. Demais testes de menu, inventario, passagens, cadeado, combate, morte e giros passaram.
+Memoria/FPS totais no console fisico nao foram medidos nesta correcao.

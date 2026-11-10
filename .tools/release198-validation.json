@@ -1,0 +1,26 @@
+{
+  "version": "15.21",
+  "observed_error": "module street_palette not found on physical Lupi 15.20",
+  "fix": "inline the exact 205 palette entries into street196.lua; remove external palette dependency",
+  "palette_entries_unchanged": true,
+  "graphics_files_unchanged": true,
+  "test_without_street_palette_module": true,
+  "lua_55_package_nil": true,
+  "street_frames_tested": 10000,
+  "portal_round_trips": 20,
+  "street_peak_desktop_kib": 1747.8,
+  "hardware_fps_or_total_memory_measured": false,
+  "tests": [
+    "check-palette198.lua",
+    "check-sandbox-memory145.lua",
+    "check-chase-memory158.lua",
+    "check-shutter169.lua",
+    "check-progression167.lua",
+    "check-kitchen168.lua",
+    "check-inventory163.lua",
+    "check-photo162.lua",
+    "check-death171.lua",
+    "check-turns168.lua",
+    "check-balance170.lua"
+  ]
+}
