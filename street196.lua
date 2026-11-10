@@ -4,6 +4,9 @@ local cameras=require('street_data')
 local hole=require('hole')
 -- Embedded: the console package did not contain street_palette.lua.
 local palette={0,20219,17014,14901,16911,12753,13774,13741,11660,10605,10603,11627,10571,10570,10570,7530,9546,9546,9514,9514,9513,9513,8489,9513,8457,8457,8456,7464,6408,7433,8456,8456,8456,8456,7431,7399,8455,7399,7399,7399,7399,7399,7399,7399,7399,7399,7398,5351,6374,7366,6342,4326,6342,4263,6342,6342,6342,6342,6342,6342,6342,5286,6342,6342,6341,6341,5317,5285,6341,6309,6309,6309,4293,5285,5285,5285,5285,5285,5285,5285,5285,5285,4261,5285,5285,5285,5285,5285,5285,5285,5285,5284,4261,5285,2212,2212,5284,5284,5252,5252,5252,4228,5252,4228,3204,3203,2179,3174,3173,3172,2148,4228,3204,3172,2148,4227,4227,3203,3171,2147,2147,3203,3170,3170,3170,3170,2146,2146,130,97,3170,2146,2146,97,2116,2115,2115,2115,2114,1091,2114,1090,2114,2113,1089,1089,65,1058,1058,1057,1057,1057,1057,33,1057,1057,64,32,32,32,1057,32,32,32,1056,32,32,32,32,2080,2080,2080,32,1056,32,32,32,1024,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
+-- PNGs carry these RGB555 keys; their console indices may be reordered.
+local carrier={0,4330,6446,2183,2184,13877,12891,6513,10574,9549,5423,7435,24412,20152,9516,6580,19230,7469,5287,5354,8459,3241,5389,6614,7705,5388,4332,3139,6547,6546,5457,4366,2149,10540,1127,9482,5490,9483,7367,5253,3207,2148,2217,12721,3172,1092,4230,1057,3173,3206,4297,1058,2114,7401,13645,27582,6344,2115,3175,3210,4235,2221,2185,1093,1060,1094,6349,1059,5361,6480,7536,2187,9617,7503,4331,2222,4298,2182,6378,5321,5290,1128,1095,1129,5288,6412,1091,4264,9550,7438,8462,6276,13610,11529,9415,9449,10507,9690,6485,4341,0,9584,2116,9587,5427,2186,1097,2257,35,1,1101,15623,9381,8358,13543,8324,10371,8257,9313,13442,13509,14634,8492,6647,20705,2218,9382,14499,11463,10405,2081,3105,8493,12417,17671,10473,10438,10338,3138,19649,3137,13544,1163,20808,15591,14600,13577,14601,3313,1164,14466,36,32766,17704,3104,3379,2292,3545,2293,26,7264,25,5255,6274,6514,53,3677,6714,17602,10608,8827,7335,5221,5186,5625,4161,21798,16615,22786,19717,24935,7233,5184,9377,49,34,4162,1024,17637,19716,18727,22855,7267,7300,7301,25992,5219,5692,8427,28,5498,1241,8764,9457,120,}
+local nativeSlots
 local sprites
 
 local x,y,angle=0,5,0
@@ -119,7 +122,7 @@ function M.update(paused)
  shot=selectCamera(x,y,shot)
 
  ui.cls(0)
- for i,v in ipairs(palette)do ui.palset(i-1,v)end
+ M.backgroundPalette(ui.palset)
  for i,v in ipairs(actor.palette)do ui.palset(ink(i-1),v)end
  ui.palset(240,0);ui.palset(241,32767)
  for i=0,2 do
@@ -132,12 +135,21 @@ function M.update(paused)
   step=(step+moved/(run and 3.0118408704 or 1.7576561718))%1;phase=step*(clip.count-1)
  end
  drawActor(clip,phase)
- ui.rectfill(0,0,479,13,240);ui.print('15.22 RUA / '..cameras[shot].name,5,3,241)
+ ui.rectfill(0,0,479,13,240);ui.print('15.23 RUA / '..cameras[shot].name,5,3,241)
  if noticeTime>0 then noticeTime=noticeTime-dt;ui.rectfill(0,247,479,269,240);ui.print(notice,8,253,241)end
  if help then ui.rectfill(80,80,405,190,240);ui.print('TESTE DE CENARIO E COLISOES',92,94,241);ui.print('Cruz: avancar, recuar e girar',92,116,241);ui.print('Y: correr   B: examinar',92,138,241);ui.print('A: fechar esta ajuda',92,160,241)end
 end
-function M.setup(sharedActor,refs,buffers)
- assert(sharedActor and refs and buffers,'Dados incompletos da rua')
+function M.backgroundPalette(set)
+ set(0,palette[1])
+ for i=2,#palette do set(nativeSlots[i],palette[i])end
+end
+function M.setup(sharedActor,refs,buffers,masterPalette)
+ assert(sharedActor and refs and buffers and masterPalette,'Dados incompletos da rua')
+ local byColor={};for i,color in ipairs(masterPalette)do byColor[color]=i-1 end
+ nativeSlots={[1]=0}
+ for i=2,#carrier do
+  nativeSlots[i]=assert(byColor[carrier[i]],'Cor da rua ausente na paleta do console: '..carrier[i])
+ end
  for _,c in ipairs(cameras)do for i=0,2 do local name='street_'..c.name..'_'..i;assert(refs[name],'Fundo ausente: '..name)end end
  actor,sprites=sharedActor,refs
  vertices,faces,facePool=buffers.vertices,buffers.faces,buffers.pool

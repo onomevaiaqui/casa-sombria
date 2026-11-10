@@ -1,0 +1,98 @@
+{
+  "version": "15.23",
+  "cause": "Street assumed canonical palette indices; native catalog can reorder colors",
+  "fix": "Map embedded carrier RGB555 keys to actual native Palette indices",
+  "png_gif_geometry_collisions_unchanged": true,
+  "desired_street_colors_unchanged": true,
+  "png_proof": {
+    "palette_permutations": 3,
+    "actual_png_pixels_verified": 3499200,
+    "mismatches_after_fix": 0,
+    "mismatches_with_old_fixed_index_algorithm": 2884848,
+    "street_pngs": 27
+  },
+  "lua_tests": [
+    {
+      "test": "check-remap200.lua",
+      "code": 0,
+      "output": "Runtime: Lua 5.5\nPASS 13 reordered native palettes, every opaque carrier color, transparent slot and incomplete-palette recovery\n"
+    },
+    {
+      "test": "check-quintal-front199.lua",
+      "code": 0,
+      "output": "Runtime: Lua 5.5\nPASS 100 backyard/front gate passages, package=nil; peak 1584.9 KiB; retained growth 0.0 KiB; actual Lua heap HUD\n"
+    },
+    {
+      "test": "check-compact199.lua",
+      "code": 0,
+      "output": "Runtime: Lua 5.5\nPASS exact original visibility/depth digests: 331835 cells, 125 depth states\n"
+    },
+    {
+      "test": "check-palette198.lua",
+      "code": 0,
+      "output": "Runtime: Lua 5.5\nPASS 10000 street frames + 20 portal round trips; peak 1511.3 KiB; retained 1266.0 KiB; growth 0.7 KiB\nPASS normal title, shared mesh/animation/render buffers, exterior inventory, staged loading, sprite-error recovery, omitted street_palette and package=nil\n"
+    },
+    {
+      "test": "check-release142.lua",
+      "code": 0,
+      "output": "Runtime: Lua 5.5\nPASS release: 125 states, all native bitmaps and depth buffers, lazy room cache\n"
+    },
+    {
+      "test": "check-performance143.lua",
+      "code": 0,
+      "output": "Runtime: Lua 5.5\nPASS 10000 projected points and occlusion samples unchanged\nDesktop CPU microbenchmark (30000 projection+occlusion pairs): before 0.0800s after 0.0140s; 82.5% reduction (not hardware FPS)\nPASS HUD actual ui.stat(7) FPS and frame counter\nPASS estimated wall-clock FPS fallback without changing gameplay timestep\n"
+    },
+    {
+      "test": "check-sandbox-memory145.lua",
+      "code": 0,
+      "output": "Runtime: Lua 5.5\nBOOT transient 2146.6 KB; retained 1068.2 KB\nquintal transient 1143.9 KB; retained 1129.7 KB\nsala transient 1230.8 KB; retained 1169.9 KB\ncozinha transient 1297.0 KB; retained 1237.1 KB\ngaragem transient 1347.7 KB; retained 1282.9 KB\nquarto transient 1382.3 KB; retained 1322.9 KB\nbanheiro transient 1426.9 KB; retained 1368.9 KB\ncorredor transient 1525.2 KB; retained 1465.3 KB\narea transient 1518.1 KB; retained 1467.7 KB\nfrente transient 1736.5 KB; retained 1658.9 KB\nferramentas transient 1732.1 KB; retained 1662.8 KB\nquintal transient 1734.9 KB; retained 1676.1 KB\nsala transient 1715.8 KB; retained 1664.2 KB\ncozinha transient 1717.3 KB; retained 1666.7 KB\ngaragem transient 1719.4 KB; retained 1663.7 KB\nquarto transient 1715.9 KB; retained 1662.3 KB\nbanheiro transient 1715.3 KB; retained 1663.1 KB\ncorredor transient 1716.2 KB; retained 1665.5 KB\narea transient 1704.7 KB; retained 1657.4 KB\nfrente transient 1755.3 KB; retained 1697.6 KB\nferramentas transient 1723.4 KB; retained 1662.8 KB\nquintal transient 1734.9 KB; retained 1676.1 KB\nsala transient 1715.8 KB; retained 1664.2 KB\ncozinha transient 1717.3 KB; retained 1666.7 KB\ngaragem transient 1719.4 KB; retained 1663.7 KB\nquarto transient 1715.9 KB; retained 1662.3 KB\nbanheiro transient 1715.3 KB; retained 1663.1 KB\ncorredor transient 1716.2 KB; retained 1665.5 KB\narea transient 1704.7 KB; retained 1657.4 KB\nfrente transient 1755.3 KB; retained 1697.6 KB\nferramentas transient 1723.4 KB; retained 1662.8 KB\nPASS desktop Lua gameplay max observed transient 1755.3 KB; retained 1697.6 KB (not hardware totals)\n"
+    },
+    {
+      "test": "check-chase-memory158.lua",
+      "code": 0,
+      "output": "Runtime: Lua 5.5\nPASS 10000 chase/combat/player-death updates: peak 2487.2 KiB, retained growth 0.2 KiB\n"
+    },
+    {
+      "test": "check-shutter169.lua",
+      "code": 0,
+      "output": "Runtime: Lua 5.5\nPASS shutter: 30 tile draws, closed/open states and camera palettes\n"
+    },
+    {
+      "test": "check-progression167.lua",
+      "code": 0,
+      "output": "Runtime: Lua 5.5\nPASS front door until 3 hatchet hits, garage inner latch by garage side, outer shutter locked both ways, exterior release/reset and backyard combat route\n"
+    },
+    {
+      "test": "check-kitchen168.lua",
+      "code": 0,
+      "output": "Runtime: Lua 5.5\nPASS real game loop: 22 transitions and corridor B action\nPASS actual B action opens garden gate\nPASS closed gate prevents passage and reports its action\nPASS real puzzle input, frozen player, 2019 unlock, crowbar pickup/equip/render\nPASS source sword-slash clip, unarmed punch, armed swing, stable palm attachment and rigid weapon, recovery, no held-Y repeats\nPASS prepared guard, original 62-frame slash, direct recovery to guard, late-input chain, no auto-repeat\nPASS 10 kitchen furniture collision boxes, including 3 chairs\n"
+    },
+    {
+      "test": "check-inventory163.lua",
+      "code": 0,
+      "output": "Runtime: Lua 5.5\nPASS inventory tabs L/R edges, dpad, inspect, back, archive photo, reserved palette; stress peak 1289.7 KiB growth -31.8 KiB\n"
+    },
+    {
+      "test": "check-photo162.lua",
+      "code": 0,
+      "output": "Runtime: Lua 5.5\nPASS second stand collision/access, environmental interaction, archive, hidden back clue, rotation, close and bounded memory\n"
+    },
+    {
+      "test": "check-death171.lua",
+      "code": 0,
+      "output": "Runtime: Lua 5.5\nPASS death: title during fall, monotonic palette fade, visible background, delayed retry/menu, reset and bounded memory\n"
+    },
+    {
+      "test": "check-turns168.lua",
+      "code": 0,
+      "output": "Runtime: Lua 5.5\nPASS exact source mesh, L/R clips render, unchanged 3.2 rad/s steering, zero displacement, wrap/release and walk/run/guard/hit priorities; 41616 pose bytes\n"
+    },
+    {
+      "test": "check-balance170.lua",
+      "code": 0,
+      "output": "Runtime: Lua 5.5\nPASS balance: hatchet 1.2 (3 hits), punch 0.8 (4 hits), mixed hits, immediate death and reset\n"
+    }
+  ],
+  "street_desktop_peak_kib": 1511.3,
+  "hardware_validation_pending": true
+}

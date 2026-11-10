@@ -1,0 +1,4 @@
+A ULTIMA ENTREGA 15.23 - paleta nativa da rua
+O video da 15.22 mostra a rua carregando a 21-23 FPS, mas com cores brancas/verdes incorretas; a frente da casa permanece correta. A rua aplicava cores por indices fixos da previa. Agora resolve cada chave RGB555 dos PNGs na paleta real fornecida pelo console, como os fundos da casa. Paleta de referencia incorporada, sem depender de street_palette.lua.
+Nenhum PNG/GIF, material, vegetacao, geometria, camera, colisao ou animacao alterado. As cores desejadas da rua continuam identicas.
+Validacao: 13 reordenacoes de paleta; 3.499.200 pixels reais dos 27 PNGs comparados em 3 reordenacoes, zero divergencias (algoritmo antigo: 2.884.848). Testes de transicoes, memoria, portas, combate, inventario e cameras passaram. Rua 10000 quadros/20 ciclos: pico Lua desktop 1511.3 KiB. Numeros de desktop nao substituem teste de memoria/FPS no hardware.
