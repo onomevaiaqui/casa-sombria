@@ -1,5 +1,5 @@
 -- Single animated stress-test actor; all FBX skinning is baked offline.
-local E={enabled=true,room='frente',x=6.45,y=4.45,time=0,scale=1.65/1.8,radius=.48,hp=4,maxHp=4,state="alive",attackTime=nil,cooldown=0,angle=0}
+local E={enabled=true,room='frente',x=6.45,y=4.45,time=0,scale=1.65/1.8,radius=.48,hp=3,maxHp=3,state="alive",attackTime=nil,cooldown=0,angle=0}
 local metric=require('metric_rooms')
 local nav=require('chase_nav158')
 local life=require('survival158')

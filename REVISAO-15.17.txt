@@ -1,0 +1,3 @@
+Saude do inimigo reduzida para 3. Dano da machadinha permanece 1.2 e soco 0.8.
+Morre em 3 golpes de machadinha ou 4 socos. Reset restaura 3 HP.
+Final CONTINUA continua exclusivo da exportacao itch.io, ausente do jogo normal.
