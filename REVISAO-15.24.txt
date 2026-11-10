@@ -1,0 +1,14 @@
+A ULTIMA ENTREGA 15.24 - muros aprovados e fluidez da rua
+
+Publica os nove angulos aprovados localmente: muro do retorno acompanha o limite externo da calcada; placas recuadas junto ao buraco substituidas por trechos alinhados a frente dos lotes e extremidades quebradas. Casa original, iluminacao, materiais, vegetacao, cameras, animacoes e colisoes preservados.
+
+DESEMPENHO
+A rua limitava dt a 0.1 segundo: abaixo de 10 FPS o personagem avancava menos por segundo. Agora usa frameTime.dt, como a casa, com limite de seguranca de 0.5 segundo e os mesmos subpassos de colisao. Nao aumenta a velocidade base de andar/correr.
+Elimina tabelas temporarias na margem das cameras, evita testar as 56 arestas do buraco quando longe dele, reutiliza a pose projetada parada, calcula seno/cosseno uma vez por deslocamento e acessa a matriz da camera diretamente na projecao dos vertices. Nao reduz poligonos, quadros de animacao, interpolacao ou resolucao.
+
+VALIDACAO
+183911 posicoes de colisao identicas a 15.23; 960 quadros com coordenadas/cores/ordem dos triangulos e movimentacao identicas a 60 FPS; caminhada/corrida percorrem a mesma distancia real por segundo a 5, 7, 15, 30 e 60 FPS.
+10000 quadros da rua e 20 ciclos de saida/retorno: pico Lua desktop 1320.4 KiB (15.23:1511.3), crescimento retido 0.7 KiB. Microbenchmark Lua desktop de 1000 quadros: parado 0.445 -> 0.033 s; giro 0.444 -> 0.395 s. Isso nao mede FPS ou memoria total do console.
+Suite de combate, perseguicao, morte, inventario, portas, cadeado, giros e 125 estados de camera passou. Navegador passou menu/novo jogo, ambas as saidas, inventario externo, retorno circular e reentrada sem erros.
+27 PNGs da rua, cada um 480x90/43200 bytes nativos, abaixo de 46059. Paleta global 204 cores opacas; GIF 64x32; codigo de remapeamento da 15.23 mantido. Nenhum PNG da casa foi alterado. Documentacao Lupi consultada em 2026-11-10.
+FPS e memoria total no hardware ainda precisam ser medidos no Lupi do usuario.
