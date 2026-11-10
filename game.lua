@@ -130,6 +130,7 @@ local Palette = {0,1,1024,1057,34,35,1059,1058,1091,3105,2081,3137,2114,3139,313
 local carSprite
 local bitmap, kitchenBitmap, titleBitmap, sofaBitmap, bitmapPalette, sofaColors
 local roomBitmaps = {}
+local sceneSprites
 local itemSprites = {}
 local inventory
 if type(require) == "function" and type(ui.spr) == "function" then
@@ -140,6 +141,7 @@ if type(require) == "function" and type(ui.spr) == "function" then
     if type(sprites) == "table" and sprites.sala75_0 and sprites.sala75_1 and sprites.sala75_2
         and type(colors) == "table" and #colors > 1 and #colors <= 224 then
         bitmap, bitmapPalette = {sprites.sala75_0, sprites.sala75_1, sprites.sala75_2}, colors
+        sceneSprites=sprites
         cameras.setup(sprites,colors)
         shutter.setup(sprites)
         codeLock:setup(sprites,colors)
@@ -1967,6 +1969,16 @@ local function drawTitle()
     end
 end
 
+local streetMode,streetCooldown=false,0
+local street
+local function ensureStreet()
+ if not street then
+  street=require('street196')
+  street.setup({palette=actorPalette,triangles=actorTriangles,clips=actorClips,low=actorLow,span=actorSpan},sceneSprites)
+ end
+ return street
+end
+
 function update()
     frameTime.sample(ui)
     if titleOpen then drawTitle(); return end
@@ -1989,6 +2001,25 @@ function update()
         previousA,previousB,previousY=a,b,run
         codeLock:draw(ui)
         if result=='opened'then dialogue:notify('Cadeado aberto.')end
+        return
+    end
+    streetCooldown=math.max(0,streetCooldown-frameTime.dt)
+    if streetMode then
+        local a,b=held(BTN_G or 13),held(BTN_Z or 4)
+        if a and not previousA then
+            if inventory.visible then inventory:back()else inventory:open();inventory.previous.b=b end
+        end
+        previousA,previousB,previousY=a,b,held(BTN_F or 12)
+        if inventory.visible then
+            inventory:handle(held(UP or 1),held(DOWN or 3),held(LEFT or 4),held(RIGHT or 2),b,currentRoom,held(inventoryLeftButton),held(inventoryRightButton))
+            inventory:draw(bitmapPalette or Palette);return
+        end
+        street.update(false);life.hud(ui);frameTime.hud(ui)
+        local sx,sy,sa=street.position()
+        if streetCooldown==0 and sx< -4.5 and ((sy>2.65 and sy<3.95)or(sy>6.65 and sy<9.35))then
+            streetMode=false;currentRoom='frente';x,y=metric.project('frente',sy+6.4,-sx-4.2,0)
+            facing=metric.facing('frente',-math.cos(sa),-math.sin(sa));crossing=false;transitionCarry=nil;streetCooldown=1
+        end
         return
     end
     ui.cls(0)
@@ -2166,7 +2197,7 @@ function update()
     end
     ui.rectfill(0,0,479,15,240)
     local motion = walking and (running and " / CORRIDA" or " / PASSOS") or ""
-    ui.print("15.18 TESTE "..status..motion,8,3,241)
+    ui.print("15.19 TESTE "..status..motion,8,3,241)
     frameTime.hud(ui)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do
@@ -2214,4 +2245,12 @@ function update()
         crowbar.palette(deathScreen.proxy);enemy.palette(deathScreen.proxy)
     end
     life.hud(ui)
+    if currentRoom=='frente'and not life.dead and not inventory.visible then
+        local gx,gy=metric.ground('frente',x,y)
+        if streetCooldown==0 and ((gx>9.15 and gx<10.25)or(gx>13.1 and gx<15.7))and gy<.05 then
+            local lx,ly=steering.forward('frente',facing)
+            ensureStreet().reset(-4.2-gy,gx-6.4,math.atan(-ly,-lx))
+            streetMode=true;streetCooldown=1;cameras.release()
+        end
+    end
 end

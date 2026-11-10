@@ -1,0 +1,436 @@
+{
+  "projeto": "A Ultima Entrega",
+  "atualizacao": "2026-11-10",
+  "politica_nova_rua": "Assets ja feitos; sem geracao de imagem, textura ou modelo por IA nesta etapa. Preferir candidatos No AI. Sem substituicao automatica dos assets atuais.",
+  "estados": "em_uso possui evidencia de integracao; uso_registrado consta nos creditos antigos e precisa fechar identificacao; local_disponivel nao equivale a integrado; candidato_online ainda nao baixado.",
+  "assets": [
+    {
+      "artista": "Kenney / Kenney Vleugels",
+      "pacote": "UI Pack",
+      "status": "em_uso",
+      "uso": "Bordas do inventario recoloridas e adaptadas",
+      "licenca": "CC0",
+      "origem": "https://kenney-assets.itch.io/ui-pack",
+      "ia_declarada": "nao verificado",
+      "observacoes": "",
+      "verificado_em": "2026-11-10"
+    },
+    {
+      "artista": "heyheythere",
+      "pacote": "PSX Furniture Free",
+      "status": "em_uso",
+      "uso": "Geladeira, balcoes, pia, mesa e cadeiras da cozinha",
+      "licenca": "CC BY 4.0",
+      "origem": "https://heyheythere.itch.io/psx-furniture-free",
+      "ia_declarada": "assistencia de IA declarada; autor informa sem imagem ou modelo 3D generativo",
+      "observacoes": "Preservar linha de credito, link da licenca e informar adaptacoes de escala/paleta/render.",
+      "verificado_em": "2026-11-10"
+    },
+    {
+      "artista": "heyheythere",
+      "pacote": "PSX Kitchen and Food Free",
+      "status": "em_uso",
+      "uso": "Fogao, carne estragada e condimento",
+      "licenca": "CC BY 4.0",
+      "origem": "https://heyheythere.itch.io/psx-kitchen-and-food-free",
+      "ia_declarada": "assistencia de IA declarada; autor informa sem imagem ou modelo 3D generativo",
+      "observacoes": "",
+      "verificado_em": "2026-11-10"
+    },
+    {
+      "artista": "postdev",
+      "pacote": "PSX Doors",
+      "status": "em_uso",
+      "uso": "Door 4 interiores; Door 8 entrada principal",
+      "licenca": "Licenca comercial propria do pacote comprado",
+      "origem": "https://postdev.itch.io/psx-doors",
+      "ia_declarada": "nao verificado",
+      "observacoes": "Originais privados; nao redistribuir os modelos como pacote.",
+      "verificado_em": "2026-11-10"
+    },
+    {
+      "artista": "GGBotNet",
+      "pacote": "PSX Style Cars / Car 01",
+      "status": "em_uso",
+      "uso": "Carro verde da garagem",
+      "licenca": "CC0",
+      "origem": "https://ggbot.itch.io/psx-style-cars",
+      "ia_declarada": "No generative AI na pagina",
+      "observacoes": "",
+      "verificado_em": "2026-11-10"
+    },
+    {
+      "artista": "ATR0CITY",
+      "pacote": "PSX Roadside Motel / Junkyard / Streets / Town Architecture / Parking Garage",
+      "status": "em_uso",
+      "uso": "Cama, criados-mudos, TV/rack, pneus, calcada e materiais exteriores",
+      "licenca": "Pendente: termos gerais nao encontrados nos README inspecionados",
+      "origem": "",
+      "ia_declarada": "Modelled with AI assistance and hand-checked by ATR0CITY",
+      "observacoes": "Nao classificar como CC0 sem evidencia. Ruas e fachadas adicionais locais disponiveis, mas nao escolhidos para a nova cena.",
+      "verificado_em": "2026-11-10"
+    },
+    {
+      "artista": "Pizza Doggy",
+      "pacote": "Retro Tree Pack v1.0",
+      "status": "em_uso",
+      "uso": "tree_rt_4: arvore de copa larga do jardim",
+      "licenca": "Licenca propria Pizza Doggy de 2026-11-01; uso comercial e render permitido",
+      "origem": "https://pizzadoggy.itch.io/retro-tree-pack",
+      "ia_declarada": "No generative AI na pagina",
+      "observacoes": "Nao rotular CC0: PDF local tem restricoes proprias; nao fornecer originais nem enviar a ferramentas generativas.",
+      "verificado_em": "2026-11-10"
+    },
+    {
+      "artista": "Screaming Brain Studios",
+      "pacote": "Base Material Pack / BM-068",
+      "status": "em_uso",
+      "uso": "Textura do exterior da casa, exceto varanda",
+      "licenca": "CC0",
+      "origem": "https://screamingbrainstudios.itch.io/",
+      "ia_declarada": "nao verificado",
+      "observacoes": "",
+      "verificado_em": "2026-11-10"
+    },
+    {
+      "artista": "EgorZuyev",
+      "pacote": "PSX Zombie Apocalypse Survival Kit / Axe",
+      "status": "em_uso",
+      "uso": "Machadinha equipada pelo jogador",
+      "licenca": "CC0",
+      "origem": "https://egorzuyev.itch.io/psx-zombie-apocalypse",
+      "ia_declarada": "No generative AI na pagina",
+      "observacoes": "",
+      "verificado_em": "2026-11-10"
+    },
+    {
+      "artista": "Vicious Potato Studios",
+      "pacote": "Shelf / Forgotten Bedroom",
+      "status": "uso_registrado",
+      "uso": "Prateleira da casinha de ferramentas",
+      "licenca": "Licenca propria: credito obrigatorio",
+      "origem": "",
+      "ia_declarada": "nao verificado",
+      "observacoes": "Linha: Assets provided by Vicious Potato Studios. Confirmar arquivo exato da prateleira no fechamento dos creditos.",
+      "verificado_em": "2026-11-10"
+    },
+    {
+      "artista": "Poly Haven / autores individuais a completar",
+      "pacote": "Ferramentas e bancada da casinha",
+      "status": "uso_registrado",
+      "uso": "Ferramentas e bancada",
+      "licenca": "CC0",
+      "origem": "https://polyhaven.com/license",
+      "ia_declarada": "nao verificado",
+      "observacoes": "Manter autor individual por asset quando o modelo efetivamente usado for conferido.",
+      "verificado_em": "2026-11-10"
+    },
+    {
+      "artista": "MutedPotato",
+      "pacote": "Low Poly Crowbar",
+      "status": "uso_registrado_historico",
+      "uso": "Pe de cabra da casinha / arma de versoes antigas",
+      "licenca": "Pendente: conferir licenca do pacote",
+      "origem": "https://mutedpotato.itch.io/low-poly-crowbar",
+      "ia_declarada": "nao verificado",
+      "observacoes": "Arma atual e Axe de EgorZuyev; nao apresentar MutedPotato como autor da machadinha.",
+      "verificado_em": "2026-11-10"
+    },
+    {
+      "artista": "Autor individual pendente / 3D Assets como fonte",
+      "pacote": "Combination Padlock Small",
+      "status": "uso_registrado",
+      "uso": "Cadeado numerico da casinha",
+      "licenca": "CC0 informado no registro de origem",
+      "origem": "https://3dassets.dev/assets/escape-room-and-puzzle-venue-combination-padlock-small-1cc72aa6",
+      "ia_declarada": "nao verificado",
+      "observacoes": "3D Assets e fonte/plataforma, nao atribuir autoria individual sem conferencia.",
+      "verificado_em": "2026-11-10"
+    },
+    {
+      "artista": "Autor pendente",
+      "pacote": "PSX Dark Fantasy Overworld FreeSample",
+      "status": "em_uso_autoria_pendente",
+      "uso": "Ground_Grass no jardim; possiveis pedras precisam conferir arquivo",
+      "licenca": "Pendente",
+      "origem": "",
+      "ia_declarada": "nao verificado",
+      "observacoes": "README examinado nao identifica claramente artista/licenca.",
+      "verificado_em": "2026-11-10"
+    },
+    {
+      "artista": "Leli (grafia a confirmar com o autor do jogo)",
+      "pacote": "Dois quadros fornecidos pelo usuario",
+      "status": "em_uso_autoria_informada",
+      "uso": "Quadros acima do sofa",
+      "licenca": "Autorizacao e credito final a confirmar",
+      "origem": "",
+      "ia_declarada": "nao verificado",
+      "observacoes": "",
+      "verificado_em": "2026-11-10"
+    },
+    {
+      "artista": "Alex Rodrigues",
+      "pacote": "Inimigos fornecidos pelo criador do jogo",
+      "status": "em_uso",
+      "uso": "Criacao dos inimigos",
+      "licenca": "Autoria informada pelo criador do jogo",
+      "origem": "",
+      "ia_declarada": "nao verificado",
+      "observacoes": "Credito dos inimigos: Alex Rodrigues. Origem/licenca das animacoes FBX permanece em registro proprio, sem presumir autoria de terceiros.",
+      "verificado_em": "2026-11-10"
+    },
+    {
+      "artista": "Alex Rodrigues",
+      "pacote": "Entregador low-poly fornecido pelo usuario",
+      "status": "em_uso",
+      "uso": "Personagem jogavel",
+      "licenca": "Autoria informada pelo criador do jogo",
+      "origem": "",
+      "ia_declarada": "nao verificado",
+      "observacoes": "Credito solicitado pelo usuario: personagem e inimigos por Alex Rodrigues.",
+      "verificado_em": "2026-11-10"
+    },
+    {
+      "artista": "Kkryy",
+      "pacote": "Retro PSX Street Furniture",
+      "status": "local_disponivel",
+      "uso": "TrashCan, GarbageBag, Barrel, Bottles, Box; detalhes da rua",
+      "licenca": "CC0 informado no registro local",
+      "origem": "https://kkryy.itch.io/streetfurniture",
+      "ia_declarada": "nao verificado",
+      "observacoes": "Disponivel localmente; uso na nova rua ainda nao aplicado.",
+      "verificado_em": "2026-11-10"
+    },
+    {
+      "artista": "ALEX / arexmotion",
+      "pacote": "FREE Modular PSX Building Asset Pack",
+      "status": "usado_na_montagem_offline",
+      "uso": "Modulos de reboco e alvenaria para casas 39,35 e41",
+      "licenca": "CC0",
+      "origem": "https://apfelgarten.itch.io/free-modular-building-kit",
+      "ia_declarada": "No generative AI na pagina",
+      "observacoes": "Pesquisado, nao baixado nesta tarefa. Montado em Rua-das-Acacias-montagem174.blend; nao integrado ao runtime.",
+      "verificado_em": "2026-11-10",
+      "arquivos": [
+        {
+          "file": "modular_building_kit_by_ALEX.zip",
+          "bytes": 17977420,
+          "sha256": "52b4e105067d17bb92645f416f30b76c7e5dc7d4aad8728dc00859d131f26770",
+          "url": "https://itchio-mirror.cb031a832f44726753d6267436f3b414.r2.cloudflarestorage.com/upload2/game/4023248/15479030"
+        }
+      ]
+    },
+    {
+      "artista": "MCSTEEG",
+      "pacote": "Trash and Debris",
+      "status": "usado_na_montagem_offline",
+      "uso": "Entulho e detritos de composicao junto ao desabamento",
+      "licenca": "Licenca propria: uso em jogos comerciais e pessoais; nao redistribuir como proprio",
+      "origem": "https://mcsteeg.itch.io/trash-and-debris",
+      "ia_declarada": "No AI na pagina",
+      "observacoes": "Pesquisado, nao baixado; conferir se as pecas atendem a borda do asfalto, sem prometer cratera pronta. Montado em Rua-das-Acacias-montagem174.blend; nao integrado ao runtime.",
+      "verificado_em": "2026-11-10",
+      "arquivos": [
+        {
+          "file": "Trash and Debris.zip",
+          "bytes": 11711466,
+          "sha256": "62e16bb1a1f9a44d457fd38d4bf5cec319d8f1a7aca6a38e4b607413b6ab1aa1",
+          "url": "https://itchio-mirror.cb031a832f44726753d6267436f3b414.r2.cloudflarestorage.com/upload2/game/4169050/16028424"
+        }
+      ]
+    },
+    {
+      "artista": "Rob Tuytel / Poly Haven",
+      "pacote": "Asphalt 02",
+      "status": "usado_na_montagem_offline",
+      "uso": "Textura de asfalto desgastado",
+      "licenca": "CC0",
+      "origem": "https://polyhaven.com/a/asphalt_02",
+      "ia_declarada": "nao verificado",
+      "observacoes": "Material para modelos prontos; nao e modelo de rua nem buraco. Montado em Rua-das-Acacias-montagem174.blend; nao integrado ao runtime.",
+      "verificado_em": "2026-11-10",
+      "arquivos": [
+        {
+          "file": "asphalt_02_diff_1k.jpg",
+          "bytes": 731707,
+          "sha256": "1aa5ce99f58a625c71d48cfc3e68b65ca85ccb00f39e045c0a928608a0ea25ed",
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/asphalt_02/asphalt_02_diff_1k.jpg"
+        },
+        {
+          "file": "asphalt_02_rough_1k.jpg",
+          "bytes": 544032,
+          "sha256": "70ba3edc65525eb4dc366cf010ca7ae0bd34e0251ff0225c2dad627a873d0712",
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/asphalt_02/asphalt_02_rough_1k.jpg"
+        },
+        {
+          "file": "asphalt_02_nor_gl_1k.jpg",
+          "bytes": 1240122,
+          "sha256": "42a1c381b53204e83a982db2864479a30bc127bbdeebb1006f8ee51bff099df3",
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/asphalt_02/asphalt_02_nor_gl_1k.jpg"
+        }
+      ]
+    },
+    {
+      "artista": "Amal Kumar / Poly Haven",
+      "pacote": "Rubble",
+      "status": "usado_na_montagem_offline",
+      "uso": "Textura de concreto quebrado e entulho",
+      "licenca": "CC0",
+      "origem": "https://polyhaven.com/a/rubble",
+      "ia_declarada": "nao verificado",
+      "observacoes": "Textura, nao malha de cratera. Pesquisada, ainda nao baixada. Montado em Rua-das-Acacias-montagem174.blend; nao integrado ao runtime.",
+      "verificado_em": "2026-11-10",
+      "arquivos": [
+        {
+          "file": "rubble_diff_1k.jpg",
+          "bytes": 781237,
+          "sha256": "a656a0692138c045c9707933cf0551559b316b817e90089abf12b6ba76e5e779",
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/rubble/rubble_diff_1k.jpg"
+        },
+        {
+          "file": "rubble_rough_1k.jpg",
+          "bytes": 380186,
+          "sha256": "b96f0bbfdde0bb9058e3e2a7566a852f0ce40b159835538bdbe3f6b565a19238",
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/rubble/rubble_rough_1k.jpg"
+        },
+        {
+          "file": "rubble_nor_gl_1k.jpg",
+          "bytes": 1124135,
+          "sha256": "e0f1c7d35a3dc994dd0fd3a1e65f469369c5e92172e158ced34e2368d89fccd2",
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/rubble/rubble_nor_gl_1k.jpg"
+        }
+      ]
+    },
+    {
+      "artista": "Kenney",
+      "pacote": "Retro Urban Kit",
+      "status": "usado_na_montagem_offline",
+      "uso": "Elementos urbanos complementares / reserva",
+      "licenca": "CC0",
+      "origem": "https://kenney.nl/assets/retro-urban-kit",
+      "ia_declarada": "nao verificado",
+      "observacoes": "Confirmar pecas especificas apos baixar; adaptar estilo apenas por materiais e renderizacao convencional. Montado em Rua-das-Acacias-montagem174.blend; nao integrado ao runtime.",
+      "verificado_em": "2026-11-10",
+      "arquivos": [
+        {
+          "file": "kenney_retro-urban-kit.zip",
+          "bytes": 2161463,
+          "sha256": "19201cbcb0d90080dfc33b54f5b4be2089de927c2a23274180798e7166d6b6ca",
+          "url": "https://itchio-mirror.cb031a832f44726753d6267436f3b414.r2.cloudflarestorage.com/upload2/game/1162409/12993675"
+        }
+      ]
+    },
+    {
+      "artista": "Mayfly Studios",
+      "pacote": "Retro Houses Pack",
+      "status": "descartado_na_busca_gratuita",
+      "uso": "Casas PSX de referencia",
+      "licenca": "Pago na pagina atual",
+      "origem": "https://mayfly-studios.itch.io/retro-houses-pack",
+      "ia_declarada": "No generative AI na pagina",
+      "observacoes": "Nao incluir na lista de gratuitos e nao baixar como se fosse gratuito.",
+      "verificado_em": "2026-11-10"
+    },
+    {
+      "artista": "Origem a confirmar",
+      "pacote": "Animacoes FBX fornecidas pelo usuario",
+      "status": "em_uso_origem_pendente",
+      "uso": "Clips de locomocao e combate",
+      "licenca": "Pendente de identificar a fonte das animacoes",
+      "origem": "",
+      "ia_declarada": "nao verificado",
+      "observacoes": "Separado do credito de criacao dos personagens, que e Alex Rodrigues.",
+      "verificado_em": "2026-11-10"
+    },
+    {
+      "artista": "Philip_Erd / Philip Erdelhoff",
+      "pacote": "01 Philip_Erd - LoFi3D Modular Pipes",
+      "status": "licenca_pendente",
+      "uso": "Candidato para detalhes estaticos pre-renderizados da rua; ainda nao integrado",
+      "licenca": "CONFLITO: pagina atual CC0; LICENSE incluido no ZIP CC BY-ND 4.0. Nao integrar ate esclarecer.",
+      "origem": "https://philip-erd.itch.io/lofi3d-modular-pipes",
+      "ia_declarada": "No generative AI conforme pagina",
+      "observacoes": "",
+      "verificado_em": "2026-11-10"
+    },
+    {
+      "artista": "chilly_durango",
+      "pacote": "02 chilly_durango - Retro Plumbing",
+      "status": "local_disponivel",
+      "uso": "Candidato para detalhes estaticos pre-renderizados da rua; ainda nao integrado",
+      "licenca": "CC0",
+      "origem": "https://chilly-durango.itch.io/3d-retro-plumbing-wiring",
+      "ia_declarada": "No generative AI conforme pagina",
+      "observacoes": "",
+      "verificado_em": "2026-11-10"
+    },
+    {
+      "artista": "br-n518",
+      "pacote": "03 br-n518 - Rat",
+      "status": "local_disponivel",
+      "uso": "Candidato para detalhes estaticos pre-renderizados da rua; ainda nao integrado",
+      "licenca": "CC0",
+      "origem": "https://opengameart.org/content/rat-0",
+      "ia_declarada": "nao verificado",
+      "observacoes": "Rato: 270 triangulos; possui animacao de morte para congelar a pose.",
+      "verificado_em": "2026-11-10"
+    },
+    {
+      "artista": "Kuutti Siitonen / Poly Haven",
+      "pacote": "Modular Pipes",
+      "status": "usado_na_montagem_offline",
+      "uso": "Tubulacoes rompidas no desabamento; material adaptado para ferrugem, render offline 177",
+      "licenca": "CC0",
+      "origem": "https://polyhaven.com/a/modular_pipes",
+      "verificado_em": "2026-11-10"
+    },
+    {
+      "artista": "Elegant Crow",
+      "pacote": "Elegant Crow - Retro PSX Nature Pack",
+      "status": "usado_na_montagem_offline",
+      "uso": "Vegetacao da rua; previa offline 179",
+      "licenca": "Modelos CC0; texturas AmbientCG e imagens Pixabay conforme autor",
+      "origem": "https://elegantcrow.itch.io/retro-psx-nature-pack",
+      "verificado_em": "2026-11-10"
+    },
+    {
+      "artista": "Rob Tuytel / Rico Cilliers / Poly Haven",
+      "pacote": "grass_medium_01",
+      "status": "usado_na_montagem_offline",
+      "uso": "Vegetacao da rua; previa offline 179",
+      "licenca": "CC0",
+      "origem": "https://polyhaven.com/a/grass_medium_01",
+      "verificado_em": "2026-11-10"
+    },
+    {
+      "artista": "Rob Tuytel / Rico Cilliers / Poly Haven",
+      "pacote": "nettle_plant",
+      "status": "usado_na_montagem_offline",
+      "uso": "Vegetacao da rua; previa offline 179",
+      "licenca": "CC0",
+      "origem": "https://polyhaven.com/a/nettle_plant",
+      "verificado_em": "2026-11-10"
+    },
+    {
+      "artista": "Rosy Lazenby / Mittzy",
+      "pacote": "Hand-Drawn Ivy Leaf",
+      "status": "usado_na_montagem_offline",
+      "uso": "Textura original aplicada a folhas montadas convencionalmente para trepadeiras nas fachadas, previa 180",
+      "licenca": "CC0",
+      "origem": "https://opengameart.org/content/hand-drawn-ivy-leaf",
+      "verificado_em": "2026-11-10"
+    },
+    {
+      "artista": "notsospecialgames",
+      "pacote": "Electric Pole PSX",
+      "status": "usado_na_montagem_offline",
+      "uso": "Postes da previa local da rua, substituindo o modelo Kenney",
+      "licenca": "CC0",
+      "origem": "https://notsospecialgames.itch.io/electric-pole",
+      "ia_declarada": "No generative AI conforme pagina do autor",
+      "verificado_em": "2026-11-10"
+    }
+  ],
+  "publicacao": "15.19 - rua aprovada na previa local 196"
+}

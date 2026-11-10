@@ -137,4 +137,8 @@ function C.occlusion(room)
  return occlusionFunction
 end
 function C.triangle(room,a,b,c)return C.occlusion(room)(a,b,c)end
+function C.release()
+ occlusionState,occlusionFunction,paletteState,paletteMaster,finalPalette=nil,nil,nil,nil,nil
+ C.room,C.shot=nil,nil;data.release()
+end
 return C

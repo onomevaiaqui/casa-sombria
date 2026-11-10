@@ -1,0 +1,73 @@
+{
+  "version": "15.19",
+  "approved_preview": 196,
+  "png_count": 456,
+  "global_opaque_colors": 204,
+  "max_native_bitmap_bytes": 43200,
+  "image_limit_bytes": 46059,
+  "street_shots": 9,
+  "street_strips": 27,
+  "street_native_bytes_on_storage": 1166400,
+  "house_grass_states": 31,
+  "shared_actor": true,
+  "runtime_external_models_or_fbx": false,
+  "lua_desktop_observed_peaks_kib": {
+    "street_10000_frames_20_roundtrips": 1859.4,
+    "rooms": 2510.3,
+    "combat_chase_10000_frames": 2864.4
+  },
+  "street_retained_growth_kib": 0.6,
+  "combat_retained_growth_kib": 0.2,
+  "icon_size": [
+    64,
+    32
+  ],
+  "hardware_measurement": false,
+  "tests": [
+    {
+      "test": "check-street196.lua",
+      "passed": true
+    },
+    {
+      "test": "check-sandbox-memory145.lua",
+      "passed": true
+    },
+    {
+      "test": "check-chase-memory158.lua",
+      "passed": true
+    },
+    {
+      "test": "check-shutter169.lua",
+      "passed": true
+    },
+    {
+      "test": "check-progression167.lua",
+      "passed": true
+    },
+    {
+      "test": "check-kitchen168.lua",
+      "passed": true
+    },
+    {
+      "test": "check-inventory163.lua",
+      "passed": true
+    },
+    {
+      "test": "check-photo162.lua",
+      "passed": true
+    },
+    {
+      "test": "check-death171.lua",
+      "passed": true
+    },
+    {
+      "test": "check-turns168.lua",
+      "passed": true
+    },
+    {
+      "test": "check-balance170.lua",
+      "passed": true
+    }
+  ],
+  "house_visible_pixels_changed_only_inside_grass_mask": 30011
+}

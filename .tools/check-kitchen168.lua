@@ -15,6 +15,8 @@ local function find(fn,key)for i=1,100 do local name,v=debug.getupvalue(fn,i);if
 local function set(k,v)local _,i=find(update,k);debug.setupvalue(update,i,v)end
 local M=require('metric_rooms');local D=require('doors131');local C=require('cameras168');local L=require('layout140');local master={0};for _,p in ipairs(M.bank)do master[#master+1]=p[1]end;C.setup(sprites,master)
 local passage=find(update,'checkPassage');local count=0
+-- Passage geometry fixture: the entrance is story-locked while the enemy is alive.
+require('enemy153').hp=0
 for room,exits in pairs(L.exits)do for _,e in ipairs(exits)do
  D.reset();for _,door in ipairs(D.list)do D.open(door.id)end
  local w=e.world;local gx,gy=(w[1]+w[2])/2,(w[3]+w[4])/2;local sx,sy=M.project(room,gx,gy,0)
@@ -24,6 +26,7 @@ for room,exits in pairs(L.exits)do for _,e in ipairs(exits)do
  assert(find(update,'currentRoom')==e.to,room..' transition failed '..e.to)
  count=count+1
 end end
+require('enemy153').reset()
 D.reset();set('currentRoom','corredor');local sx,sy=M.project('corredor',.65,1,0);set('x',sx);set('y',sy);set('titleOpen',false)
 keys={};update();keys={[4]=true};update();assert(D.isOpen('corredor'),'B did not open corridor door')
 keys={};update()

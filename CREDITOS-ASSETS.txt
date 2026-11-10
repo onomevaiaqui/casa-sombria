@@ -15,3 +15,30 @@ Segundo criado-mudo: copia do modelo de criado-mudo ja utilizado no quarto, posi
 Interface 15.10: UI Pack by Kenney Vleugels (https://kenney-assets.itch.io/ui-pack), CC0. Bordas adaptadas e recoloridas para metal gasto e ferrugem; desenho por primitivas, sem novo bitmap de tela inteira. Licenca em KENNEY-UI-LICENSE.txt.
 
 Inspecao 15.10: desenho e inscricao fornecidos pelo usuario; recorte, correcao de perspectiva e remocao da inscricao vertical assistidos por IA. Foto de familia permanece no cenario; somente o desenho e usado na inspecao.
+
+
+AUDITORIA DE CREDITOS - 10/11/2026
+Registro detalhado: .tools/REGISTRO-ASSETS.json. Somente ativos integrados devem entrar nos creditos finais; candidatos online nao estao implementados.
+GGBotNet - PSX Style Cars / Car 01 - https://ggbot.itch.io/psx-style-cars - CC0. Escala, material e render adaptados.
+postdev - PSX Doors / Door 4 e Door 8 - https://postdev.itch.io/psx-doors - licenca propria do pacote adquirido. Escala e render adaptados.
+ATR0CITY - PSX Roadside Motel, Junkyard, Streets, Town Architecture e Parking Garage: cama, criados-mudos, TV/rack, pneus, calcadas e materiais. README declara assistencia de IA. Termos gerais pendentes de conferencia; nao classificar CC0.
+Pizza Doggy - Retro Tree Pack v1.0 / tree_rt_4 - https://pizzadoggy.itch.io/retro-tree-pack - licenca propria, PDF local de 01/11/2026. Nao classificar como CC0 a partir de anuncios antigos.
+Screaming Brain Studios - Base Material Pack / BM-068 - https://screamingbrainstudios.itch.io/ - CC0. Adaptacao de materiais e paleta.
+EgorZuyev - PSX Zombie Apocalypse Survival Kit / Axe - https://egorzuyev.itch.io/psx-zombie-apocalypse - CC0. Autor da machadinha atualmente equipada.
+heyheythere: materiais/modelos ajustados, posicionados e renderizados. CC BY 4.0: https://creativecommons.org/licenses/by/4.0/ . As paginas declaram assistencia de IA, sem imagem ou modelo 3D generativo.
+Pendencias: autor/licenca de Ground_Grass do PSX Dark Fantasy FreeSample; fontes dos FBX e do modelo do inimigo; autores individuais de assets Poly Haven; identificacao individual do cadeado; grafia/autorizacao dos quadros Leli 2015.
+A previa da rua gerada por IA e somente referencia de composicao; nao integra os assets da nova cena.
+
+Criacao do jogo, personagem e inimigos: Alex Rodrigues. Credito autoral informado pelo criador em 10/11/2026.
+
+RUA / PREVIA 196 PUBLICADA NA 15.19
+Modelos de casas: ALEX / arexmotion - https://apfelgarten.itch.io/free-modular-building-kit - CC0.
+Elementos urbanos e muros: Kenney - Retro Urban Kit - https://kenney.nl/assets/retro-urban-kit - CC0.
+Vegetacao: Elegant Crow - https://elegantcrow.itch.io/retro-psx-nature-pack - modelos CC0; fontes das texturas conforme autor.
+Gramas e urtigas: Rob Tuytel / Rico Cilliers / Poly Haven - https://polyhaven.com/a/grass_medium_01 e https://polyhaven.com/a/nettle_plant - CC0.
+Folhas de hera: Rosy Lazenby / Mittzy - https://opengameart.org/content/hand-drawn-ivy-leaf - CC0.
+Postes: notsospecialgames - https://notsospecialgames.itch.io/electric-pole - CC0.
+Canos: Kuutti Siitonen / Poly Haven - https://polyhaven.com/a/modular_pipes - CC0.
+Textura do asfalto: Rob Tuytel / Poly Haven - Asphalt 02 - CC0.
+Entulho/lixo: MCSTEEG - Trash and Debris - https://mcsteeg.itch.io/trash-and-debris - uso comercial/pessoal permitido conforme licenca do pacote.
+Adaptacoes: montagem convencional, escala, materiais sem autoiluminacao, iluminacao, cameras, reducao de vegetacao, render e paleta para Lupi. Sem geracao de imagem/modelo por IA na nova rua. Somente fundos renderizados entram no jogo; fontes/modelos privados nao sao publicados.

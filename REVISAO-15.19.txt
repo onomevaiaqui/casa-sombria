@@ -1,0 +1,13 @@
+A ULTIMA ENTREGA 15.19
+Publica a rua aprovada na previa local 196: casas 35/39/41, retorno sem saida, buraco e canos, calcadas unidas, vegetacao reduzida e materiais dos muros/pilares/lixeira corrigidos para receber luz e sombra.
+Casa preservada: cameras, dimensoes, portas, itens e colisoes. Apenas pequenas touceiras acrescentadas aos bitmaps por diferenca de render, sem substituir o restante da imagem nem sua paleta.
+Saida social/entrada de carro ligam a casa a rua. Menu normal e novo jogo mantidos; inventario tambem abre na rua. Sem final temporario CONTINUA.
+Rua reutiliza malha e clips ja decodificados do jogador, sem segunda copia de animacoes. Buffers de triangulos reutilizados e camera/depth da casa liberados ao sair. Nenhum FBX/GLB/rig/textura original de terceiros e carregado em tempo real.
+
+COMPATIBILIDADE E MEMORIA
+456 PNGs, 204 cores opacas compartilhadas, 27 novas faixas de rua 480x90, 43200 bytes por faixa; limite individual 46059. Os PNGs usam exatamente o codigo de cores existente; sem novas cores globais. Icone mantido 64x32.
+A rua adiciona 1166400 bytes de bitmaps no pacote; esse valor e armazenamento, nao memoria Lua residente nem alocacao unica. Cada faixa e um sprite separado.
+Teste Lua 5.5 com package indisponivel: 10000 quadros de rua + 20 idas/voltas, pico observado 1859.4 KiB, crescimento retido 0.6 KiB. Dez comodos: pico observado 2510.3 KiB. 10000 quadros de combate/perseguicao/morte: pico observado 2864.4 KiB, crescimento retido 0.2 KiB.
+Passaram: menu/novo jogo, inventario externo, compartilhamento de personagem, portas de rolo, progressao, 22 passagens internas, cozinha/moveis, cadeado 2019, arma, inspecao/foto, morte, giros e danos.
+Dados medidos no Lua desktop: nao representam o total do hardware, PSRAM ou FPS do console. HUD mostra FPS e memoria Lua para conferir no Lupi fisico.
+Documentacao consultada: https://lupi.api.br/docs/ (firmware 0.6.8).

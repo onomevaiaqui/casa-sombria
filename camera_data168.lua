@@ -13,4 +13,5 @@ setmetatable(D,{__index=function(_,room)
  current,views=room,loaded
  return views
 end})
+function D.release()current,views=nil,nil;require('memory168').release()end
 return D
