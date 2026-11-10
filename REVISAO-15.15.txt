@@ -1,0 +1,3 @@
+Dano da machadinha: 1.2. Soco: 0.8. Saude do inimigo: 4.
+Morte em quatro golpes de machadinha ou cinco socos. Dano calculado em decimos para evitar residuos numericos.
+Preserva animacoes, alcance, desempenho, colisoes e porta de rolo.

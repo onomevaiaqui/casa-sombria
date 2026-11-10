@@ -2165,7 +2165,7 @@ function update()
     end
     ui.rectfill(0,0,479,15,240)
     local motion = walking and (running and " / CORRIDA" or " / PASSOS") or ""
-    ui.print("15.14 TESTE "..status..motion,8,3,241)
+    ui.print("15.15 TESTE "..status..motion,8,3,241)
     frameTime.hud(ui)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do
@@ -2185,7 +2185,7 @@ function update()
     if not enemyBehind then enemy.draw(currentRoom)end
     if currentRoom==enemy.room then
         ui.rectfill(0,16,245,26,240)
-        ui.print('INIMIGO '..(enemy.enabled and ('HP '..enemy.hp..'/5 '..(enemy.hp<=0 and 'MORTO'or(enemy.attackTime and 'ATAQUE'or 'ON')))or 'OFF'),8,18,241)
+        ui.print('INIMIGO '..(enemy.enabled and ('HP '..enemy.hp..'/'..enemy.maxHp..' '..(enemy.hp<=0 and 'MORTO'or(enemy.attackTime and 'ATAQUE'or 'ON')))or 'OFF'),8,18,241)
     end
     if not cameras.active and currentRoom=="garagem" and carSprite and native then
         local gx,gy=metric.ground(currentRoom,x,y)

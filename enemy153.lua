@@ -1,5 +1,5 @@
 -- Single animated stress-test actor; all FBX skinning is baked offline.
-local E={enabled=true,room='frente',x=6.45,y=4.45,time=0,scale=1.65/1.8,radius=.48,hp=5,state="alive",attackTime=nil,cooldown=0,angle=0}
+local E={enabled=true,room='frente',x=6.45,y=4.45,time=0,scale=1.65/1.8,radius=.48,hp=4,maxHp=4,state="alive",attackTime=nil,cooldown=0,angle=0}
 local metric=require('metric_rooms')
 local nav=require('chase_nav158')
 local life=require('survival158')
@@ -53,7 +53,7 @@ local slots={205,206,207,208,209,210,211,212,213,214,215,219,220,221,222,223}
 local function ink(n)return slots[n+1]end
 function E.palette(ui)for i,color in ipairs(D.palette)do ui.palset(slots[i],color)end end
 function E.reset()
- E.hp=5;E.x,E.y=homeX,homeY;E.state='alive';E.time=0;E.runTime=0;E.attackTime=nil;E.cooldown=.15;E.mode='idle';E.moving=false;E.enabled=true;nav.clear();corpseRoom=nil
+ E.hp=E.maxHp;E.x,E.y=homeX,homeY;E.state='alive';E.time=0;E.runTime=0;E.attackTime=nil;E.cooldown=.15;E.mode='idle';E.moving=false;E.enabled=true;nav.clear();corpseRoom=nil
 end
 function E.toggle()
  E.enabled=not E.enabled
@@ -70,8 +70,10 @@ function E.tryHit(room,x,y,facing,baton)
   local gx,gy=x+dx*i/5,y+dy*i/5;local sx,sy=metric.project(room,gx,gy,0)
   if not metric.walkable(room,sx,sy)or not doors.walkable(room,gx,gy)then return false end
  end
- E.hp=E.hp-1
- if E.hp==0 then E.state='dying';E.time=0;E.attackTime=nil end
+ -- Integer tenths avoid fractional residues delaying the death animation.
+ local damage=baton and 12 or 8
+ E.hp=math.max(0,math.floor(E.hp*10+.5)-damage)/10
+ if E.hp<=0 then E.state='dying';E.time=0;E.attackTime=nil end
  return true
 end
 -- Circle footprint, summed with the same 0.25 m courier collision radius.
