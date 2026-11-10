@@ -132,7 +132,7 @@ function M.update(paused)
   step=(step+moved/(run and 3.0118408704 or 1.7576561718))%1;phase=step*(clip.count-1)
  end
  drawActor(clip,phase)
- ui.rectfill(0,0,479,13,240);ui.print('15.21 RUA / '..cameras[shot].name,5,3,241)
+ ui.rectfill(0,0,479,13,240);ui.print('15.22 RUA / '..cameras[shot].name,5,3,241)
  if noticeTime>0 then noticeTime=noticeTime-dt;ui.rectfill(0,247,479,269,240);ui.print(notice,8,253,241)end
  if help then ui.rectfill(80,80,405,190,240);ui.print('TESTE DE CENARIO E COLISOES',92,94,241);ui.print('Cruz: avancar, recuar e girar',92,116,241);ui.print('Y: correr   B: examinar',92,138,241);ui.print('A: fechar esta ajuda',92,160,241)end
 end

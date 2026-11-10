@@ -4,6 +4,12 @@ local doors=require('doors131')
 local memory=require('memory168')
 local C={data=data,enabled=false,active=true,room=nil,shot=nil}
 local sprites,map
+local paletteState,paletteMaster,finalPalette
+local occlusionState,occlusionFunction
+data.beforeChange=function()
+ occlusionState,occlusionFunction,paletteState,paletteMaster,finalPalette=nil,nil,nil,nil,nil
+ memory.release()
+end
 function C.setup(refs,palette)
  sprites=refs;map={};C.enabled=false
  for i,color in ipairs(palette)do map[color]=i-1 end
@@ -57,10 +63,21 @@ function C.initial(room)
  local prefix=data.firstprefix[room];if not prefix or not sprites then return end
  return{sprites[prefix..'_0'],sprites[prefix..'_1'],sprites[prefix..'_2']}
 end
+local function isVisible(c,index)
+ if c.visibilityHex then
+  local cell=index-1;local offset=(cell//8)*2+1
+  local a,b=c.visibilityHex:byte(offset,offset+1)
+  if not a or not b then return false end
+  local hi=a>=97 and a-87 or a-48;local lo=b>=97 and b-87 or b-48
+  return (((hi*16+lo)>>(cell%8))&1)==1
+ end
+ return c.visibility:byte(index)==49
+end
+C.isVisible=isVisible
 local function clearance(c,x,y)
  local col=math.max(0,math.min(c.visibilityWidth-1,math.floor(x/c.visibilityStep+.5)))
  local row=math.max(0,math.min(c.visibilityHeight-1,math.floor((y-(c.visibilityY0 or 0))/c.visibilityStep+.5)))
- if c.visibility:byte(row*c.visibilityWidth+col+1)~=49 then return -1e6 end
+ if not isVisible(c,row*c.visibilityWidth+col+1)then return -1e6 end
  local edge=1e6
  for _,xx in ipairs({x-.2,x+.2})do for _,yy in ipairs({y-.2,y+.2})do for _,z in ipairs({0,1.85})do
   local a,b,depth=project(c,xx,yy,z);if depth<.15 then return-1e6 end
@@ -93,7 +110,6 @@ end
 function C.palette(room,set)
  local c=current(room);if c then eachColor(state(c),function(key,value)local i=map[key];if i then set(i,value)end end) end
 end
-local paletteState,paletteMaster,finalPalette
 function C.nativePalette(room,master,set)
  local c=current(room);if not c then return end;local st=state(c)
  if paletteState~=st or paletteMaster~=master then
@@ -120,7 +136,6 @@ function C.captureDirection(room,gx,gy,dx,dy,wx,wy)
  if a then return a,b end
  local n=math.sqrt(wx*wx+wy*wy);return wx/n,wy/n
 end
-local occlusionState,occlusionFunction
 local function alwaysVisible()return true end
 function C.occlusion(room)
  local view=current(room);if not view then return alwaysVisible end

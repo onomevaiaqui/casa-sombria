@@ -35,7 +35,7 @@ end
 local function clearance(c,x,y)
  local col=math.max(0,math.min(c.visibilityWidth-1,math.floor(x/c.visibilityStep+.5)))
  local row=math.max(0,math.min(c.visibilityHeight-1,math.floor((y-(c.visibilityY0 or 0))/c.visibilityStep+.5)))
- if c.visibility:byte(row*c.visibilityWidth+col+1)~=49 then return -1e6 end
+ if not require('cameras168').isVisible(c,row*c.visibilityWidth+col+1)then return -1e6 end
  local edge=1e6
  for _,xx in ipairs({x-.2,x+.2})do for _,yy in ipairs({y-.2,y+.2})do for _,z in ipairs({0,1.85})do
   local a,b,depth=project(c,xx,yy,z);if depth<.15 then return-1e6 end

@@ -1,0 +1,12 @@
+A ULTIMA ENTREGA 15.22 - memoria no portao quintal/frente
+O usuario confirmou not enough memory na passagem do quintal para a frente. A carga anterior mantinha grades de visibilidade extensas e dados de profundidade repetidos de varias combinacoes de portas; a camera da frente tinha 288855 bytes de visibilidade em ASCII.
+Grades de visibilidade agora usam bits em hexadecimal, sem expandir o mapa inteiro. As mascaras de profundidade usam bases compartilhadas por camera e deltas XOR/RLE sem perdas; apenas a base e o estado atuais sao expandidos. Strings de bancos/pacotes repetidas sao compartilhadas. Os caches de paleta e profundidade sao liberados ANTES de qualquer troca de ambiente, incluindo consultas fora de C.select.
+Nenhum PNG/GIF, cor, material, vegetacao, escala, posicao de camera, matriz, geometria, colisao, animacao ou regra de combate foi alterado. A paleta da rua continua incorporada ao codigo desde a 15.21.
+
+VALIDACAO
+331835 celulas de visibilidade e 125 mapas de profundidade (1800000 bytes expandidos) comparados com a 15.21: identicos. Demais campos de camera, estado de porta e banco de cor identicos. Digests originais em .tools/camera199-golden.lua.
+100 passagens reais pelo portao quintal/frente com package=nil: pico Lua desktop 1584.9 KiB, crescimento retido 0.0 KiB. Dez comodos: pico observado 1755.3 KiB (antes 2512.0 KiB). Rua 10000 quadros/20 ciclos: pico 1506.1 KiB. Combate/perseguicao/morte 10000 quadros: pico 2530.7 KiB.
+Reproducao com metadados de sprites e heap limitado DEPOIS do boot: na rota sala/cozinha/quintal/frente, a 15.21 falha ao carregar camera_mem168_frente com 2.25 e 2.5 MiB; a 15.22 passa em ambos os limites. Esses limites sao de simulacao, nao especificacoes da memoria fisica do Lupi.
+Menu, inventario, cadeado, armas, 22 passagens, portas, morte, giros e navegacao na rua passaram. Preview de publicacao sem erros no navegador.
+HUD: prefere o maior valor entre memoria Lua real por collectgarbage('count') e ui.stat(0), evitando mostrar 1 KiB quando o firmware retorna esse valor fixo.
+Memoria total e FPS no hardware ainda precisam de verificacao no console do usuario.

@@ -4,6 +4,7 @@ local current,views
 setmetatable(D,{__index=function(_,room)
  if room==current then return views end
  if not D.firstprefix[room]then return nil end
+ if D.beforeChange then D.beforeChange()end
  views=nil;current=nil;require('memory168').release();collectgarbage('collect')
  local name='camera_mem168_'..room
  local factory=require(name)

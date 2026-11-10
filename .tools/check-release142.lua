@@ -4,7 +4,7 @@ for room in pairs(data.firstprefix)do
  local views=data[room]
  assert(package.loaded['camera_mem168_'..room]==nil,'room leaked into require cache')
  for _,c in ipairs(views)do
-  assert(type(c.visibility)=='string'and #c.visibility==c.visibilityWidth*c.visibilityHeight)
+  assert(type(c.visibilityHex)=='string'and #c.visibilityHex==2*math.ceil(c.visibilityWidth*c.visibilityHeight/8))
   for _,s in pairs(c.states)do
    for i=0,2 do assert(refs[s.prefix..'_'..i],'missing native bitmap '..s.prefix)end
    assert(#mem.depth(s)==s.depthWidth*s.depthHeight,'truncated depth buffer')

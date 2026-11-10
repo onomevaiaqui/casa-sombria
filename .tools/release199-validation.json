@@ -1,0 +1,147 @@
+{
+  "version": "15.22",
+  "target": "quintal -> frente via jardim_quintal",
+  "images_palettes_materials_geometry_collisions_unchanged": true,
+  "camera_equivalence": {
+    "visibility_cells_compared": 331835,
+    "depth_states_compared": 125,
+    "depth_bytes_compared": 1800000,
+    "all_camera_matrices_positions_targets_palettes_and_door_states_identical": true,
+    "all_expanded_depth_and_visibility_bytes_identical": true
+  },
+  "metadata_source_bytes_before": 5026751,
+  "metadata_source_bytes_after": 2167072,
+  "gate_passages_tested": 100,
+  "gate_observed_desktop_peak_kib": 1584.9,
+  "gate_retained_growth_kib": 0,
+  "all_rooms_observed_desktop_peak_kib": 1755.3,
+  "previous_all_rooms_peak_kib": 2512.0,
+  "street_observed_desktop_peak_kib": 1506.1,
+  "combat_observed_desktop_peak_kib": 2530.7,
+  "firmware_stat0_1k_placeholder_uses_actual_lua_gc_count": true,
+  "hardware_measurement": false,
+  "constrained_heap_route_test": [
+    {
+      "version": "15.21",
+      "runtime_heap_limit_mib": 2,
+      "status": "FAIL",
+      "stage": "b'cozinha'"
+    },
+    {
+      "version": "15.21",
+      "runtime_heap_limit_mib": 2.25,
+      "status": "FAIL",
+      "stage": "b'quintal -> frente'"
+    },
+    {
+      "version": "15.21",
+      "runtime_heap_limit_mib": 2.5,
+      "status": "FAIL",
+      "stage": "b'quintal -> frente'"
+    },
+    {
+      "version": "15.21",
+      "runtime_heap_limit_mib": 2.75,
+      "status": "PASS",
+      "retained_kib": 2046.0
+    },
+    {
+      "version": "15.21",
+      "runtime_heap_limit_mib": 3,
+      "status": "PASS",
+      "retained_kib": 2046.0
+    },
+    {
+      "version": "15.22",
+      "runtime_heap_limit_mib": 2,
+      "status": "FAIL",
+      "stage": "b'quintal'"
+    },
+    {
+      "version": "15.22",
+      "runtime_heap_limit_mib": 2.25,
+      "status": "PASS",
+      "retained_kib": 1613.3
+    },
+    {
+      "version": "15.22",
+      "runtime_heap_limit_mib": 2.5,
+      "status": "PASS",
+      "retained_kib": 1613.3
+    },
+    {
+      "version": "15.22",
+      "runtime_heap_limit_mib": 2.75,
+      "status": "PASS",
+      "retained_kib": 1613.3
+    },
+    {
+      "version": "15.22",
+      "runtime_heap_limit_mib": 3,
+      "status": "PASS",
+      "retained_kib": 1613.3
+    }
+  ],
+  "tests": [
+    {
+      "test": "check-quintal-front199.lua",
+      "passed": true
+    },
+    {
+      "test": "check-compact199.lua",
+      "passed": true
+    },
+    {
+      "test": "check-palette198.lua",
+      "passed": true
+    },
+    {
+      "test": "check-release142.lua",
+      "passed": true
+    },
+    {
+      "test": "check-performance143.lua",
+      "passed": true
+    },
+    {
+      "test": "check-sandbox-memory145.lua",
+      "passed": true
+    },
+    {
+      "test": "check-chase-memory158.lua",
+      "passed": true
+    },
+    {
+      "test": "check-shutter169.lua",
+      "passed": true
+    },
+    {
+      "test": "check-progression167.lua",
+      "passed": true
+    },
+    {
+      "test": "check-kitchen168.lua",
+      "passed": true
+    },
+    {
+      "test": "check-inventory163.lua",
+      "passed": true
+    },
+    {
+      "test": "check-photo162.lua",
+      "passed": true
+    },
+    {
+      "test": "check-death171.lua",
+      "passed": true
+    },
+    {
+      "test": "check-turns168.lua",
+      "passed": true
+    },
+    {
+      "test": "check-balance170.lua",
+      "passed": true
+    }
+  ]
+}

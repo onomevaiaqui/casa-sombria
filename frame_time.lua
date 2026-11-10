@@ -12,7 +12,7 @@ function T.sample(ui)
  T.frames=T.frames+1
  if T.details then
   local bytes=stat(ui,0)
-  if not bytes and type(collectgarbage)=='function'then local ok,kb=pcall(collectgarbage,'count');if ok then bytes=kb*1024 end end
+  if type(collectgarbage)=='function'then local ok,kb=pcall(collectgarbage,'count');if ok then bytes=math.max(bytes or 0,kb*1024)end end
   if bytes and bytes>=0 then T.luaBytes=bytes;T.peakBytes=math.max(T.peakBytes,bytes)end
   local cpu=stat(ui,1);T.cpu=cpu and cpu>=0 and cpu<=100 and cpu or nil
  end
