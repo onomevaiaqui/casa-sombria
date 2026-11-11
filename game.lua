@@ -1975,7 +1975,7 @@ local street
 local function ensureStreet()
  if not street then
   street=require('street196')
-  street.setup({palette=actorPalette,triangles=actorTriangles,clips=actorClips,low=actorLow,span=actorSpan},sceneSprites,{vertices=courierVertices,faces=courierFaces,pool=courierPool},bitmapPalette)
+  street.setup({palette=actorPalette,triangles=actorTriangles,clips=actorClips,low=actorLow,span=actorSpan},sceneSprites,{vertices=courierVertices,faces=courierFaces,pool=courierPool},bitmapPalette,inventory)
  end
  return street
 end
@@ -2008,7 +2008,7 @@ function update()
     if pendingStreet then
         -- A frame boundary separates house rendering, release, require and first street draw.
         ui.cls(240);ui.palset(240,0);ui.palset(241,32767)
-        ui.print('15.26 - PREPARANDO RUA '..pendingStreet.phase..'/3',95,125,241)
+        ui.print('15.34 - PREPARANDO RUA '..pendingStreet.phase..'/3',95,125,241)
         frameTime.hud(ui)
         if pendingStreet.phase==1 then
             cameras.release();courierCache=nil
@@ -2032,7 +2032,7 @@ function update()
     end
     if streetMode then
         local a,b=held(BTN_G or 13),held(BTN_Z or 4)
-        if a and not previousA then
+        if a and not previousA and not(street.pickupActive and street.pickupActive())then
             if inventory.visible then inventory:back()else inventory:open();inventory.previous.b=b end
         end
         previousA,previousB,previousY=a,b,held(BTN_F or 12)
@@ -2046,7 +2046,7 @@ function update()
             x,y=metric.project('frente',9.7,.8,0);facing=math.pi
             dialogue:notify('Falha ao exibir a rua: '..tostring(err));return
         end
-        life.hud(ui);frameTime.hud(ui)
+        if not(street.pickupActive and street.pickupActive())then life.hud(ui);frameTime.hud(ui)end
         local sx,sy,sa=street.position()
         if streetCooldown==0 and sx< -4.5 and ((sy>2.65 and sy<3.95)or(sy>6.65 and sy<9.35))then
             streetMode=false;courierCache=nil;currentRoom='frente';x,y=metric.project('frente',sy+6.4,-sx-4.2,0)
@@ -2229,7 +2229,7 @@ function update()
     end
     ui.rectfill(0,0,479,15,240)
     local motion = walking and (running and " / CORRIDA" or " / PASSOS") or ""
-    ui.print("15.26 TESTE "..status..motion,8,3,241)
+    ui.print("15.34 TESTE "..status..motion,8,3,241)
     frameTime.hud(ui)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do

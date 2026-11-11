@@ -5,6 +5,7 @@ local cameras=require('street_data')
 local outsideCameras=cameras
 local inside39=false
 local house39
+local medicine,medicineInventory
 local hole=require('hole')
 -- Embedded: the console package did not contain street_palette.lua.
 local palette={0,20219,17014,14901,16911,12753,13774,13741,11660,10605,10603,11627,10571,10570,10570,7530,9546,9546,9514,9514,9513,9513,8489,9513,8457,8457,8456,7464,6408,7433,8456,8456,8456,8456,7431,7399,8455,7399,7399,7399,7399,7399,7399,7399,7399,7399,7398,5351,6374,7366,6342,4326,6342,4263,6342,6342,6342,6342,6342,6342,6342,5286,6342,6342,6341,6341,5317,5285,6341,6309,6309,6309,4293,5285,5285,5285,5285,5285,5285,5285,5285,5285,4261,5285,5285,5285,5285,5285,5285,5285,5285,5284,4261,5285,2212,2212,5284,5284,5252,5252,5252,4228,5252,4228,3204,3203,2179,3174,3173,3172,2148,4228,3204,3172,2148,4227,4227,3203,3171,2147,2147,3203,3170,3170,3170,3170,2146,2146,130,97,3170,2146,2146,97,2116,2115,2115,2115,2114,1091,2114,1090,2114,2113,1089,1089,65,1058,1058,1057,1057,1057,1057,33,1057,1057,64,32,32,32,1057,32,32,32,1056,32,32,32,32,2080,2080,2080,32,1056,32,32,32,1024,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
@@ -178,6 +179,12 @@ function M.update(paused,elapsed)
  local dt=math.max(0,math.min(.5,elapsed or 1/fps))
  local a,b=held(BTN_G or 13),held(BTN_Z or 4)
 
+ local medicineWasActive=inside39 and medicine and medicine.busy()
+ if medicineWasActive then
+  local message=medicine.input(held(LEFT or 4),held(RIGHT or 2),b and not previousB,a and not previousA,medicineInventory)
+  if message then notice=message;noticeTime=2 end
+  paused=true
+ end
  local dogWasActive=dogPhase>0
  if dogWasActive then
   local left=held(LEFT or 4)or held(UP or 1)
@@ -202,10 +209,12 @@ function M.update(paused,elapsed)
     dogPhase=0
    end
   end
- elseif not paused and b and not previousB then
+ elseif not paused and not medicineWasActive and b and not previousB then
   if inside39 then
-   local result=house39.action(x,y);poseClip=nil
-   if result=='exit'then M.leave39()else notice=result;noticeTime=2 end
+   if not medicine.ask(x,y,medicineInventory)then
+    local result=house39.action(x,y);poseClip=nil
+    if result=='exit'then M.leave39()else notice=result;noticeTime=2 end
+   end
   elseif (x-17.0)^2+(y-5.2)^2<1.15^2 then M.enter39()
   elseif (x-5.05)^2+(y+5.55)^2<1.35^2 and clueInventory then
    if clueInventory.collected.collar then notice='O pequeno cachorro continua imovel.';noticeTime=3
@@ -217,7 +226,7 @@ function M.update(paused,elapsed)
   elseif (x-17.0)^2+(y-5.2)^2<1.15^2 then notice='A porta esta fechada.';noticeTime=3
   else notice='Nao ha nada para examinar aqui.';noticeTime=3 end
  end
- if dogWasActive or dogPhase>0 then paused=true end
+ if dogWasActive or dogPhase>0 or(inside39 and medicine.busy())then paused=true end
  previousA,previousB=a,b
  local horizontal=(held(LEFT or 4)and 1 or 0)-(held(RIGHT or 2)and 1 or 0)
  local throttle=(held(UP or 1)and 1 or 0)-(held(DOWN or 3)and 1 or 0)
@@ -247,8 +256,9 @@ function M.update(paused,elapsed)
   clip=run and actor.clips.run or actor.clips.walk
   step=(step+moved/(run and 3.0118408704 or 1.7576561718))%1;phase=step*(clip.count-1)
  end
+ if inside39 then house39.prepare(shot);medicine.draw(ui,cameras[shot].m,house39.room(x,y),medicineInventory,house39.triangleVisible)end
  drawActor(clip,phase)
- ui.rectfill(0,0,479,13,240);ui.print('15.26 / '..(inside39 and ('CASA 39 - '..house39.room(x,y))or cameras[shot].name),5,3,241)
+ ui.rectfill(0,0,479,13,240);ui.print('15.34 / '..(inside39 and ('CASA 39 - '..house39.room(x,y))or cameras[shot].name),5,3,241)
  if noticeTime>0 then noticeTime=noticeTime-dt;ui.rectfill(0,247,479,269,240);ui.print(notice,8,253,241)end
  if dogPhase>0 then
   if dogPhase==3 then
@@ -259,13 +269,15 @@ function M.update(paused,elapsed)
    ui.print(dogPhase==1 and 'Um pequeno cachorro... Esta morto.'or 'Ele esta usando uma coleira.',8,247,241)
   end
  end
+ if inside39 then medicine.prompt(ui,sprites,medicineInventory)end
  if help then ui.rectfill(80,80,405,190,240);ui.print('TESTE DE CENARIO E COLISOES',92,94,241);ui.print('Cruz: avancar, recuar e girar',92,116,241);ui.print('Y: correr   B: examinar',92,138,241);ui.print('A: fechar esta ajuda',92,160,241)end
 end
 function M.backgroundPalette(set)
  set(0,palette[1])
  for i=2,#palette do set(nativeSlots[i],palette[i])end
 end
-function M.setup(sharedActor,refs,buffers,masterPalette)
+function M.setup(sharedActor,refs,buffers,masterPalette,inv)
+ medicineInventory=inv
  assert(sharedActor and refs and buffers and masterPalette,'Dados incompletos da rua')
  local byColor={};for i,color in ipairs(masterPalette)do byColor[color]=i-1 end
  nativeSlots={[1]=0}
@@ -282,11 +294,12 @@ end
 M.carOcclusion=carTriangleVisible;M.prepareCarMask=prepareCarMask
 M.selectCamera=selectCamera;M.clearance=clearance;M.walkable=walkable
 function M.enter39()
- house39=house39 or require('house39');inside39=true;cameras=house39.cameras;palette=house39.palette;x,y,angle=7.55,2.4,-math.pi/2;shot=house39.selectCamera(x,y,nil);poseClip=nil;notice='Casa 39 - entrada pelos fundos';noticeTime=2
+ house39=house39 or require('house39');medicine=medicine or require('medicine244');medicine.cancel();inside39=true;cameras=house39.cameras;palette=house39.palette;x,y,angle=7.55,2.4,-math.pi/2;shot=house39.selectCamera(x,y,nil);poseClip=nil;notice='Casa 39 - entrada pelos fundos';noticeTime=2
 end
 function M.leave39()
- inside39=false;house39.release();cameras=outsideCameras;palette=outsidePalette;x,y,angle=17.4,5.8,math.pi;shot=selectCamera(x,y,nil);poseClip=nil;noticeTime=0
+ inside39=false;medicine.cancel();house39.release();cameras=outsideCameras;palette=outsidePalette;x,y,angle=17.4,5.8,math.pi;shot=selectCamera(x,y,nil);poseClip=nil;noticeTime=0
 end
+function M.pickupActive()return inside39 and medicine and medicine.busy()end
 function M.inside39()return inside39 end
 function M.position()return x,y,angle,shot end
 function M.reset(px,py,a)if inside39 then M.leave39()end;dogPhase,dogChoice=0,1;dogPreviousLeft,dogPreviousRight=false,false;poseClip=nil;x,y,angle=px,py,a or 0;shot=1;noticeTime=0;previousA,previousB=true,true end

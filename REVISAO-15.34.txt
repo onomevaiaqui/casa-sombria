@@ -1,0 +1,7 @@
+15.34 - Casa 39: banheiro reorganizado e analgesico no armario com espelho.
+Pia e espelho no fundo ao lado do box; privada afastada da porta conforme marcacao aprovada. Colisores, cameras, profundidade e interacao atualizados.
+Otimizacao: segmentos das portas calculados somente quando o estado muda; escolha de camera reutilizada quando posicao/estado nao mudam; nomes de bitmap reutilizados; modulo base de profundidade descartado do cache Lua quando disponivel. Sem reducao visual ou de animacao.
+Validacao Lua 5.5: 4000 frames, 25 entradas/saidas Casa39, 10000 frames de rua, 20 idas/voltas, 100 passagens quintal/frente, package=nil. Pico Lua observado: 1655 KiB, memoria de profundidade decodificada limitada a 16320 bytes.
+294 faixas Casa39 de 480x90: 43200 bytes cada, limite 46059; paleta opaca global204 RGB555;112 estados de profundidade exatos;1271 pontos de camera sem corte.
+Teste de CPU isolado 30000 iteracoes estacionarias: 0.324 s antes / 0.128 s depois no PC. Isto nao representa FPS ou memoria total no console fisico.
+Console fisico: teste pendente do desenvolvedor.

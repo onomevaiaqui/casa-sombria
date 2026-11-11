@@ -50,3 +50,11 @@ CASA 39 / INTERIOR 15.26
 KaFe-z - Bedroom Pack PSX (cama de solteiro): https://kafe-z.itch.io/bedroom-pack-psx-early-acess . Modelo ajustado em escala e renderizado no fundo.
 Nickben12 - PSX Horror Starter Pack (Bed_01, adaptada para casal): https://nickben12.itch.io/psx-horror-starter-pack . Licenca royalty-free para jogos pessoais e comerciais; fontes 3D nao redistribuidas.
 Demais moveis: heyheythere; loucas sanitarias: Clone Crafts; portas: PSX_Doors licenciado; janelas: Kenney; materiais: fontes ja creditadas. Somente bitmaps renderizados entram no console.
+
+Medicamentos selecionados: BompShoobyDooby - Free PSX First Aid Assets. Fonte: https://bompshoobydooby.itch.io/free-psx-first-aid-assets . Frasco e kit, icones do autor adaptados para 32x32 e paleta Lupi. Uso comercial confirmado pelo autor nos comentarios da pagina; pagina arquivada junto aos assets. Nao revender/redistribuir os assets isolados.
+
+Armario de banheiro com espelho: Innerscene - REFLECT Bathroom Mirror Cabinet, CC0. Fonte: https://www.innerscene.com/tools/library/3d-parts/reflect-bathroom-mirror-cabinet-45ff6243 . Ajustado em escala e portas para a cena pre-renderizada; somente bitmaps incluidos no jogo.
+
+Banheiro Casa39 15.28: Arrangemonk - Prison Toilet Pack, free tier CC0, https://arrangemonk.itch.io/prison-toilet-pack . Pia e vaso, ajustados em escala e pre-renderizados. Armario heyheythere + espelho e revestimento Clone Crafts adaptados; fontes e licencas ja creditadas acima. Acessorios AssetsFactory, PSX Motel 3D Bathroom Clutter, uso comercial permitido sem redistribuir arquivos; autor declara assistencia de IA.
+
+Box banheiro Casa39: Kenney - Furniture Kit, shower.obj, CC0. Fonte: https://kenney.nl/assets/furniture-kit . Ajustado em escala e orientacao e integrado ao fundo pre-renderizado.

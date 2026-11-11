@@ -1,0 +1,3 @@
+Previa local: medicamentos BompShoobyDooby no inventario. Comprimidos recuperam 1 PV; kit restaura ate maxHp. Consome somente se curar, nao revive e nao consome com vida cheia.
+Casa39: comprimidos escondidos no armario com espelho do banheiro. B examina, B abre, B solicita pegar, Sim/Nao. A cancela. Frasco some apos coleta e armario reaberto fica vazio. Kit medico na pia. Armario Innerscene CC0, somente fundos pre-renderizados, sem novo modelo 3D em runtime.
+Testes Lua: vida cheia, cura parcial/total, consumo, sem duplicacao, cancelamento, limites do inventario, entrada/saida e memoria. Lupinho web: banheiro, espelho fechado/aberto, confirmacao, inventario e vazio. Aguarda publicacao e teste no console fisico.

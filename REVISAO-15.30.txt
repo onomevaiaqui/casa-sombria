@@ -1,0 +1,3 @@
+Previa local: box Kenney Furniture Kit escolhido (opcao1), 0.82 x 0.82 x 2.04m, no canto direito do banheiro Casa39. Modelo somente no fundo pre-renderizado; colisao da base adicionada e visibilidade das cameras recalculada.
+Retirado o kit medico de teste da pia e o frasco decorativo de shampoo confundido com medicamento. Permanece apenas o analgesico escondido dentro do armario. Kit continua definido como item de cura para futura colocacao.
+Validacao: seis comodos conectados; 1244 amostras livres enquadradas; 112 estados de profundidade exatos; 204 cores carrier globais, faixas 43200 bytes abaixo de 46059. Espelho, Sim/Nao, cancelamento, coleta unica e cura testados em Lua e Lupinho web. Sem publicacao nesta etapa.

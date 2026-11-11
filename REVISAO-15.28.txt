@@ -1,0 +1,4 @@
+Previa local: banheiro Casa39 opcao2 escolhida. Pia/vaso Arrangemonk CC0, azulejos e espelho Clone Crafts CC BY4, armario heyheythere CC BY4 adaptado. Mantem layout do comodo e cameras fixas com visibilidade recalculada; colisores de pia e vaso medidos do asset novo.
+Porta do armario e espelho giram juntos na renderizacao. Interior, prateleira e frasco BompShoobyDooby pre-renderizados. Animacao original do asset foi desligada somente no processo offline para nao reposicionar a porta durante os renders. Sem novo objeto 3D em runtime.
+Analgesico: descricao Alivia as dores.; cura 1 PV. Kit cura toda vida. Confirmacao de coleta, recusa sem espaco, sem duplicacao, sem consumir com vida cheia. Interacao do espelho separada da area do kit.
+Mesma paleta carrier global, faixas 480x90=43200bytes. Profundidade base+XOR/RLE, apenas uma base e mascara ativas. Testes Lua com package=nil e Lupinho web. Necessita teste fisico quando publicado.

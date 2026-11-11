@@ -1,0 +1,1 @@
+Previa local: removida apenas a janela do banheiro Casa39 indicada pelo usuario. Mantidos armario, analgesico, pia/vaso e azulejos da opcao2. Re-renderizados fundos e profundidade das vistas afetadas; nenhuma nova colisao, modelo dinamico ou cor carrier. Chuveiro aguardando escolha entre Kenney Furniture Kit e Reodesuxz Bedroom Bathroom Vol2, ambos ja disponiveis localmente.

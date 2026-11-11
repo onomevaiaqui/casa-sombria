@@ -3,6 +3,8 @@ local theme=require('inventory_theme163')
 local Inventory = {}
 
 local items = {
+    pills = {name="Analgesico",detail="Alivia as dores.",usable=true,heal=1},
+    medkit = {name="Kit medico",detail="Um kit de primeiros socorros. Recupera toda a vida ao usar.",usable=true,fullHeal=true},
     shed_key = {name="Chave",detail="Chave pequena de um cadeado. A etiqueta diz: FERRAMENTAS.",usable=true},
     car_key = {name="Chave", detail="Chave do carro da garagem. O plastico esta gasto.", usable=true},
     door_key = {name="Chave", detail="Uma etiqueta desbotada diz: GARAGEM.", usable=true},
@@ -87,6 +89,19 @@ function Inventory.new(sprites)
     function state:has(id)for _,v in ipairs(self.bag)do if v==id then return true end end;return false end
 
     function state:use(id,room)
+        local item=items[id]
+        if item and (item.heal or item.fullHeal)then
+            if not self:has(id)then return "Este item nao esta no inventario."end
+            local life=require('survival158')
+            if life.dead or life.hp<=0 then return "Nao posso usar este item agora."end
+            if life.hp>=life.maxHp then return "Minha vida ja esta completa."end
+            local restored=life.heal(item.fullHeal and life.maxHp or item.heal)
+            if restored<=0 then return "Nao foi possivel usar este item."end
+            for i,v in ipairs(self.bag)do if v==id then table.remove(self.bag,i);break end end
+            self.selected=math.max(1,math.min(self.selected,#self.bag))
+            self.inspected=false
+            return item.fullHeal and "Usei o kit. Minha vida foi restaurada."or "Usei o analgesico. Recuperei 1 ponto de vida."
+        end
         if id=="shed_key"then return "Aproxime-se do cadeado da casinha e pressione B."
         elseif id=="lighter" then
             self.lit = not self.lit

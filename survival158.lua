@@ -9,6 +9,12 @@ function L.damage()
  if L.hp==0 then L.dead=true;L.time=0;L.hitTime=nil;L.previousA=true;L.previousB=true end
  return true
 end
+function L.heal(amount)
+ if L.dead or L.hp<=0 or L.hp>=L.maxHp then return 0 end
+ local before=L.hp
+ L.hp=math.min(L.maxHp,L.hp+math.max(0,amount or 0))
+ return L.hp-before
+end
 function L.tick(dt)if L.dead then L.time=math.min(clip.duration,L.time+dt)end;if L.hitTime then L.hitTime=L.hitTime+dt;if L.hitTime>=hit.duration then L.hitTime=nil end end end
 function L.input(a,b)
  local action
