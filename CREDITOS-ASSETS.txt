@@ -42,3 +42,6 @@ Canos: Kuutti Siitonen / Poly Haven - https://polyhaven.com/a/modular_pipes - CC
 Textura do asfalto: Rob Tuytel / Poly Haven - Asphalt 02 - CC0.
 Entulho/lixo: MCSTEEG - Trash and Debris - https://mcsteeg.itch.io/trash-and-debris - uso comercial/pessoal permitido conforme licenca do pacote.
 Adaptacoes: montagem convencional, escala, materiais sem autoiluminacao, iluminacao, cameras, reducao de vegetacao, render e paleta para Lupi. Sem geracao de imagem/modelo por IA na nova rua. Somente fundos renderizados entram no jogo; fontes/modelos privados nao sao publicados.
+
+Bloqueios de construcao: Concrete and Brick Rubble Pile, REAL SCANS, BlenderKit Royalty Free. Fonte: https://www.blendkit.com/asset-gallery-detail/3845c286-a5a8-4cf8-a331-c495549e1796/
+Janelas: Kenney Retro Urban Kit, CC0. Porta frontal: pack PSX_Doors licenciado ja utilizado.

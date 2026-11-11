@@ -1,0 +1,10 @@
+{
+  "version": "15.25",
+  "street_strips": 42,
+  "bytes_per_strip": 43200,
+  "max_image_bytes": 46059,
+  "global_opaque_rgb555_colors": 204,
+  "palette_permutation_proof": "outputs/palette230-png-proof.json",
+  "simulated_peak_lua_kib": 1585.3,
+  "physical_console_tested": false
+}
