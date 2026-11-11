@@ -1,0 +1,18 @@
+{
+  "connectedRooms": [
+    "banheiro",
+    "casal",
+    "corredor",
+    "cozinha",
+    "sala",
+    "solteiro"
+  ],
+  "reachableGridPoints": 1272,
+  "totalWalkableGridPoints": 1296,
+  "nativeBitmapStrips": 276,
+  "maxBitmapBytes": 43200,
+  "limitBytes": 46059,
+  "globalOpaqueRGB555": 204,
+  "compactDepthStatesExact": 112,
+  "originalHouseAndActorUnchanged": true
+}

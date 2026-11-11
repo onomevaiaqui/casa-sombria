@@ -2,11 +2,15 @@ local actor
 local M={}
 
 local cameras=require('street_data')
+local outsideCameras=cameras
+local inside39=false
+local house39
 local hole=require('hole')
 -- Embedded: the console package did not contain street_palette.lua.
 local palette={0,20219,17014,14901,16911,12753,13774,13741,11660,10605,10603,11627,10571,10570,10570,7530,9546,9546,9514,9514,9513,9513,8489,9513,8457,8457,8456,7464,6408,7433,8456,8456,8456,8456,7431,7399,8455,7399,7399,7399,7399,7399,7399,7399,7399,7399,7398,5351,6374,7366,6342,4326,6342,4263,6342,6342,6342,6342,6342,6342,6342,5286,6342,6342,6341,6341,5317,5285,6341,6309,6309,6309,4293,5285,5285,5285,5285,5285,5285,5285,5285,5285,4261,5285,5285,5285,5285,5285,5285,5285,5285,5284,4261,5285,2212,2212,5284,5284,5252,5252,5252,4228,5252,4228,3204,3203,2179,3174,3173,3172,2148,4228,3204,3172,2148,4227,4227,3203,3171,2147,2147,3203,3170,3170,3170,3170,2146,2146,130,97,3170,2146,2146,97,2116,2115,2115,2115,2114,1091,2114,1090,2114,2113,1089,1089,65,1058,1058,1057,1057,1057,1057,33,1057,1057,64,32,32,32,1057,32,32,32,1056,32,32,32,32,2080,2080,2080,32,1056,32,32,32,1024,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
 -- PNGs carry these RGB555 keys; their console indices may be reordered.
 local carrier={0,4330,6446,2183,2184,13877,12891,6513,10574,9549,5423,7435,24412,20152,9516,6580,19230,7469,5287,5354,8459,3241,5389,6614,7705,5388,4332,3139,6547,6546,5457,4366,2149,10540,1127,9482,5490,9483,7367,5253,3207,2148,2217,12721,3172,1092,4230,1057,3173,3206,4297,1058,2114,7401,13645,27582,6344,2115,3175,3210,4235,2221,2185,1093,1060,1094,6349,1059,5361,6480,7536,2187,9617,7503,4331,2222,4298,2182,6378,5321,5290,1128,1095,1129,5288,6412,1091,4264,9550,7438,8462,6276,13610,11529,9415,9449,10507,9690,6485,4341,0,9584,2116,9587,5427,2186,1097,2257,35,1,1101,15623,9381,8358,13543,8324,10371,8257,9313,13442,13509,14634,8492,6647,20705,2218,9382,14499,11463,10405,2081,3105,8493,12417,17671,10473,10438,10338,3138,19649,3137,13544,1163,20808,15591,14600,13577,14601,3313,1164,14466,36,32766,17704,3104,3379,2292,3545,2293,26,7264,25,5255,6274,6514,53,3677,6714,17602,10608,8827,7335,5221,5186,5625,4161,21798,16615,22786,19717,24935,7233,5184,9377,49,34,4162,1024,17637,19716,18727,22855,7267,7300,7301,25992,5219,5692,8427,28,5498,1241,8764,9457,120,}
+local outsidePalette=palette
 local nativeSlots
 local sprites
 local clueInventory
@@ -66,6 +70,7 @@ local function clearance(c,px,py)
  return edge
 end
 local function selectCamera(px,py,previous)
+ if inside39 then return house39.selectCamera(px,py,previous)end
  local preferred
  if px>14.2 and py>9.8 and py<12.7 then preferred=13
  elseif px>16.4 and py<12.7 then preferred=12
@@ -96,6 +101,7 @@ local function onTrail(px,py)
  return false
 end
 local function walkable(px,py)
+ if inside39 then return house39.walkable(px,py)end
  if (px-5.05)^2+(py+5.55)^2<.53^2 then return false end
  if px>16.4 and py<4.85 then return false end
  local r=.25
@@ -137,7 +143,7 @@ local poseClip,posePhase,poseX,poseY,poseAngle,poseShot
 local function ink(i)return i<16 and 224+i or 226+i end
 local function farther(a,b)return a[4]>b[4]end
 local function drawActor(clip,phase)
- prepareCarMask()
+ if inside39 then house39.prepare(shot)else prepareCarMask()end
  if poseClip==clip and posePhase==phase and poseX==x and poseY==y and poseAngle==angle and poseShot==shot then
   for _,f in ipairs(faces)do ui.trisfill(f[1][1],f[1][2],f[2][1],f[2][2],f[3][1],f[3][2],f[5])end
   return
@@ -161,7 +167,7 @@ local function drawActor(clip,phase)
  for i=1,#actor.triangles,7 do
   local al,ah,bl,bh,cl,ch,color=actor.triangles:byte(i,i+6)
   local a,b,c=vertices[al+ah*256+1],vertices[bl+bh*256+1],vertices[cl+ch*256+1]
-  if a[3]>.2 and b[3]>.2 and c[3]>.2 and (b[1]-a[1])*(c[2]-a[2])-(b[2]-a[2])*(c[1]-a[1])<0 and carTriangleVisible(a,b,c)then local n=#faces+1;local f=facePool[n];if not f then f={};facePool[n]=f end;f[1],f[2],f[3],f[4],f[5]=a,b,c,a[3]+b[3]+c[3],ink(color);faces[n]=f end
+  if a[3]>.2 and b[3]>.2 and c[3]>.2 and (b[1]-a[1])*(c[2]-a[2])-(b[2]-a[2])*(c[1]-a[1])<0 and ((inside39 and house39.triangleVisible(a,b,c))or(not inside39 and carTriangleVisible(a,b,c)))then local n=#faces+1;local f=facePool[n];if not f then f={};facePool[n]=f end;f[1],f[2],f[3],f[4],f[5]=a,b,c,a[3]+b[3]+c[3],ink(color);faces[n]=f end
  end
  table.sort(faces,farther)
  for _,f in ipairs(faces)do ui.trisfill(f[1][1],f[1][2],f[2][1],f[2][2],f[3][1],f[3][2],f[5])end
@@ -197,7 +203,11 @@ function M.update(paused,elapsed)
    end
   end
  elseif not paused and b and not previousB then
-  if (x-5.05)^2+(y+5.55)^2<1.35^2 and clueInventory then
+  if inside39 then
+   local result=house39.action(x,y);poseClip=nil
+   if result=='exit'then M.leave39()else notice=result;noticeTime=2 end
+  elseif (x-17.0)^2+(y-5.2)^2<1.15^2 then M.enter39()
+  elseif (x-5.05)^2+(y+5.55)^2<1.35^2 and clueInventory then
    if clueInventory.collected.collar then notice='O pequeno cachorro continua imovel.';noticeTime=3
    else dogPhase,dogChoice=1,1;noticeTime=0;dogPreviousLeft,dogPreviousRight=false,false end
   elseif (x-17.0)^2+(y-5.2)^2<1.15^2 and clueInventory then
@@ -229,7 +239,7 @@ function M.update(paused,elapsed)
  for i,v in ipairs(actor.palette)do ui.palset(ink(i-1),v)end
  ui.palset(240,0);ui.palset(241,32767)
  for i=0,2 do
-  local cameraName=(cameras[shot].name=='fundos39'and clueInventory and clueInventory.collected.house39_rear_open)and 'fundos39_aberta'or cameras[shot].name;local name='street_'..cameraName..'_'..i;local ref=assert(sprites[name],'Fundo ausente: '..name)
+  local cameraName=(cameras[shot].name=='fundos39'and clueInventory and clueInventory.collected.house39_rear_open)and 'fundos39_aberta'or cameras[shot].name;local name=inside39 and (house39.prefix(shot)..'_'..i)or('street_'..cameraName..'_'..i);local ref=assert(sprites[name],'Fundo ausente: '..name)
   local result=ui.spr(ref,0,i*90);assert(result~=false,'Falha ao desenhar: '..name)
  end
  local clip=actor.clips.idle;local phase=0
@@ -238,7 +248,7 @@ function M.update(paused,elapsed)
   step=(step+moved/(run and 3.0118408704 or 1.7576561718))%1;phase=step*(clip.count-1)
  end
  drawActor(clip,phase)
- ui.rectfill(0,0,479,13,240);ui.print('15.25 TESTE / '..cameras[shot].name,5,3,241)
+ ui.rectfill(0,0,479,13,240);ui.print('15.26 / '..(inside39 and ('CASA 39 - '..house39.room(x,y))or cameras[shot].name),5,3,241)
  if noticeTime>0 then noticeTime=noticeTime-dt;ui.rectfill(0,247,479,269,240);ui.print(notice,8,253,241)end
  if dogPhase>0 then
   if dogPhase==3 then
@@ -271,6 +281,13 @@ function M.setup(sharedActor,refs,buffers,masterPalette)
 end
 M.carOcclusion=carTriangleVisible;M.prepareCarMask=prepareCarMask
 M.selectCamera=selectCamera;M.clearance=clearance;M.walkable=walkable
+function M.enter39()
+ house39=house39 or require('house39');inside39=true;cameras=house39.cameras;palette=house39.palette;x,y,angle=7.55,2.4,-math.pi/2;shot=house39.selectCamera(x,y,nil);poseClip=nil;notice='Casa 39 - entrada pelos fundos';noticeTime=2
+end
+function M.leave39()
+ inside39=false;house39.release();cameras=outsideCameras;palette=outsidePalette;x,y,angle=17.4,5.8,math.pi;shot=selectCamera(x,y,nil);poseClip=nil;noticeTime=0
+end
+function M.inside39()return inside39 end
 function M.position()return x,y,angle,shot end
-function M.reset(px,py,a)dogPhase,dogChoice=0,1;dogPreviousLeft,dogPreviousRight=false,false;poseClip=nil;x,y,angle=px,py,a or 0;shot=1;noticeTime=0;previousA,previousB=true,true end
+function M.reset(px,py,a)if inside39 then M.leave39()end;dogPhase,dogChoice=0,1;dogPreviousLeft,dogPreviousRight=false,false;poseClip=nil;x,y,angle=px,py,a or 0;shot=1;noticeTime=0;previousA,previousB=true,true end
 return M
