@@ -98,7 +98,7 @@ function M.triangleVisible(a,b,c)
 end
 function M.action(x,y)
  if (x-7.85)^2+(y-2.4)^2<.95^2 then return 'exit'end
- if x<.95 and math.abs(y-.9)<.9 then return 'A passagem da frente esta bloqueada.'end
+ if x<.95 and math.abs(y-.9)<.65 then return 'front'end
  local best,dist=nil,1.1^2
  for k,d in ipairs(D.doors)do local q=(x-d.center[1])^2+(y-d.center[2])^2;if q<dist then best,dist=k,q end end
  if not best then return 'Nao ha nada para examinar aqui.'end

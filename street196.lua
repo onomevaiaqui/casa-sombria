@@ -4,6 +4,11 @@ local M={}
 local cameras=require('street_data')
 local outsideCameras=cameras
 local inside39=false
+local front39=false
+local yard39
+local strikeTime,hitThisSwing,previousY=nil,false,true
+local poseEquipped
+local gripSocket={}
 local house39
 local medicine,medicineInventory
 local hole=require('hole')
@@ -72,6 +77,7 @@ local function clearance(c,px,py)
 end
 local function selectCamera(px,py,previous)
  if inside39 then return house39.selectCamera(px,py,previous)end
+ if front39 then return yard39.selectCamera(px,py,previous)end
  local preferred
  if px>14.2 and py>9.8 and py<12.7 then preferred=13
  elseif px>16.4 and py<12.7 then preferred=12
@@ -103,6 +109,7 @@ local function onTrail(px,py)
 end
 local function walkable(px,py)
  if inside39 then return house39.walkable(px,py)end
+ if front39 then return yard39.walkable(px,py)end
  if (px-5.05)^2+(py+5.55)^2<.53^2 then return false end
  if px>16.4 and py<4.85 then return false end
  local r=.25
@@ -143,13 +150,14 @@ local vertices,faces,facePool
 local poseClip,posePhase,poseX,poseY,poseAngle,poseShot
 local function ink(i)return i<16 and 224+i or 226+i end
 local function farther(a,b)return a[4]>b[4]end
-local function drawActor(clip,phase)
- if inside39 then house39.prepare(shot)else prepareCarMask()end
- if poseClip==clip and posePhase==phase and poseX==x and poseY==y and poseAngle==angle and poseShot==shot then
+local function drawActor(clip,phase,clipName)
+ local equipped=medicineInventory and medicineInventory.equipped
+ if inside39 then house39.prepare(shot)elseif front39 then yard39.prepare(shot)else prepareCarMask()end
+ if poseClip==clip and posePhase==phase and poseX==x and poseY==y and poseAngle==angle and poseShot==shot and poseEquipped==equipped then
   for _,f in ipairs(faces)do ui.trisfill(f[1][1],f[1][2],f[2][1],f[2][2],f[3][1],f[3][2],f[5])end
   return
  end
- poseClip,posePhase,poseX,poseY,poseAngle,poseShot=clip,phase,x,y,angle,shot
+ poseClip,posePhase,poseX,poseY,poseAngle,poseShot=clip,phase,x,y,angle,shot;poseEquipped=equipped
  local frame=math.floor(phase);local nextFrame=math.min(frame+1,clip.count-1);local blend=phase-frame;local low,span=clip.low or actor.low,clip.span or actor.span;local sn,cs=math.sin(angle),math.cos(angle);local factor=1.8/1.852
  local m=cameras[shot].m;local r1,r2,r4=m[1],m[2],m[4]
  for i=0,407 do
@@ -168,7 +176,18 @@ local function drawActor(clip,phase)
  for i=1,#actor.triangles,7 do
   local al,ah,bl,bh,cl,ch,color=actor.triangles:byte(i,i+6)
   local a,b,c=vertices[al+ah*256+1],vertices[bl+bh*256+1],vertices[cl+ch*256+1]
-  if a[3]>.2 and b[3]>.2 and c[3]>.2 and (b[1]-a[1])*(c[2]-a[2])-(b[2]-a[2])*(c[1]-a[1])<0 and ((inside39 and house39.triangleVisible(a,b,c))or(not inside39 and carTriangleVisible(a,b,c)))then local n=#faces+1;local f=facePool[n];if not f then f={};facePool[n]=f end;f[1],f[2],f[3],f[4],f[5]=a,b,c,a[3]+b[3]+c[3],ink(color);faces[n]=f end
+  if a[3]>.2 and b[3]>.2 and c[3]>.2 and (b[1]-a[1])*(c[2]-a[2])-(b[2]-a[2])*(c[1]-a[1])<0 and ((inside39 and house39.triangleVisible(a,b,c))or(front39 and yard39.triangleVisible(a,b,c))or(not inside39 and not front39 and carTriangleVisible(a,b,c)))then local n=#faces+1;local f=facePool[n];if not f then f={};facePool[n]=f end;f[1],f[2],f[3],f[4],f[5]=a,b,c,a[3]+b[3]+c[3],ink(color);faces[n]=f end
+ end
+ if equipped=='crowbar'and actor.combat and actor.weapon then
+  actor.combat.socket(clipName or 'idle',phase,gripSocket)
+  local function project(ax,ay,az,out)
+   local wx,wy=x+(ax*cs-az*sn)*factor,y+(ax*sn+az*cs)*factor;local z=ay*factor
+   local depth=r4[1]*wx+r4[2]*wy+r4[3]*z+r4[4];out=out or {};out[1]=math.floor(((r1[1]*wx+r1[2]*wy+r1[3]*z+r1[4])/depth+1)*240+.5);out[2]=math.floor((1-(r2[1]*wx+r2[2]*wy+r2[3]*z+r2[4])/depth)*135+.5);out[3]=depth;return out
+  end
+  local first=#faces+1;actor.weapon.held(project,gripSocket,faces)
+  for i=#faces,first,-1 do local f=faces[i];local a,b,c=f[1],f[2],f[3]
+   if a[3]<=.2 or b[3]<=.2 or c[3]<=.2 or(inside39 and not house39.triangleVisible(a,b,c))or(front39 and not yard39.triangleVisible(a,b,c))then table.remove(faces,i)end
+  end
  end
  table.sort(faces,farther)
  for _,f in ipairs(faces)do ui.trisfill(f[1][1],f[1][2],f[2][1],f[2][2],f[3][1],f[3][2],f[5])end
@@ -213,8 +232,12 @@ function M.update(paused,elapsed)
   if inside39 then
    if not medicine.ask(x,y,medicineInventory)then
     local result=house39.action(x,y);poseClip=nil
-    if result=='exit'then M.leave39()else notice=result;noticeTime=2 end
+    if result=='exit'then M.leave39()elseif result=='front'then M.enterFront39()else notice=result;noticeTime=2 end
    end
+  elseif front39 then
+   if yard39.atDoor(x,y)or(x-8.05)^2+(y-5)^2<.85^2 then M.returnFront39()
+   elseif yard39.nearBoards(x,y)then notice=yard39.opened and 'A passagem esta livre.'or 'Tabuas bloqueiam o muro quebrado. Posso usar o machadinho.';noticeTime=3
+   else notice='Nao ha nada para examinar aqui.';noticeTime=2 end
   elseif (x-17.0)^2+(y-5.2)^2<1.15^2 then M.enter39()
   elseif (x-5.05)^2+(y+5.55)^2<1.35^2 and clueInventory then
    if clueInventory.collected.collar then notice='O pequeno cachorro continua imovel.';noticeTime=3
@@ -230,7 +253,21 @@ function M.update(paused,elapsed)
  previousA,previousB=a,b
  local horizontal=(held(LEFT or 4)and 1 or 0)-(held(RIGHT or 2)and 1 or 0)
  local throttle=(held(UP or 1)and 1 or 0)-(held(DOWN or 3)and 1 or 0)
- local run=held(BTN_F or 12)and throttle>0
+ local yDown=held(BTN_F or 12);local guard=held(BTN_E or 15)and not paused
+ local equipped=medicineInventory and medicineInventory.equipped
+ if not guard then strikeTime=nil;hitThisSwing=false
+ elseif yDown and not previousY and not strikeTime then strikeTime=0;hitThisSwing=false end
+ previousY=yDown
+ if strikeTime then
+  local attackClip=actor.combat.attack(actor.clips,equipped);strikeTime=strikeTime+dt
+  if not hitThisSwing and strikeTime*(attackClip.fps or 60)>=math.floor(attackClip.count*.35)then
+   hitThisSwing=true
+   if front39 then local message=yard39.hit(x,y,angle,equipped,medicineInventory);if message then notice=message;noticeTime=2;poseClip=nil end end
+  end
+  if strikeTime*(attackClip.fps or 60)>=attackClip.count-1 then strikeTime=nil end
+ end
+ if guard then throttle=0 end
+ local run=yDown and not guard and throttle>0
  if paused then horizontal,throttle=0,0 end
  angle=(angle+horizontal*(run and 2.5 or 3.2)*dt)%(2*math.pi)
  local distance=(run and 4.1070557323 or 1.7009575856)*dt*throttle
@@ -241,6 +278,8 @@ function M.update(paused,elapsed)
   elseif walkable(x+dx,y)then x=x+dx;moved=moved+math.abs(dx)
   elseif walkable(x,y+dy)then y=y+dy;moved=moved+math.abs(dy)end
  end
+ if inside39 and moved>0 and x<.47 and math.abs(y-.9)<.33 then M.enterFront39()
+ elseif front39 and moved>0 and yard39.atDoor(x,y)then M.returnFront39()end
  shot=selectCamera(x,y,shot)
 
  ui.cls(0)
@@ -248,17 +287,22 @@ function M.update(paused,elapsed)
  for i,v in ipairs(actor.palette)do ui.palset(ink(i-1),v)end
  ui.palset(240,0);ui.palset(241,32767)
  for i=0,2 do
-  local cameraName=(cameras[shot].name=='fundos39'and clueInventory and clueInventory.collected.house39_rear_open)and 'fundos39_aberta'or cameras[shot].name;local name=inside39 and (house39.prefix(shot)..'_'..i)or('street_'..cameraName..'_'..i);local ref=assert(sprites[name],'Fundo ausente: '..name)
+  local cameraName=(cameras[shot].name=='fundos39'and clueInventory and clueInventory.collected.house39_rear_open)and 'fundos39_aberta'or cameras[shot].name;local name=inside39 and (house39.prefix(shot)..'_'..i)or(front39 and(yard39.prefix(shot)..'_'..i)or('street_'..cameraName..'_'..i));local ref=assert(sprites[name],'Fundo ausente: '..name)
   local result=ui.spr(ref,0,i*90);assert(result~=false,'Falha ao desenhar: '..name)
  end
- local clip=actor.clips.idle;local phase=0
+ local clip=actor.clips.idle;local phase=0;local clipName="idle"
  if moved>0 then
-  clip=run and actor.clips.run or actor.clips.walk
+  clip=run and actor.clips.run or actor.clips.walk;clipName=run and "run"or"walk"
   step=(step+moved/(run and 3.0118408704 or 1.7576561718))%1;phase=step*(clip.count-1)
  end
  if inside39 then house39.prepare(shot);medicine.draw(ui,cameras[shot].m,house39.room(x,y),medicineInventory,house39.triangleVisible)end
- drawActor(clip,phase)
- ui.rectfill(0,0,479,13,240);ui.print('15.34 / '..(inside39 and ('CASA 39 - '..house39.room(x,y))or cameras[shot].name),5,3,241)
+ if guard and actor.combat then
+  if strikeTime then clip=actor.combat.attack(actor.clips,equipped);phase=math.min(clip.count-1,strikeTime*(clip.fps or 60));clipName=actor.combat.isBaton(equipped)and 'swing'or 'punch'
+  else clip=actor.combat.guard(actor.clips,equipped);phase=0;clipName=actor.combat.isBaton(equipped)and 'ready'or 'guard'end
+ end
+ if equipped=='crowbar'and actor.weapon then actor.weapon.palette(ui)end
+ drawActor(clip,phase,clipName)
+ ui.rectfill(0,0,479,13,240);ui.print('15.39 / '..(inside39 and ('CASA 39 - '..house39.room(x,y))or(front39 and ('JARDIM 39 - '..cameras[shot].name)or cameras[shot].name)),5,3,241)
  if noticeTime>0 then noticeTime=noticeTime-dt;ui.rectfill(0,247,479,269,240);ui.print(notice,8,253,241)end
  if dogPhase>0 then
   if dogPhase==3 then
@@ -294,13 +338,22 @@ end
 M.carOcclusion=carTriangleVisible;M.prepareCarMask=prepareCarMask
 M.selectCamera=selectCamera;M.clearance=clearance;M.walkable=walkable
 function M.enter39()
+ if front39 then yard39.release();front39=false end;strikeTime=nil
  house39=house39 or require('house39');medicine=medicine or require('medicine244');medicine.cancel();inside39=true;cameras=house39.cameras;palette=house39.palette;x,y,angle=7.55,2.4,-math.pi/2;shot=house39.selectCamera(x,y,nil);poseClip=nil;notice='Casa 39 - entrada pelos fundos';noticeTime=2
 end
 function M.leave39()
- inside39=false;medicine.cancel();house39.release();cameras=outsideCameras;palette=outsidePalette;x,y,angle=17.4,5.8,math.pi;shot=selectCamera(x,y,nil);poseClip=nil;noticeTime=0
+ inside39=false;front39=false;strikeTime=nil;medicine.cancel();house39.release();cameras=outsideCameras;palette=outsidePalette;x,y,angle=17.4,5.8,math.pi;shot=selectCamera(x,y,nil);poseClip=nil;noticeTime=0
 end
+function M.enterFront39()
+ if inside39 then medicine.cancel();house39.release()end
+ yard39=yard39 or require('yard39');yard39.enter(medicineInventory);inside39=false;front39=true;cameras=yard39.cameras;palette=outsidePalette;x,y,angle=7.42,5.0,-math.pi/2;shot=yard39.selectCamera(x,y,nil);poseClip=nil;strikeTime=nil;notice='Jardim frontal da Casa 39';noticeTime=2
+end
+function M.returnFront39()
+ if yard39 then yard39.release()end;front39=false;M.enter39();x,y,angle=.62,.9,math.pi/2;shot=house39.selectCamera(x,y,nil);poseClip=nil
+end
+function M.front39()return front39 end
 function M.pickupActive()return inside39 and medicine and medicine.busy()end
 function M.inside39()return inside39 end
 function M.position()return x,y,angle,shot end
-function M.reset(px,py,a)if inside39 then M.leave39()end;dogPhase,dogChoice=0,1;dogPreviousLeft,dogPreviousRight=false,false;poseClip=nil;x,y,angle=px,py,a or 0;shot=1;noticeTime=0;previousA,previousB=true,true end
+function M.reset(px,py,a)if inside39 then M.leave39()end;if front39 then yard39.release();front39=false;cameras=outsideCameras;palette=outsidePalette end;strikeTime=nil;dogPhase,dogChoice=0,1;dogPreviousLeft,dogPreviousRight=false,false;poseClip=nil;x,y,angle=px,py,a or 0;shot=1;noticeTime=0;previousA,previousB=true,true end
 return M

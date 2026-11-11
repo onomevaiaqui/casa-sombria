@@ -1,0 +1,10 @@
+15.39 - Casa 39: jardim e acesso ao novo quintal
+
+Preserva os interiores aprovados 15.38, proporcoes, colisoes e materiais humanos.
+Porta frontal da sala aberta, saida automatica e retorno pelo mesmo acesso.
+Muro lateral quebrado, fechado com tabuas MCSTEEG Wooden_Plank_1/2, exige tres golpes de machadinha (R + Y). Punhos nao quebram. Abertura e golpes persistem ao trocar de cena.
+Quatro cameras fixas com continuidade espacial, estados fechado/aberto pre-renderizados, colisoes do muro/porta/vegetacao.
+Reutiliza personagem, arma e animacao existentes; nenhum modelo externo adicional no runtime.
+Somente uma mascara de profundidade do jardim ativa (8160 bytes); libera ao voltar para a casa. Bitmaps nativos 480x90, 43200 bytes por imagem (<46059); paleta global opaca 204 cores RGB555.
+Validacao Lua com package=nil: 1993 amostras visiveis sem corte do personagem, tres golpes/debounce/direcao/colisoes, 50 transicoes, pico 1542 KiB e delta retido 7.3 KiB. Interiores: 112 estados de profundidade exatos, seis comodos conectados. Navegador Lupinho: movimento/guarda/ataque sem erros.
+Teste no console fisico ainda necessario; nao ha medicao real de FPS ou memoria total do firmware. A previa local inclui machadinha para teste rapido; jogo publicado mantem progressao normal.

@@ -58,3 +58,12 @@ Armario de banheiro com espelho: Innerscene - REFLECT Bathroom Mirror Cabinet, C
 Banheiro Casa39 15.28: Arrangemonk - Prison Toilet Pack, free tier CC0, https://arrangemonk.itch.io/prison-toilet-pack . Pia e vaso, ajustados em escala e pre-renderizados. Armario heyheythere + espelho e revestimento Clone Crafts adaptados; fontes e licencas ja creditadas acima. Acessorios AssetsFactory, PSX Motel 3D Bathroom Clutter, uso comercial permitido sem redistribuir arquivos; autor declara assistencia de IA.
 
 Box banheiro Casa39: Kenney - Furniture Kit, shower.obj, CC0. Fonte: https://kenney.nl/assets/furniture-kit . Ajustado em escala e orientacao e integrado ao fundo pre-renderizado.
+
+TV CRT da Casa 39: Lowbit Lab - Free PSX 90s House Sampler. https://lowbitlab.itch.io/free-psx-90s-house-sampler
+Uso conforme termos preservados na biblioteca local; somente imagem pre-renderizada no jogo.
+
+Abandono Casa39: MCSTEEG - Trash and Debris, https://mcsteeg.itch.io/trash-and-debris. Autor declara No generative AI. Jornais, embalagens, latas e decals usados somente em render offline. Materiais envelhecidos por edicao convencional de shaders.
+
+Casa39 revisao15.38: Decrepit Wallpaper - Rob Tuytel, https://polyhaven.com/a/decrepit_wallpaper (CC0). Worn Cracked Plaster - Amal Kumar https://polyhaven.com/a/worn_cracked_plaster (CC0). Root Cluster01 - Jenelle van Heerden / Rico Cilliers https://polyhaven.com/a/root_cluster_01 (CC0). Kenney Furniture Kit https://kenney.nl/assets/furniture-kit (CC0,2018). EmaceArt Gravefield Dark Corners https://emaceart.itch.io/cemetrydarkcorners (licenca propria, uso comercial permitido). Household Interior Props by Jonathan U (jku.itch.io), CC-BY4.0; creditos secundarios incluidos preservados na pasta de assets e no arquivo CREDITOS-JONATHAN-U.txt. MCSTEEG Trash and Debris, licenca propria. Somente bitmaps pre-renderizados no runtime.
+
+Jardim Casa39 15.39: tabuas Wooden_Plank_1/2 de MCSTEEG - Trash and Debris, https://mcsteeg.itch.io/trash-and-debris. Integradas em render offline do trecho de muro quebrado; mesmas fontes e licencas da rua, sem novo modelo no runtime.
