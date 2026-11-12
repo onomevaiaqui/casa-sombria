@@ -1,0 +1,8 @@
+{
+  "visible_cells": 82186,
+  "walkable_samples": 24629,
+  "benchmark": {
+    "before_stationary_seconds": 0.06031760000041686,
+    "after_stationary_seconds": 0.0005963000003248453
+  }
+}

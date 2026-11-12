@@ -57,6 +57,7 @@ local function eachColor(st,set)
 end
 local function state(c)
  local mask=doors.stateMask(c.doorBits)
+ local family,id=require('interaction287').doorVisual();if family=='main'then for _,door in ipairs(doors.list)do if door.id==id and math.floor(mask/door.bit)%2==1 then mask=mask-door.bit;break end end end
  return assert(c.states[mask],'Missing room door state '..mask)
 end
 function C.initial(room)

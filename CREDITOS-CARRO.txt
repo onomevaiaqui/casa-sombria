@@ -1,0 +1,4 @@
+Destroyed Car 03 / Backrooms Car (Gameready ver) - Renafox (kryik1023)
+https://sketchfab.com/3d-models/destroyed-car-03-backrooms-car-gameready-ver-efc4dfe2c7284a64bc9281eb4f61d402
+CC BY 4.0 - https://creativecommons.org/licenses/by/4.0/
+Adaptacoes: escala, rotacao, materiais reconectados as texturas fornecidas, iluminacao da cena e conversao para bitmap indexado.

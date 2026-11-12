@@ -1,0 +1,8 @@
+Arquitetura: ALEX / Apfelgarten, Modular Building Kit - https://apfelgarten.itch.io/free-modular-building-kit
+Postes e modulos urbanos: Kenney, Retro Urban Kit - https://kenney.nl/assets/retro-urban-kit
+Entulho: MCSTEEG, Trash and Debris - https://mcsteeg.itch.io/trash-and-debris
+Arvores novas: Kkryy, Forest Model Pack (CC0) - https://kkryy.itch.io/forestmodelpack
+Piso da calcada: Elbolilloduro, Pizzeria PSX - biblioteca existente e seus termos preservados
+Pedras dos acessos: FlakDeau, Cobblestones_01_Grey_1 - biblioteca existente
+Demais materiais: fontes humanas da cena ja catalogada. Nenhuma imagem ou modelo desta expansao foi gerado por IA. Uso de assistente para montagem de codigo, adaptacao de modelos e correcao de problemas.
+Referencia de composicao: exteriores de Resident Evil classicos; nenhum asset da Capcom foi incorporado ao jogo.

@@ -96,6 +96,37 @@ end
 function M.triangleVisible(a,b,c)
  return visible((a[1]+b[1]+c[1])/3,(a[2]+b[2]+c[2])/3,(a[3]+b[3]+c[3])/3)
 end
+function M.setDoor(k,value)
+ local bit=2^(k-1);if open(k)~=value then M.bits=M.bits+(value and bit or -bit)end
+ doorBits=nil;key=nil;prefixShot=nil;viewBits=nil
+end
+function M.planDoor(x,y)
+ local best,dist=nil,1.1^2
+ for k,d in ipairs(D.doors)do local q=(x-d.center[1])^2+(y-d.center[2])^2;if q<dist then best,dist=k,q end end
+ if not best then return nil end
+ local d=D.doors[best];local tx,ty=d.axis[1],d.axis[2];local len=math.sqrt(tx*tx+ty*ty);tx,ty=tx/len,ty/len
+ local nx,ny=-ty,tx;local side=(x-d.center[1])*nx+(y-d.center[2])*ny>=0 and 1 or -1;nx,ny=nx*side,ny*side
+ local was=open(best)
+ local function clear(px,py)
+  local here=(px-d.center[1])^2+(py-d.center[2])^2
+  for k,other in ipairs(D.doors)do if k~=best and(px-other.center[1])^2+(py-other.center[2])^2<here+.02 then return false end end
+  for i=0,8 do
+   local a=d.turn*math.pi/180*i/8;local sn,cs=math.sin(a),math.cos(a)
+   local ex=d.hinge[1]+d.axis[1]*cs-d.axis[2]*sn;local ey=d.hinge[2]+d.axis[1]*sn+d.axis[2]*cs
+   if segment(px,py,d.hinge[1],d.hinge[2],ex,ey)<.23^2 then return false end
+  end
+  M.setDoor(best,false);local a=M.walkable(px,py);M.setDoor(best,true);local b=M.walkable(px,py);M.setDoor(best,was);return a and b
+ end
+ local dock,target
+ for _,distance in ipairs({.78,.94,.62})do for _,offset in ipairs({0,.18,-.18,.32,-.32,.45,-.45})do
+  local px,py=d.center[1]+nx*distance+tx*offset,d.center[2]+ny*distance+ty*offset
+  if not dock and clear(px,py)then dock={px,py}end
+  px,py=d.center[1]-nx*distance+tx*offset,d.center[2]-ny*distance+ty*offset
+  if not target and clear(px,py)then target={px,py}end
+ end end
+ if not dock or not target then return nil end
+ return {index=best,center=d.center,dock=dock,target=target,kind=side>0 and 'open_in'or 'open_out'}
+end
 function M.action(x,y)
  if (x-7.85)^2+(y-2.4)^2<.95^2 then return 'exit'end
  if x<.95 and math.abs(y-.9)<.65 then return 'front'end
@@ -104,7 +135,7 @@ function M.action(x,y)
  if not best then return 'Nao ha nada para examinar aqui.'end
  local bit=2^(best-1);M.bits=M.bits+(open(best)and -bit or bit)
  -- A leaf cannot close through the player or swing onto their position.
- if not M.walkable(x,y)then M.bits=M.bits+(open(best)and -bit or bit);return 'Afaste-se um pouco da porta.'end
+ if not M.walkable(x,y)then M.bits=M.bits+(open(best)and -bit or bit);key=nil;return 'B: ABRIR PORTA'end
  key=nil;return open(best)and 'Porta aberta.'or 'Porta fechada.'
 end
 function M.release()depth,key,baseDepth,baseKey=nil,nil,nil,nil end

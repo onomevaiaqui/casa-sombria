@@ -5,8 +5,8 @@ local inner='Parece estar trancada pelo outro lado.'
 function P.defeated(enemy)return enemy.hp<=0 end
 function P.message(id,room,enemy,doors)
  if id=='entrada'and not P.defeated(enemy)then return entrance end
- if id=='garagem'and room=='corredor'and not doors.isOpen(id)then return inner end
- if id=='garagem_externa'and not doors.isOpen(id)then
+ if id=='garagem'and room=='corredor'and not doors.isOpen(id)and not doors.unlocked[id]then return inner end
+ if id=='garagem_externa'and not doors.isOpen(id)and not doors.unlocked[id]then
   return room=='garagem'and 'A porta de rolo esta travada. O mecanismo fica do lado de fora.'or 'Preciso encontrar algo para abrir esta porta.'
  end
 end

@@ -1,0 +1,13 @@
+A ULTIMA ENTREGA - 15.85
+
+Publicacao da previa 15.84 com otimizacoes sem reduzir imagens, modelos ou animacoes.
+- Grades de visibilidade recortadas exatamente por camera: 338570 -> 22790 bytes (315780 bytes a menos).
+- Reutilizacao de consultas de camera quando posicao e estado nao mudam.
+- Indices de triangulos do jogador decodificados uma vez e compartilhados entre ambientes.
+- Pontos fixos de colisao reutilizados, sem tabelas temporarias a cada consulta.
+- Inspecao da coleira usa indices reais da paleta do pipeline, sem depender da ordem de cores.
+
+Validacao local: 82186 celulas de visibilidade preservadas; 24629 posicoes com colisoes e cameras identicas; 30 ciclos de entrada/saida da Casa31; 16 transicoes executando a versao de publicacao sem package; todos os Lua compilam.
+Bitmaps nativos preservados; PNGs com paleta global de 204 cores opacas; maior imagem 46029 bytes, limite 46059. Icone 64x32. Previa de navegador sem erros JavaScript observados.
+
+FPS e limite total de memoria devem ser confirmados no console fisico; as medicoes locais nao substituem o teste no Lupi.

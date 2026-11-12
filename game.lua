@@ -1,3 +1,5 @@
+local interaction287=require('interaction287')
+do if BTN_Q and BTN_X and BTN_Z and BTN_G then BTN_F,BTN_Z,BTN_G,BTN_E=BTN_Q,BTN_X,BTN_Z,BTN_G end end
 local deathScreen=require('death171')
 local shutter=require('shutter169')
 local turning=require('turn168')
@@ -1662,7 +1664,7 @@ local function checkPassage(dx,dy,keyDx,keyDy)
                     end
                     local safeX,safeY=passagePlacement.arrival(metric,doors,exit.to,arrivalX,arrivalY,exit.transfer)
                     if not safeX then
-                        roomNotice="A passagem está obstruída."
+                        roomNotice="A passagem estÃƒÂ¡ obstruÃƒÂ­da."
                         crossing=false;transitionCarry=nil
                         return
                     end
@@ -1719,7 +1721,62 @@ local overwrittenLines,prunedFaces={},{}
 -- Reserve renderer buffers before play, avoiding first-attack table growth.
 for i=1,408 do courierVertices[i]={0,0,0}end
 for i=1,#actorTriangles/7 do courierPool[i]={0,0,0,0,0}end
+local function beginDoorInteraction(door)
+ if interaction287.busy()then return false end
+ local layout=require('layout140');local source=currentRoom;local destination
+ for rn in pairs(door.ends)do if rn~=source then destination=rn end end
+ if not destination or not layout.rooms[destination]then return false end
+ local p,q=door.ends[source],door.ends[destination]
+ local function normal(room,endpoint)
+  local size=layout.rooms[room].size
+  if endpoint.axis==1 then return endpoint.x<size[1]/2 and 1 or -1,0 end
+  return 0,endpoint.y<size[2]/2 and 1 or -1
+ end
+ local function sweepClear(room,gx,gy)
+  if not door.hinge then return true end
+  local off=layout.rooms[room].offset;local wx,wy=gx+off[1],gy+off[2]
+  local width=door.id=='jardim_quintal'and 1 or(door.id=='casinha'and .9 or .8)
+  for i=0,8 do
+   local a=math.rad(door.closed+(door.open-door.closed)*i/8);local dx,dy=math.cos(a)*width,math.sin(a)*width
+   local t=math.max(0,math.min(1,((wx-door.hinge[1])*dx+(wy-door.hinge[2])*dy)/(width*width)))
+   if(wx-door.hinge[1]-dx*t)^2+(wy-door.hinge[2]-dy*t)^2<.25^2 then return false end
+  end
+  return true
+ end
+ local function dock(room,endpoint)
+  local baseX,baseY=normal(room,endpoint)
+  if room==source then local gx,gy=metric.ground(source,x,y);if(gx-endpoint.x)*baseX+(gy-endpoint.y)*baseY<0 then baseX,baseY=-baseX,-baseY end end
+  for _,side in ipairs({1,-1})do local nx,ny=baseX*side,baseY*side;local tx,ty=-ny,nx
+  for _,distance in ipairs({.65,.85,1.05,1.25})do for _,offset in ipairs({0,.16,-.16,.30,-.30})do
+   local gx,gy=endpoint.x+nx*distance+tx*offset,endpoint.y+ny*distance+ty*offset
+   local px,py=metric.project(room,gx,gy,0)
+   if navigation.walkable(room,px,py)and doors.canOpen(door.id,room,gx,gy)and enemy.walkable(room,gx,gy)and sweepClear(room,gx,gy)then return {gx,gy},nx,ny end
+  end end end
+ end
+ local fromX,fromY=metric.ground(source,x,y);local start,nx,ny=dock(source,p);local target,dx,dy=dock(destination,q)
+ if not start or not target then return false end
+ local face=metric.facing(source,-nx,-ny);local forward=metric.facing(destination,dx,dy)
+ local function place(room,gx,gy,a)currentRoom=room;x,y=metric.project(room,gx,gy,0);facing=a;courierCache=nil end
+ local into=destination=='quarto'or destination=='banheiro'or destination=='ferramentas'or destination=='sala'
+ return interaction287.begin({kind=into and 'open_in'or 'open_out',visualFamily='main',visualDoor=door.id,from={fromX,fromY,facing},dock=start,face=face,
+  set=function(gx,gy,a)place(source,gx,gy,a)end,
+  open=function()doors.open(door.id)end,
+  advance=function(t)
+   if t<.5 then local a=t*2;place(source,start[1]+(p.x+nx*.08-start[1])*a,start[2]+(p.y+ny*.08-start[2])*a,face)
+   else local a=(t-.5)*2;place(destination,q.x+dx*.08+(target[1]-q.x-dx*.08)*a,q.y+dy*.08+(target[2]-q.y-dy*.08)*a,forward)end
+  end,
+  faceBack=function()facing=metric.facing(destination,-dx,-dy);courierCache=nil end,
+  close=function()doors.close(door.id)end,
+  finish=function()place(destination,target[1],target[2],forward);crossing=false;transitionCarry=nil;roomNotice=''end,
+  cancel=function()doors.close(door.id);if currentRoom==source then place(source,start[1],start[2],face)else place(destination,target[1],target[2],forward)end end})
+end
+
 local courierDoorBits={1,2,4,8,16,32,64,128}
+local actorIndex339={}
+for i=1,#actorTriangles,7 do
+ local a,b,c,d,e,f,k=actorTriangles:byte(i,i+6);local n=#actorIndex339
+ actorIndex339[n+1],actorIndex339[n+2],actorIndex339[n+3],actorIndex339[n+4]=a+b*256+1,c+d*256+1,e+f*256+1,k
+end
 local function courier()
     local clip, position, clipName = actorClips.idle, 0, "idle"
     if life.dead then
@@ -1742,6 +1799,8 @@ local function courier()
         clip,position=turning.clip(),turning.position
         clipName=turning.direction<0 and 'turnLeft'or 'turnRight'
     end
+    local interactionClip,interactionPhase,interactionName=interaction287.pose(actorClips.walk,actorClips.idle)
+    if interactionClip then clip,position,clipName=interactionClip,interactionPhase,interactionName end
     local doorMask=doors.stateMask(courierDoorBits)
     local equipped=inventory and inventory.equipped
     if courierCache and combat.stable()then
@@ -1762,6 +1821,7 @@ local function courier()
     local currentOffset, nextOffset = frame*408*3, nextFrame*408*3
     local low,span=clip.low or actorLow,clip.span or actorSpan
     combat.preparePose(clipName,animationDelta())
+    local interaction339=interaction287.busy()
     for index = 0,407 do
         local first = currentOffset+index*3+1
         local second = nextOffset+index*3+1
@@ -1770,7 +1830,7 @@ local function courier()
         local ax = low[1]+(a+(d-a)*blend)/255*span[1]
         local ay = low[2]+(b+(e-b)*blend)/255*span[2]
         local az = low[3]+(c+(f-c)*blend)/255*span[3]
-        ax,ay,az=combat.blendVertex(index+1,ax,ay,az)
+        if not interaction339 then ax,ay,az=combat.blendVertex(index+1,ax,ay,az)end
         if index==207 then courierHand[1],courierHand[2],courierHand[3]=ax,ay,az;hand=courierHand end
         vertices[index+1]=project(ax,ay,az,vertices[index+1])
     end
@@ -1789,16 +1849,16 @@ local function courier()
         end
     end
     local gripSocket=combat.blendSocket(combat.socket(clipName,position,courierRawSocket),courierSocket)
-    if hand and inventory and not life.dead then
+    if hand and inventory and not life.dead and not interaction287.busy()then
         if inventory.equipped=="crowbar" then
             crowbar.held(project,gripSocket,faces)
         elseif inventory.equipped=="phone" then
             heldBox(hand[1]-0.035,hand[2]-0.025,hand[3]-0.035,0.07,0.13,0.025)
         end
     end
-    for i = 1,#actorTriangles,7 do
-        local al,ah,bl,bh,cl,ch,ink = string.byte(actorTriangles,i,i+6)
-        local a,b,c = vertices[al+ah*256+1],vertices[bl+bh*256+1],vertices[cl+ch*256+1]
+    for i = 1,#actorIndex339,4 do
+        local ink=actorIndex339[i+3]
+        local a,b,c = vertices[actorIndex339[i]],vertices[actorIndex339[i+1]],vertices[actorIndex339[i+2]]
         local area = (b[1]-a[1])*(c[2]-a[2])-(b[2]-a[2])*(c[1]-a[1])
         if area < 0 then
             faceCount=faceCount+1
@@ -1975,7 +2035,7 @@ local street
 local function ensureStreet()
  if not street then
   street=require('street196')
-  street.setup({palette=actorPalette,triangles=actorTriangles,clips=actorClips,low=actorLow,span=actorSpan,combat=combat,weapon=crowbar},sceneSprites,{vertices=courierVertices,faces=courierFaces,pool=courierPool},bitmapPalette,inventory)
+  street.setup({palette=actorPalette,triangles=actorTriangles,indices=actorIndex339,clips=actorClips,low=actorLow,span=actorSpan,combat=combat,weapon=crowbar},sceneSprites,{vertices=courierVertices,faces=courierFaces,pool=courierPool},bitmapPalette,inventory)
  end
  return street
 end
@@ -1990,6 +2050,7 @@ function update()
     end
     life.tick(animationDelta())
     if life.dead then
+        if interaction287.busy()then interaction287.cancel()end
         local action=life.input(held(BTN_G or 13),held(BTN_Z or 4))
         if action=='retry'then
             life.reset();enemy.reset();currentRoom='frente';x,y=metric.project('frente',9.7,3.2,0)
@@ -2001,14 +2062,14 @@ function update()
         local result=codeLock:input({a=a,b=b,up=held(UP or 1),down=held(DOWN or 3),left=held(LEFT or 4),right=held(RIGHT or 2)},frameTime.dt,doors)
         previousA,previousB,previousY=a,b,run
         codeLock:draw(ui)
-        if result=='opened'then dialogue:notify('Cadeado aberto.')end
+        if result=='opened'then doors.unlock('casinha');doors.close('casinha');for _,d in ipairs(doors.list)do if d.id=='casinha'then beginDoorInteraction(d);break end end end
         return
     end
     streetCooldown=math.max(0,streetCooldown-frameTime.dt)
     if pendingStreet then
         -- A frame boundary separates house rendering, release, require and first street draw.
         ui.cls(240);ui.palset(240,0);ui.palset(241,32767)
-        ui.print('15.39 - PREPARANDO RUA '..pendingStreet.phase..'/3',95,125,241)
+        ui.print('15.85 - PREPARANDO RUA '..pendingStreet.phase..'/3',95,125,241)
         frameTime.hud(ui)
         if pendingStreet.phase==1 then
             cameras.release();courierCache=nil
@@ -2032,7 +2093,7 @@ function update()
     end
     if streetMode then
         local a,b=held(BTN_G or 13),held(BTN_Z or 4)
-        if a and not previousA and not(street.pickupActive and street.pickupActive())then
+        if a and not previousA and not interaction287.busy()and not(street.pickupActive and street.pickupActive())then
             if inventory.visible then inventory:back()else inventory:open();inventory.previous.b=b end
         end
         previousA,previousB,previousY=a,b,held(BTN_F or 12)
@@ -2054,6 +2115,8 @@ function update()
         end
         return
     end
+    local interactionWasBusy=interaction287.busy()
+    if interactionWasBusy then interaction287.tick(animationDelta())end
     ui.cls(0)
 
     for i, color in ipairs(actorPalette) do ui.palset(actorInk(i-1), color) end
@@ -2066,6 +2129,7 @@ function update()
     if life.hitTime then aiming,strike,walking,running=false,0,false,false;queuedStrike=false end
     local cancel, confirm, attack = a and not previousA, b and not previousB, run and not previousY
     previousA, previousB, previousY = a, b, run
+    if interactionWasBusy or interaction287.busy()then dx,dy,run,guard=0,0,false,false;confirm,cancel,attack=false,false,false end
     local reading=dialogue.active
     if reading then
         dialogue:handle(confirm,cancel)
@@ -2146,7 +2210,7 @@ function update()
         local px,py=metric.project(currentRoom,gx+worldMoveX,gy+worldMoveY,0)
         passageDx,passageDy=px-x,py-y
     end
-    checkPassage(passageDx,passageDy,inputDx,inputDy)
+    if not interactionWasBusy and not interaction287.busy()then checkPassage(passageDx,passageDy,inputDx,inputDy)end
     local ix,iy=metric.ground(currentRoom,x,y)
     local interaction=interactions.nearby(currentRoom,ix,iy)
     local nearbyDoor=doors.nearby(currentRoom,ix,iy)
@@ -2157,11 +2221,11 @@ function update()
         if nearbyDoor then
             local refusal=progression.message(nearbyDoor.id,currentRoom,enemy,doors)
             if refusal then dialogue:notify(refusal)
-            elseif nearbyDoor.id=="casinha"then
+            elseif nearbyDoor.id=="casinha"and not doors.unlocked.casinha then
                 codeLock:begin()
-            elseif doors.canOpen(nearbyDoor.id,currentRoom,ix,iy)then
-                doors.open(nearbyDoor.id);dialogue:notify(nearbyDoor.id=="jardim_quintal"and "Você abriu o portão."or "Você abriu a porta.")
-            else dialogue:notify("Afaste-se um pouco da porta.")end
+            else
+                beginDoorInteraction(nearbyDoor)
+            end
             nearbyDoor=nil
             roomNotice=""
         elseif interaction then
@@ -2176,7 +2240,7 @@ function update()
             local pickup = inventory:nearby(currentRoom,x,y)
             local result=pickup and inventory:collect(pickup)or "NADA PARA USAR"
             local messages={['ITEM COLETADO']='Item coletado.',['ARQUIVO COLETADO']='Arquivo coletado.',
-                ['INVENTARIO CHEIO']='O inventário está cheio.',['NADA PARA USAR']='Não há nada para usar aqui.'}
+                ['INVENTARIO CHEIO']='O inventÃƒÂ¡rio estÃƒÂ¡ cheio.',['NADA PARA USAR']='NÃƒÂ£o hÃƒÂ¡ nada para usar aqui.'}
             dialogue:notify(messages[result]or result)
         end
     end
@@ -2221,7 +2285,7 @@ function update()
             end
         end
     end
-    if native then shutter.draw(cameras,currentRoom,ui.spr) end
+    if native then shutter.draw(cameras,currentRoom,ui.spr);require('door290').draw('main',currentRoom,cameras.shot,ui,sceneSprites)end
     local fine = false
     if not native then
         drawImage(detailedBackground, 0, 479)
@@ -2229,7 +2293,7 @@ function update()
     end
     ui.rectfill(0,0,479,15,240)
     local motion = walking and (running and " / CORRIDA" or " / PASSOS") or ""
-    ui.print("15.39 TESTE "..status..motion,8,3,241)
+    ui.print("15.85 TESTE "..status..motion,8,3,241)
     frameTime.hud(ui)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do
@@ -2241,7 +2305,7 @@ function update()
     end
     if currentRoom=='ferramentas'and not inventory.collected.crowbar then crowbar.pickup(cameras,ui)end
     local playerGX,playerGY=metric.ground(currentRoom,x,y)
-    enemy.tick(animationDelta(),currentRoom,playerGX,playerGY)
+    if not interactionWasBusy and not interaction287.busy()then enemy.tick(animationDelta(),currentRoom,playerGX,playerGY)end
     enemy.palette(ui)
     local enemyBehind=enemy.beforePlayer(currentRoom,x,y)
     if enemyBehind then enemy.draw(currentRoom)end

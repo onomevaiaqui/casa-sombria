@@ -1,12 +1,14 @@
 -- One shared state per physical door, regardless of the side used to open it.
-local D={opened={}}
+local D={opened={},unlocked={}}
 D.list={{["id"]='quarto',["label"]='QUARTO',["bit"]=1,["asset"]=4,["hinge"]={8.5,4.828},["closed"]=0,["open"]=180,["ends"]={["corredor"]={["x"]=4.1,["y"]=1.8,["axis"]=2},["quarto"]={["x"]=1.7,["y"]=0,["axis"]=2}}},{["id"]='banheiro',["label"]='BANHEIRO',["bit"]=2,["asset"]=4,["hinge"]={5.6,4.828},["closed"]=0,["open"]=180,["ends"]={["corredor"]={["x"]=1.2,["y"]=1.8,["axis"]=2},["banheiro"]={["x"]=1.2,["y"]=0,["axis"]=2}}},{["id"]='entrada',["label"]='ENTRADA',["bit"]=4,["asset"]=8,["hinge"]={2.9,0.028},["closed"]=0,["open"]=180,["ends"]={["sala"]={["x"]=3.3,["y"]=0,["axis"]=2},["area"]={["x"]=1.5,["y"]=1.5,["axis"]=2}}},{["id"]='garagem',["label"]='GARAGEM',["bit"]=8,["asset"]=4,["hinge"]={5.6,2.972},["closed"]=0,["open"]=180,["ends"]={["corredor"]={["x"]=1.2,["y"]=0,["axis"]=2},["garagem"]={["x"]=1.2,["y"]=5.7,["axis"]=2}}},{["id"]='cozinha_quintal',["label"]='COZINHA_QUINTAL',["bit"]=16,["asset"]=4,["hinge"]={0.028,5.9},["closed"]=90,["open"]=-90,["ends"]={["cozinha"]={["x"]=0,["y"]=1.5,["axis"]=1},["quintal"]={["x"]=6.4,["y"]=4.3,["axis"]=1}}},{["id"]='corredor',["label"]='CORREDOR',["bit"]=32,["asset"]=4,["hinge"]={4.8,3.6},["closed"]=90,["open"]=0,["ends"]={["sala"]={["x"]=4.8,["y"]=4,["axis"]=1},["corredor"]={["x"]=0,["y"]=1,["axis"]=1}},["openBoxes"]={["corredor"]={0,0.8,0.58,0.62}}}}
 table.insert(D.list,{id='jardim_quintal',label='PORTAO DO QUINTAL',bit=64,asset=0,hinge={-2.1,0},closed=0,open=90,ends={frente={x=4.8,y=8.6,axis=2},quintal={x=4.8,y=0,axis=2}},openBoxes={quintal={4.27,4.33,0,1}}})
 D.list[5].ends.quintal.y=6.3
 table.insert(D.list,{id='casinha',label='CASINHA DE FERRAMENTAS',bit=128,asset=0,hinge={-5.05,6.5},closed=0,open=-95,ends={quintal={x=1.8,y=6.5,axis=2},ferramentas={x=1.5,y=0,axis=2}},openBoxes={quintal={1.23,1.4,5.6,6.5}}})
 table.insert(D.list,{id='garagem_externa',label='PORTA DE ROLO',bit=256,asset=0,ends={garagem={x=3.2,y=0,axis=2},frente={x=14.4,y=5.9,axis=2}}})
-function D.reset()D.opened={}end
-function D.open(id)D.opened[id]=true end
+function D.reset()D.opened={};D.unlocked={}end
+function D.open(id)D.opened[id]=true;D.unlocked[id]=true end
+function D.close(id)D.opened[id]=nil end
+function D.unlock(id)D.unlocked[id]=true end
 function D.isOpen(id)return not not D.opened[id]end
 function D.forPassage(room,to)
  for _,door in ipairs(D.list)do if door.ends[room]and door.ends[to]then return door end end

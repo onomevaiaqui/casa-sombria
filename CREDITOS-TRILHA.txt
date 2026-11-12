@@ -1,0 +1,2 @@
+Terra: Soil_01, Trailer Park, Elbolilloduro. https://elbolilloduro.itch.io/trailer-park
+Vegetacao: Elegant Crow, Poly Haven e modelos humanos ja catalogados no projeto. Grade: DanglingBat. Composicao e conversao offline, sem geracao de imagens por IA.

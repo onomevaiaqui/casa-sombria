@@ -1,0 +1,7 @@
+Veiculos destruidos: Renafox (kryik1023), Destroyed Car 03 / Backrooms Car (Gameready ver). CC BY 4.0. https://sketchfab.com/3d-models/destroyed-car-03-backrooms-car-gameready-ver-efc4dfe2c7284a64bc9281eb4f61d402
+Veiculo abandonado: boggle, Classic Hatchback PSX Style. https://boggle.itch.io/classic-hatchback-psx-style Licenca original permite uso em jogos e renders; modelos brutos nao incluidos nesta previa.
+Jornais: heyheythere, PSX Furniture Free. https://heyheythere.itch.io/psx-furniture-free
+Entulho, latas e sacos: MCSTEEG, Trash and Debris, fontes ja catalogadas. https://mcsteeg.itch.io/trash-and-debris
+Grade: DanglingBat, PSX Modular Chain Link Fence. https://danglingbat.itch.io/psx-modular-chain-link-fence
+Churrasqueira: parte do modelo de quiosque ja fornecido para o projeto.
+Adaptacoes nesta revisao: posicionamento, escala metrica, aspecto empoeirado do hatch, separacao e tombamento da churrasqueira, colisoes, composicao e conversao para a paleta existente. Somente assets de origem humana; sem geracao de imagens.

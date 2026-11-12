@@ -48,17 +48,28 @@ local function drawLine(ui,line,x,y,count)
 end
 function S.new()
  local d={active=false,clock=0,page=1,revealed=0,toastTime=0}
- function d:close()self.active=false;self.pages=nil end
+ function d:close()self.active=false;self.pages=nil;self.question=false;self.answer=nil end
  function d:open(pages)
   self.pages=pages;self.page=1;self.active=true;self.revealed=0;self.toastTime=0
   self.lines=S.wrap(pages[1],66);self.total=length(self.lines)
  end
+ function d:ask(text,answer)
+  self:open({text});self.question=true;self.answer=answer;self.choice=1;self.revealed=self.total
+  self.choiceLeft,self.choiceRight=true,true
+ end
  function d:notify(text,seconds)
   self.toast=S.wrap(text,66);self.toastTime=seconds or 2.5
  end
- function d:handle(confirm,cancel)
+ function d:handle(confirm,cancel,left,right)
   if not self.active then return end
   if cancel then self:close();return end
+  if self.question then
+   if left and not self.choiceLeft then self.choice=1 end
+   if right and not self.choiceRight then self.choice=2 end
+   self.choiceLeft,self.choiceRight=left,right
+   if confirm then local answer,yes=self.answer,self.choice==1;self:close();if yes and answer then answer()end end
+   return
+  end
   if confirm then
    if self.revealed<self.total then self.revealed=self.total
    elseif self.page<#self.pages then
@@ -76,10 +87,13 @@ function S.new()
   local lines=self.active and self.lines or(self.toastTime>0 and self.toast)
   if not lines then return end
   local remaining=self.active and math.floor(self.revealed)or math.huge
-  local y=244-(#lines-1)*14
+  local y=(self.question and 223 or 244)-(#lines-1)*14
   for _,line in ipairs(lines)do
    local x=32
    drawLine(ui,line,x,y,remaining);remaining=math.max(0,remaining-#line);y=y+14
+  end
+  if self.question then
+   drawLine(ui,chars(self.choice==1 and '> Sim      Nao'or '  Sim    > Nao'),32,248,99);return
   end
   if self.active and self.revealed>=self.total and self.clock%1<.7 then
    ui.print('>',453,254,240);ui.print('>',452,253,241)
