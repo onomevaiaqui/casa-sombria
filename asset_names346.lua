@@ -1,0 +1,1 @@
+return {["y39d_acacias_reserva_acesso0"]="z0000000",["y39d_acacias_reserva_acesso1"]="z0000001",["y39d_avenida_acesso_comercio0"]="z0000002",["y39d_avenida_acesso_comercio1"]="z0000003",["y39d_avenida_porta_farmacia0"]="z0000004",["y39d_avenida_porta_farmacia1"]="z0000005",["y39d_avenida_reserva_centro0"]="z0000006",["y39d_avenida_reserva_centro1"]="z0000007"}

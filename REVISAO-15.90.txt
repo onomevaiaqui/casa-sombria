@@ -1,0 +1,5 @@
+15.90 - teste de compatibilidade de instalacao
+
+20 arquivos de jogo com nomes maiores que os usados na versao anterior foram renomeados para nomes curtos. Conteudo SHA256 identico antes/depois; referencias de sprites e profundidade ajustadas. Nenhuma alteracao visual, de cameras, colisoes, gameplay ou animacoes.
+Nao ha confirmacao publica de um limite de 31 caracteres no firmware fisico. Esta revisao testa essa hipotese sem atribuir a falha ao cartao.
+Se o erro persistir, sera necessario obter o log detalhado ou uma captura do instalador/serial.

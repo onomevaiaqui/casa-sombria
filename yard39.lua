@@ -1,4 +1,5 @@
 local D=require('yard39_data')
+local installNames346=require('asset_names346')
 local Y={cameras=D.cameras,opened=false,hits=0}
 local depth,key
 local function decode(raw)
@@ -99,6 +100,7 @@ function Y.prefix(shot)return 'yard39_'..D.cameras[shot].name..(Y.opened and '1'
 function Y.prepare(shot)
  local name=Y.prefix(shot);if key==name then return end
  local module='y39d_'..D.cameras[shot].name..(Y.opened and '1'or '0')
+ module=installNames346[module]or module
  depth=nil;depth=decode((require(module)));key=name;assert(#depth==8160,'Profundidade quintal incompleta')
  if type(package)=='table'and package.loaded then package.loaded[module]=nil end
 end

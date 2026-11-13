@@ -1,0 +1,102 @@
+[
+  {
+    "from": "y39d_acacias_reserva_acesso0.lua",
+    "to": "z0000000.lua",
+    "sha256": "5d79ef3165a815af259cde3db178248bf6189363a52e6426819ba36883114885"
+  },
+  {
+    "from": "y39d_acacias_reserva_acesso1.lua",
+    "to": "z0000001.lua",
+    "sha256": "5d79ef3165a815af259cde3db178248bf6189363a52e6426819ba36883114885"
+  },
+  {
+    "from": "y39d_avenida_acesso_comercio0.lua",
+    "to": "z0000002.lua",
+    "sha256": "bc017e744413071395937d6bfada266678d071d1d7e93010307e9e691e3353a8"
+  },
+  {
+    "from": "y39d_avenida_acesso_comercio1.lua",
+    "to": "z0000003.lua",
+    "sha256": "bc017e744413071395937d6bfada266678d071d1d7e93010307e9e691e3353a8"
+  },
+  {
+    "from": "y39d_avenida_porta_farmacia0.lua",
+    "to": "z0000004.lua",
+    "sha256": "f2aeba4364be58db8423d9b9a1e1cbcbae683520d32faf7c4655ec5ad687d68e"
+  },
+  {
+    "from": "y39d_avenida_porta_farmacia1.lua",
+    "to": "z0000005.lua",
+    "sha256": "f2aeba4364be58db8423d9b9a1e1cbcbae683520d32faf7c4655ec5ad687d68e"
+  },
+  {
+    "from": "y39d_avenida_reserva_centro0.lua",
+    "to": "z0000006.lua",
+    "sha256": "773e8af72edd7289e12018173f5b44c5d36325e6dba121fa2d75fa9c87c1f21c"
+  },
+  {
+    "from": "y39d_avenida_reserva_centro1.lua",
+    "to": "z0000007.lua",
+    "sha256": "773e8af72edd7289e12018173f5b44c5d36325e6dba121fa2d75fa9c87c1f21c"
+  },
+  {
+    "from": "yard39_acacias_reserva_acesso0_0.png",
+    "to": "z0000008.png",
+    "sha256": "ff675d8217c6ba99329ab9febda24cc6d8124526b86d8a4e02c43b2c4b87c683"
+  },
+  {
+    "from": "yard39_acacias_reserva_acesso0_1.png",
+    "to": "z0000009.png",
+    "sha256": "25f390bbe8b12d61dcd551ece88d9ede89574edb87717e85bcb364f9fec39dae"
+  },
+  {
+    "from": "yard39_acacias_reserva_acesso0_2.png",
+    "to": "z0000010.png",
+    "sha256": "a4339af37c9148af0da7639ff5a6976315de8b2ec6ea539195bfa945e87303fd"
+  },
+  {
+    "from": "yard39_avenida_acesso_comercio0_0.png",
+    "to": "z0000011.png",
+    "sha256": "80dc4613729e872a41a43e6f7291ddbc3a435ee83cfd835e33c9e4ea170a34b5"
+  },
+  {
+    "from": "yard39_avenida_acesso_comercio0_1.png",
+    "to": "z0000012.png",
+    "sha256": "fb60873fa93cba3cc4e2c76d897bb799677fc8a260fc7a982d84a80c8088104f"
+  },
+  {
+    "from": "yard39_avenida_acesso_comercio0_2.png",
+    "to": "z0000013.png",
+    "sha256": "d287597e2ccf3626f326a31a1920f05716e4933b1648c98fe431c43e1933633a"
+  },
+  {
+    "from": "yard39_avenida_porta_farmacia0_0.png",
+    "to": "z0000014.png",
+    "sha256": "434269036575fbf35c8b81c91c895d934045017de3e672e085324faea1114e96"
+  },
+  {
+    "from": "yard39_avenida_porta_farmacia0_1.png",
+    "to": "z0000015.png",
+    "sha256": "552cdd89103ffaa0ed677cfe4c74703ab2db5d29f5e86c33f392c390d3e7d81d"
+  },
+  {
+    "from": "yard39_avenida_porta_farmacia0_2.png",
+    "to": "z0000016.png",
+    "sha256": "76b8a3439ca0a0222d82ca2a17fef1460c6bb8fd9432982925ee8f57335abdae"
+  },
+  {
+    "from": "yard39_avenida_reserva_centro0_0.png",
+    "to": "z0000017.png",
+    "sha256": "3768513d5ccfe16bf037f19e39f2903efcae73c2efee59b49b7d88ccf8390737"
+  },
+  {
+    "from": "yard39_avenida_reserva_centro0_1.png",
+    "to": "z0000018.png",
+    "sha256": "666d34d45b8f3a0a8ba824181a291817dc48e3ca26c92a5e27bd81fb9015d083"
+  },
+  {
+    "from": "yard39_avenida_reserva_centro0_2.png",
+    "to": "z0000019.png",
+    "sha256": "abd10afcb61443950a0454177e3414bc36c172e58bd66ed6e39c502ce9138e0e"
+  }
+]
