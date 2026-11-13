@@ -1,0 +1,5 @@
+15.89 - reducao de arquivos de instalacao
+
+283 bitmaps com dimensoes e pixels RGBA identicos foram unificados, preservando os nomes usados pelas cenas por referencias compartilhadas no modulo sprites. A equivalencia foi conferida antes da remocao de cada copia.
+Nao ha alteracao das imagens, modelos, qualidade, colisoes ou animacoes. O icone 15.88 permanece.
+Reducao de fontes PNG: 11727486 bytes. Objetivo: reduzir download e gravacao no SD. Nao foi possivel diagnosticar nem reproduzir o erro fisico de SD sem log ou acesso ao aparelho.

@@ -1,3 +1,4 @@
+require('sprite_aliases345')
 local interaction287=require('interaction287')
 do if BTN_Q and BTN_X and BTN_Z and BTN_G then BTN_F,BTN_Z,BTN_G,BTN_E=BTN_Q,BTN_X,BTN_Z,BTN_G end end
 local deathScreen=require('death171')
@@ -2026,7 +2027,7 @@ function update()
     if pendingStreet then
         -- A frame boundary separates house rendering, release, require and first street draw.
         ui.cls(240);ui.palset(240,0);ui.palset(241,32767)
-        ui.print('15.88 - PREPARANDO RUA '..pendingStreet.phase..'/3',95,125,241)
+        ui.print('15.89 - PREPARANDO RUA '..pendingStreet.phase..'/3',95,125,241)
         frameTime.hud(ui)
         if pendingStreet.phase==1 then
             cameras.release();courierCache=nil
@@ -2250,7 +2251,7 @@ function update()
     end
     ui.rectfill(0,0,479,15,240)
     local motion = walking and (running and " / CORRIDA" or " / PASSOS") or ""
-    ui.print("15.88 TESTE "..status..motion,8,3,241)
+    ui.print("15.89 TESTE "..status..motion,8,3,241)
     frameTime.hud(ui)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do
