@@ -1,24 +1,9 @@
-A Ultima Entrega - capa animada do catalogo, revisao 11.4
+A ULTIMA ENTREGA - icone 15.88
 
-Arquivo icon.gif, em minusculas, na raiz da branch main publica.
-Nao requer campo icon no lupi.yaml nem desenho da miniatura pelo game.lua.
+icon.gif na raiz da branch main, em minusculas. Nao ha campo icon em lupi.yaml.
+GIF89a 64x32, 16 entradas fixas compartilhadas, 12 quadros completos em 0,0, 120ms, repeticao infinita, sem transparencia, descarte 1, LZW inicial 8 bits.
+9439 bytes. Todos os quadros foram decodificados e comparados pixel a pixel.
+Perfil conferido no CatalogIconGenerator.cs do Lupix Studio e nos validadores do Lupi Combat Rally. Resolucao de 64x32 segue o perfil atual da Lupix; a versao 128x64 do Rally foi uma compatibilidade observada em outro teste.
+Arte reaproveitada da capa aprovada; titulo redesenhado em fonte pequena para legibilidade.
 
-Capa derivada da tela inicial aprovada, com a pizza e o titulo do jogo.
-GIF89a de 64 x 32 pixels, preenchendo o canvas, sem faixas adicionadas.
-16 cores em paleta fixa, identica em todos os 12 quadros completos.
-120 ms por quadro; ciclo de 1,44 s; repeticao infinita.
-Sem transparencia ou entrelacamento; descarte 1; LZW inicial de 8 bits.
-Todos os indices de pixel ficam em 0..15. Tamanho: 7.676 bytes.
-
-O pipeline do console recusou anteriormente canvas de 128 x 64,
-com a mensagem GIF canvas 128x64 exceeds 64x64. A nova capa respeita
-ambas as dimensoes desse limite. Substitui o GIF 64 x 64 com faixas pretas.
-
-Validacao: node .tools/check-icon.cjs; todos os quadros tambem foram
-decodificados e comparados pixel a pixel com a conversao esperada.
-A exibicao no menu fisico depende da atualizacao do catalogo e ainda
-precisa ser confirmada no aparelho. Versao 11.4 identifica a publicacao.
-
-Referencia de organizacao do arquivo: docs/ICONE-CATALOGO.md do
-repositorio onomevaiaqui/lupi3d. O tamanho 128 x 64 desse outro teste
-nao se aplica ao limite observado no pipeline deste jogo.
+A exibicao depende do catalogo e do console. Esta mudanca nao resolve nem confirma a causa de falhas de gravacao no SD durante a instalacao.

@@ -1,0 +1,1 @@
+15.88 - novo icon.gif de catalogo. Jogabilidade, graficos e otimizacoes da 15.87 preservados. Apenas icone e identificacao de versao alterados. Validacao local do GIF e do runtime; instalacao no SD depende de teste fisico e log do console.

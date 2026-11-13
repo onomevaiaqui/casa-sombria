@@ -1,0 +1,13 @@
+{
+  "size": [
+    64,
+    32
+  ],
+  "frames": 12,
+  "colors": 16,
+  "frame_ms": 120,
+  "bytes": 9439,
+  "sha256": "4c70a5019061b6a6a5191a837bbfc0aaa70c3b0261ad21e567799da10a400441",
+  "roundtrip": "all frames exactly decoded",
+  "profile": "Lupix Studio CatalogIconGenerator, same GIF layout as Combat Rally"
+}
