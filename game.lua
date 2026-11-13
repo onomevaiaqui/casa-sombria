@@ -1722,53 +1722,10 @@ local overwrittenLines,prunedFaces={},{}
 for i=1,408 do courierVertices[i]={0,0,0}end
 for i=1,#actorTriangles/7 do courierPool[i]={0,0,0,0,0}end
 local function beginDoorInteraction(door)
- if interaction287.busy()then return false end
- local layout=require('layout140');local source=currentRoom;local destination
- for rn in pairs(door.ends)do if rn~=source then destination=rn end end
- if not destination or not layout.rooms[destination]then return false end
- local p,q=door.ends[source],door.ends[destination]
- local function normal(room,endpoint)
-  local size=layout.rooms[room].size
-  if endpoint.axis==1 then return endpoint.x<size[1]/2 and 1 or -1,0 end
-  return 0,endpoint.y<size[2]/2 and 1 or -1
- end
- local function sweepClear(room,gx,gy)
-  if not door.hinge then return true end
-  local off=layout.rooms[room].offset;local wx,wy=gx+off[1],gy+off[2]
-  local width=door.id=='jardim_quintal'and 1 or(door.id=='casinha'and .9 or .8)
-  for i=0,8 do
-   local a=math.rad(door.closed+(door.open-door.closed)*i/8);local dx,dy=math.cos(a)*width,math.sin(a)*width
-   local t=math.max(0,math.min(1,((wx-door.hinge[1])*dx+(wy-door.hinge[2])*dy)/(width*width)))
-   if(wx-door.hinge[1]-dx*t)^2+(wy-door.hinge[2]-dy*t)^2<.25^2 then return false end
-  end
-  return true
- end
- local function dock(room,endpoint)
-  local baseX,baseY=normal(room,endpoint)
-  if room==source then local gx,gy=metric.ground(source,x,y);if(gx-endpoint.x)*baseX+(gy-endpoint.y)*baseY<0 then baseX,baseY=-baseX,-baseY end end
-  for _,side in ipairs({1,-1})do local nx,ny=baseX*side,baseY*side;local tx,ty=-ny,nx
-  for _,distance in ipairs({.65,.85,1.05,1.25})do for _,offset in ipairs({0,.16,-.16,.30,-.30})do
-   local gx,gy=endpoint.x+nx*distance+tx*offset,endpoint.y+ny*distance+ty*offset
-   local px,py=metric.project(room,gx,gy,0)
-   if navigation.walkable(room,px,py)and doors.canOpen(door.id,room,gx,gy)and enemy.walkable(room,gx,gy)and sweepClear(room,gx,gy)then return {gx,gy},nx,ny end
-  end end end
- end
- local fromX,fromY=metric.ground(source,x,y);local start,nx,ny=dock(source,p);local target,dx,dy=dock(destination,q)
- if not start or not target then return false end
- local face=metric.facing(source,-nx,-ny);local forward=metric.facing(destination,dx,dy)
- local function place(room,gx,gy,a)currentRoom=room;x,y=metric.project(room,gx,gy,0);facing=a;courierCache=nil end
- local into=destination=='quarto'or destination=='banheiro'or destination=='ferramentas'or destination=='sala'
- return interaction287.begin({kind=into and 'open_in'or 'open_out',visualFamily='main',visualDoor=door.id,from={fromX,fromY,facing},dock=start,face=face,
-  set=function(gx,gy,a)place(source,gx,gy,a)end,
-  open=function()doors.open(door.id)end,
-  advance=function(t)
-   if t<.5 then local a=t*2;place(source,start[1]+(p.x+nx*.08-start[1])*a,start[2]+(p.y+ny*.08-start[2])*a,face)
-   else local a=(t-.5)*2;place(destination,q.x+dx*.08+(target[1]-q.x-dx*.08)*a,q.y+dy*.08+(target[2]-q.y-dy*.08)*a,forward)end
-  end,
-  faceBack=function()facing=metric.facing(destination,-dx,-dy);courierCache=nil end,
-  close=function()doors.close(door.id)end,
-  finish=function()place(destination,target[1],target[2],forward);crossing=false;transitionCarry=nil;roomNotice=''end,
-  cancel=function()doors.close(door.id);if currentRoom==source then place(source,start[1],start[2],face)else place(destination,target[1],target[2],forward)end end})
+ -- Doors open on action; the player crosses with normal movement.
+ doors.open(door.id)
+ courierCache=nil
+ return true
 end
 
 local courierDoorBits={1,2,4,8,16,32,64,128}
@@ -2069,7 +2026,7 @@ function update()
     if pendingStreet then
         -- A frame boundary separates house rendering, release, require and first street draw.
         ui.cls(240);ui.palset(240,0);ui.palset(241,32767)
-        ui.print('15.85 - PREPARANDO RUA '..pendingStreet.phase..'/3',95,125,241)
+        ui.print('15.87 - PREPARANDO RUA '..pendingStreet.phase..'/3',95,125,241)
         frameTime.hud(ui)
         if pendingStreet.phase==1 then
             cameras.release();courierCache=nil
@@ -2285,7 +2242,7 @@ function update()
             end
         end
     end
-    if native then shutter.draw(cameras,currentRoom,ui.spr);require('door290').draw('main',currentRoom,cameras.shot,ui,sceneSprites)end
+    if native then shutter.draw(cameras,currentRoom,ui.spr)end
     local fine = false
     if not native then
         drawImage(detailedBackground, 0, 479)
@@ -2293,7 +2250,7 @@ function update()
     end
     ui.rectfill(0,0,479,15,240)
     local motion = walking and (running and " / CORRIDA" or " / PASSOS") or ""
-    ui.print("15.85 TESTE "..status..motion,8,3,241)
+    ui.print("15.87 TESTE "..status..motion,8,3,241)
     frameTime.hud(ui)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do

@@ -343,9 +343,9 @@ local shots337={};for i,c in ipairs(D.cameras)do if c.name:sub(1,8)=='avenida_'t
 local function usable337(i,x,y,margin)return i and sees(D.cameras[i],x,y)and Y.clearance(D.cameras[i],x,y)>margin end
 function Y.selectCamera(x,y,previous)
  if y> -72.65 or x< -40 or x>19 then return cameraBefore337(x,y,previous)end
- local old=previous and D.cameras[previous]
- if old and old.name:sub(1,8)=='avenida_'and usable337(previous,x,y,6)then return previous end
  local name=x< -19 and 'avenida_mercado'or(x< -4 and 'avenida_farmacia'or(x<3 and 'avenida_juncao'or(x>11 and 'avenida_buraco_leste'or'avenida_buraco_oeste')))
+ local old=previous and D.cameras[previous]
+ if old and old.name==name and usable337(previous,x,y,6)then return previous end
  if y> -76 and x>11 then name='avenida_parque'end
  local preferred=shots337[name];if usable337(preferred,x,y,12)then return preferred end
  local best,score
@@ -368,6 +368,22 @@ function Y.noticeAt(x,y)
  end
  return noticeBefore337(x,y)
 end
+-- Doorway views remain stable while approaching the facade; facing does not switch cameras.
+local cameraBefore340=Y.selectCamera
+local entrances340={}
+for i,c in ipairs(D.cameras)do if c.name=='avenida_porta_mercado'then entrances340.market=i elseif c.name=='avenida_porta_farmacia'then entrances340.pharmacy=i end end
+function Y.selectCamera(x,y,previous)
+ local old=previous and D.cameras[previous];local oldname=old and old.name or ''
+ local market=x> -29 and x< -21 and y< -80.7
+ local pharmacy=x> -15.8 and x< -7 and y< -80.7
+ if oldname=='avenida_porta_mercado'and x> -29.6 and x< -20.4 and y< -79.8 then market=true end
+ if oldname=='avenida_porta_farmacia'and x> -16.4 and x< -6.4 and y< -79.8 then pharmacy=true end
+ local preferred=market and entrances340.market or(pharmacy and entrances340.pharmacy)
+ if preferred and sees(D.cameras[preferred],x,y)and Y.clearance(D.cameras[preferred],x,y)>5 then return preferred end
+ if oldname=='avenida_porta_mercado'or oldname=='avenida_porta_farmacia'or oldname=='avenida_acesso_comercio'then previous=nil end
+ return cameraBefore340(x,y,previous)
+end
+
 -- Exact memoization: stationary camera queries do not rescan every view.
 local choose339=Y.selectCamera
 local mx339,my339,mp339,mr339,mo339,mh339

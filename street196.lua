@@ -109,7 +109,7 @@ end
 local obstacles={{-5.15,-4.65,7.75,8.25},{4.65,5.15,-2.25,-1.75},{-5.25,-4.75,-24.25,-23.75},{4.75,5.25,-30.25,-29.75},{4.4,5.5,3.2,4.5},{-5.3,-4.4,-4.3,-3.1},{1.15,2.85,-4.9,-4.1},{-3.4,-2.0,-5.1,-4.4}}
 local holeMinX,holeMaxX,holeMinY,holeMaxY=1e9,-1e9,1e9,-1e9
 for _,p in ipairs(hole)do holeMinX=math.min(holeMinX,p[1]-.32);holeMaxX=math.max(holeMaxX,p[1]+.32);holeMinY=math.min(holeMinY,p[2]-.32);holeMaxY=math.max(holeMaxY,p[2]+.32)end
-local trailPoints={{6.30000,11.60000},{6.47041,11.60479},{6.69766,11.61641},{6.96826,11.63076},{7.26875,11.64375},{7.58564,11.65127},{7.90547,11.64922},{8.21475,11.63350},{8.50000,11.60000},{8.76250,11.53779},{9.01562,11.44609},{9.26406,11.33604},{9.51250,11.21875},{9.76562,11.10537},{10.02813,11.00703},{10.30469,10.93486},{10.60000,10.90000},{10.92061,10.90439},{11.26484,10.93828},{11.62510,10.99521},{11.99375,11.06875},{12.36318,11.15244},{12.72578,11.23984},{13.07393,11.32451},{13.40000,11.40000},{13.70508,11.48047},{13.99688,11.57812},{14.27773,11.68359},{14.55000,11.78750},{14.81602,11.88047},{15.07813,11.95312},{15.33867,11.99609},{15.85000,12.00000},{15.87119,11.96611},{16.15391,11.90391},{16.43936,11.81631},{16.71875,11.70625},{16.98330,11.57666},{17.22422,11.43047},{17.43271,11.27061},{17.60000,11.10000},{17.72534,10.90830},{17.81680,10.68828},{17.87876,10.44756},{17.91562,10.19375},{17.93179,9.93447},{17.93164,9.67734},{17.91958,9.42998},{17.90000,9.20000},{17.85840,8.98701},{17.78438,8.78359},{17.68848,8.58682},{17.58125,8.39375},{17.47324,8.20146},{17.37500,8.00703},{17.29707,7.80752},{17.25000,7.60000},{17.23569,7.37227},{17.24492,7.12188},{17.27153,6.86055},{17.30937,6.60000},{17.35229,6.35195},{17.39414,6.12812},{17.42876,5.94023},{17.45000,5.80000}}
+local trailPoints={{6.30000,11.60000},{6.47041,11.60479},{6.69766,11.61641},{6.96826,11.63076},{7.26875,11.64375},{7.58564,11.65127},{7.90547,11.64922},{8.21475,11.63350},{8.50000,11.60000},{8.76250,11.53779},{9.01562,11.44609},{9.26406,11.33604},{9.51250,11.21875},{9.76562,11.10537},{10.02813,11.00703},{10.30469,10.93486},{10.60000,10.90000},{10.92061,10.90439},{11.26484,10.93828},{11.62510,10.99521},{11.99375,11.06875},{12.36318,11.15244},{12.72578,11.23984},{13.07393,11.32451},{13.40000,11.40000},{13.70508,11.48047},{13.99688,11.57812},{14.27773,11.68359},{14.55000,11.78750},{14.81602,11.88047},{15.07813,11.95312},{15.33867,11.99609},{15.87000,12.00000},{15.87119,11.96611},{16.15391,11.90391},{16.43936,11.81631},{16.71875,11.70625},{16.98330,11.57666},{17.22422,11.43047},{17.43271,11.27061},{17.60000,11.10000},{17.72534,10.90830},{17.81680,10.68828},{17.87876,10.44756},{17.91562,10.19375},{17.93179,9.93447},{17.93164,9.67734},{17.91958,9.42998},{17.90000,9.20000},{17.85840,8.98701},{17.78438,8.78359},{17.68848,8.58682},{17.58125,8.39375},{17.47324,8.20146},{17.37500,8.00703},{17.29707,7.80752},{17.25000,7.60000},{17.23569,7.37227},{17.24492,7.12188},{17.27153,6.86055},{17.30937,6.60000},{17.35229,6.35195},{17.39414,6.12812},{17.42876,5.94023},{17.45000,5.80000}}
 local function onTrail(px,py)
  for i=1,#trailPoints-1 do local a,b=trailPoints[i],trailPoints[i+1];local dx,dy=b[1]-a[1],b[2]-a[2];local t=math.max(0,math.min(1,((px-a[1])*dx+(py-a[2])*dy)/(dx*dx+dy*dy)))
  if (px-a[1]-t*dx)^2+(py-a[2]-t*dy)^2<=.48^2 then return true end end
@@ -207,17 +207,6 @@ local function drawActor(clip,phase,clipName)
  table.sort(faces,farther)
  for _,f in ipairs(faces)do ui.trisfill(f[1][1],f[1][2],f[2][1],f[2][2],f[3][1],f[3][2],f[5])end
 end
-local function startHouseDoor(plan)
- if not plan then return false end
- local face=math.atan(plan.center[1]-plan.dock[1],-(plan.center[2]-plan.dock[2]))
- return interaction287.begin({kind=plan.kind,visualFamily='house',visualDoor=tostring(plan.index),from={x,y,angle},dock=plan.dock,face=face,
-  set=function(px,py,a)x,y,angle=px,py,a;poseClip=nil end,
-  open=function()house39.setDoor(plan.index,true)end,
-  advance=function(t)x=plan.dock[1]+(plan.target[1]-plan.dock[1])*t;y=plan.dock[2]+(plan.target[2]-plan.dock[2])*t;poseClip=nil end,
-  faceBack=function()angle=face+math.pi;poseClip=nil end,
-  close=function()house39.setDoor(plan.index,false)end,
-  finish=function()angle=face;poseClip=nil;noticeTime=0 end})
-end
 local function startDogPickup()
  local dx,dy=x-5.05,y+5.55;local length=math.max(.001,math.sqrt(dx*dx+dy*dy));local px,py=5.05+dx/length*.82,-5.55+dy/length*.82
  if walkable(4,-5.55)then px,py=4,-5.55 elseif not walkable(px,py)then px,py=x,y end
@@ -269,9 +258,7 @@ function M.update(paused,elapsed)
  elseif not paused and not medicineWasActive and b and not previousB then
   if inside39 then
    if not medicine.ask(x,y,medicineInventory)then
-    local plan=house39.planDoor(x,y)
-    local result
-    if plan then startHouseDoor(plan);result=nil else result=house39.action(x,y)end;poseClip=nil
+    local result=house39.action(x,y);poseClip=nil
     if result=='exit31'then M.leave31()elseif result=='exit'then M.leave39()elseif result=='front'then M.enterFront39()elseif result then notice=result;noticeTime=2 end
    end
   elseif front39 then
@@ -341,7 +328,7 @@ end
   local cameraName=(cameras[shot].name=='fundos39'and clueInventory and clueInventory.collected.house39_rear_open)and 'fundos39_aberta'or cameras[shot].name;local name=inside39 and (house39.prefix(shot)..'_'..i)or(front39 and(yard39.prefix(shot)..'_'..i)or('street_'..cameraName..((medicineInventory and medicineInventory.collected.yard39_open)and '_breach'or '')..'_'..i));local ref=assert(sprites[name],'Fundo ausente: '..name)
   local result=ui.spr(ref,0,i*90);assert(result~=false,'Falha ao desenhar: '..name)
  end
- if inside39 and not inside31 then require('door290').draw('house',house39.room(x,y),shot,ui,sprites)end
+
  local clip=actor.clips.idle;local phase=0;local clipName="idle"
  if moved>0 then
   clip=run and actor.clips.run or actor.clips.walk;clipName=run and "run"or"walk"
@@ -360,7 +347,7 @@ end
  if enemy289 and not inside39 and not front39 and y<enemy289.y then enemy289.draw(ui,cameras[shot].m,carTriangleVisible)end
  drawActor(clip,phase,clipName)
  if enemy289 and not inside39 and not front39 and y>=enemy289.y then enemy289.draw(ui,cameras[shot].m,carTriangleVisible)end
- ui.rectfill(0,0,479,13,240);ui.print('15.85 / '..(inside39 and ((inside31 and 'CASA 31 - 'or 'CASA 39 - ')..house39.room(x,y))or(front39 and yard39.zone(x,y)or cameras[shot].name)),5,3,241)
+ ui.rectfill(0,0,479,13,240);ui.print('15.87 / '..(inside39 and ((inside31 and 'CASA 31 - 'or 'CASA 39 - ')..house39.room(x,y))or(front39 and yard39.zone(x,y)or cameras[shot].name)),5,3,241)
  if enemy289 and not inside39 and not front39 then ui.print('INIMIGO '..string.format('%.1f',enemy289.hp)..'/6  '..enemy289.state..' - DANO AO JOGADOR: 0',5,18,241)end
  if noticeTime>0 then noticeTime=noticeTime-dt;ui.rectfill(0,247,479,269,240);ui.print(notice,8,253,241)end
  if dogPhase>0 then

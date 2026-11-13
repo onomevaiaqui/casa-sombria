@@ -1,0 +1,8 @@
+A ULTIMA ENTREGA - 15.87
+
+Portas e portoes abrem com acao, sem animacao, travessia automatica ou fechamento automatico. Chaves, cadeado e bloqueios preservados. Animacao de pegar itens preservada.
+Cameras proximas para mercadinho e farmacia, com transicoes estaveis por area de aproximacao.
+Removidos 598 arquivos de animacao de portas (8426190 bytes de fontes). Cenarios, modelos, texturas, proporcoes e animacoes de combate preservados.
+Mantidas otimizacoes da 15.85: grades de visibilidade recortadas, indices compartilhados e consultas de camera reutilizadas.
+
+Validacao local nao substitui o teste de FPS, memoria e instalacao no SD do console fisico.
