@@ -1,0 +1,5 @@
+15.92 - segundo inimigo completamente retirado da publicacao
+
+Removidos os hooks restantes do inimigo de teste, incluindo perseguicao, colisao, dano de teste, captura, reacao e HUD. Removidos camera exclusiva, tres bitmaps de teste e dois modulos de mordida/captura. O mesh e os dados principais do segundo inimigo ja tinham sido excluidos na 15.91.
+O primeiro inimigo (enemy153/enemy_data155), seu combate, morte e reacoes do jogador foram preservados.
+Esta mudanca e um teste de isolamento da falha de instalacao, sem confirmacao previa de causa.

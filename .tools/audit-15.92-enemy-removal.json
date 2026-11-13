@@ -1,0 +1,11 @@
+{
+  "removed_files": {
+    "enemy_grip293.lua": 815,
+    "player_grab293.lua": 39387,
+    "street_inimigo_teste_0.png": 5507,
+    "street_inimigo_teste_1.png": 4870,
+    "street_inimigo_teste_2.png": 4570
+  },
+  "removed_bytes": 55149,
+  "first_enemy_preserved": true
+}
