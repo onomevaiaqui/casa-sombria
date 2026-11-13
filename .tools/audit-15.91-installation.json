@@ -1,0 +1,192 @@
+{
+  "15.39": {
+    "types": {
+      ".txt": {
+        "files": 71,
+        "source_bytes": 84507
+      },
+      ".lua": {
+        "files": 177,
+        "source_bytes": 5233181
+      },
+      ".png": {
+        "files": 800,
+        "source_bytes": 31516358
+      },
+      ".gif": {
+        "files": 1,
+        "source_bytes": 7676
+      },
+      ".yaml": {
+        "files": 1,
+        "source_bytes": 68
+      }
+    },
+    "native_bitmap_bytes_8bpp": 32689404,
+    "largest_lua": [
+      [
+        "enemy_data155.lua",
+        1180125
+      ],
+      [
+        "camera_mem168_corredor.lua",
+        356825
+      ],
+      [
+        "camera_mem168_quintal.lua",
+        355476
+      ],
+      [
+        "camera_mem168_frente.lua",
+        350258
+      ],
+      [
+        "game.lua",
+        286410
+      ],
+      [
+        "camera_mem168_cozinha.lua",
+        239849
+      ],
+      [
+        "camera_mem168_sala.lua",
+        190053
+      ],
+      [
+        "camera_mem168_garagem.lua",
+        177935
+      ]
+    ]
+  },
+  "15.85": {
+    "types": {
+      ".txt": {
+        "files": 78,
+        "source_bytes": 88664
+      },
+      ".lua": {
+        "files": 301,
+        "source_bytes": 10334491
+      },
+      ".png": {
+        "files": 1809,
+        "source_bytes": 53113734
+      },
+      ".gif": {
+        "files": 1,
+        "source_bytes": 7676
+      },
+      ".yaml": {
+        "files": 1,
+        "source_bytes": 68
+      }
+    },
+    "native_bitmap_bytes_8bpp": 63510165,
+    "largest_lua": [
+      [
+        "enemy289_data.lua",
+        1706462
+      ],
+      [
+        "enemy_data155.lua",
+        1180125
+      ],
+      [
+        "camera_mem168_corredor.lua",
+        356825
+      ],
+      [
+        "camera_mem168_quintal.lua",
+        355476
+      ],
+      [
+        "camera_mem168_frente.lua",
+        350258
+      ],
+      [
+        "game.lua",
+        290888
+      ],
+      [
+        "enemy291_rise.lua",
+        262366
+      ],
+      [
+        "camera_mem168_cozinha.lua",
+        239849
+      ]
+    ]
+  },
+  "15.90": {
+    "types": {
+      ".txt": {
+        "files": 82,
+        "source_bytes": 90174
+      },
+      ".lua": {
+        "files": 305,
+        "source_bytes": 10223462
+      },
+      ".png": {
+        "files": 950,
+        "source_bytes": 33735471
+      },
+      ".gif": {
+        "files": 1,
+        "source_bytes": 9439
+      },
+      ".yaml": {
+        "files": 1,
+        "source_bytes": 68
+      }
+    },
+    "native_bitmap_bytes_8bpp": 39104892,
+    "largest_lua": [
+      [
+        "enemy289_data.lua",
+        1706462
+      ],
+      [
+        "enemy_data155.lua",
+        1180125
+      ],
+      [
+        "camera_mem168_corredor.lua",
+        356825
+      ],
+      [
+        "camera_mem168_quintal.lua",
+        355476
+      ],
+      [
+        "camera_mem168_frente.lua",
+        350258
+      ],
+      [
+        "game.lua",
+        287763
+      ],
+      [
+        "enemy291_rise.lua",
+        262366
+      ],
+      [
+        "yard39_data.lua",
+        249592
+      ]
+    ]
+  },
+  "staged_cleanup": {
+    "removed": {
+      "enemy289.lua": 7785,
+      "enemy289_data.lua": 1706462,
+      "enemy291_walk.lua": 94306,
+      "enemy291_rise.lua": 262366,
+      "actor_data.lua": 170446,
+      "street_game.lua": 6558
+    },
+    "removed_bytes": 2247923,
+    "status": "validated locally; release prepared for console installation test",
+    "reason": "experimental enemy and standalone browser/test launcher unreachable from production entry point"
+  }
+}

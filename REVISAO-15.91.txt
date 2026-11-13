@@ -1,0 +1,6 @@
+15.91 - pacote limpo para teste no console
+
+Referencia: 15.39 (Casa39). Primeira publicacao posterior 15.85 duplicou aproximadamente o volume de dados graficos e incluiu modulos de teste. 15.89 reduziu bitmaps, mas esses modulos continuaram no pacote.
+Removidos seis arquivos exclusivos de teste: enemy289.lua, enemy289_data.lua, enemy291_walk.lua, enemy291_rise.lua, actor_data.lua e street_game.lua. O ponto de entrada desse inimigo experimental tambem foi retirado.
+Cenarios, inimigo normal, jogador, animacoes de jogo, colisoes, imagens e icone preservados. O maior arquivo Lua volta a ser enemy_data155.lua, ja presente na versao de referencia.
+Esta limpeza corrige o empacotamento; nao comprova por si a causa da falha de gravacao no console.
