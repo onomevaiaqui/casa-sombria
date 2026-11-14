@@ -1,6 +1,6 @@
 require('sprite_aliases345')
+local boot349=require('boot349')
 local interaction287=require('interaction287')
-do if BTN_Q and BTN_X and BTN_Z and BTN_G then BTN_F,BTN_Z,BTN_G,BTN_E=BTN_Q,BTN_X,BTN_Z,BTN_G end end
 local deathScreen=require('death171')
 local shutter=require('shutter169')
 local turning=require('turn168')
@@ -1924,11 +1924,20 @@ local function drawTitle()
                     transitionCarry=nil
                     aiming,strike,aimCancelled = false,0,false
                     roomNotice = ""
+                    boot349.stage('REINICIAR ESTADO')
                     life.reset();enemy.reset()
                     inventory:reset()
                     doors.reset()
                     codeLock:reset()
                     dialogue:close();dialogue.toastTime=0
+                    boot349.queue({
+                     {'CAMERA DA SALA',function()local gx,gy=metric.ground(currentRoom,x,y);cameras.select(currentRoom,gx,gy)end},
+                     {'PROFUNDIDADE DA SALA',function()cameras.occlusion(currentRoom)end},
+                     {'FUNDO 1/3',function()local strips=assert(cameras.background(currentRoom),'Fundo ausente');assert(ui.spr(assert(strips[1],'Faixa 1 ausente'),0,0)~=false,'Falha ao ler faixa 1')end},
+                     {'FUNDO 2/3',function()local strips=assert(cameras.background(currentRoom),'Fundo ausente');assert(ui.spr(assert(strips[2],'Faixa 2 ausente'),0,90)~=false,'Falha ao ler faixa 2')end},
+                     {'FUNDO 3/3',function()local strips=assert(cameras.background(currentRoom),'Fundo ausente');assert(ui.spr(assert(strips[3],'Faixa 3 ausente'),0,180)~=false,'Falha ao ler faixa 3')end},
+                     {'PERSONAGEM 3D',function()courier()end}
+                    })
                 end
                 titleOpen,canContinue = false,true
                 previousB = true
@@ -2006,6 +2015,7 @@ function update()
         if familyPhoto.active then familyPhoto.draw(ui)else previousA,previousB=held(BTN_G or 13),held(BTN_Z or 4)end
         return
     end
+    boot349.stage('ATUALIZAR VIDA')
     life.tick(animationDelta())
     if life.dead then
         if interaction287.busy()then interaction287.cancel()end
@@ -2027,7 +2037,7 @@ function update()
     if pendingStreet then
         -- A frame boundary separates house rendering, release, require and first street draw.
         ui.cls(240);ui.palset(240,0);ui.palset(241,32767)
-        ui.print('15.92 - PREPARANDO RUA '..pendingStreet.phase..'/3',95,125,241)
+        ui.print('15.93 - PREPARANDO RUA '..pendingStreet.phase..'/3',95,125,241)
         frameTime.hud(ui)
         if pendingStreet.phase==1 then
             cameras.release();courierCache=nil
@@ -2073,6 +2083,7 @@ function update()
         end
         return
     end
+    boot349.stage('MOVIMENTO E INTERACOES')
     local interactionWasBusy=interaction287.busy()
     if interactionWasBusy then interaction287.tick(animationDelta())end
     ui.cls(0)
@@ -2215,10 +2226,13 @@ function update()
         status = pickup.document and "B: PEGAR ARQUIVO" or "B: PEGAR ITEM"
     end
     local cgx,cgy=metric.ground(currentRoom,x,y)
+    boot349.stage('CAMERA E ESTADO DE PORTAS')
     cameras.select(currentRoom,cgx,cgy)
+    boot349.stage('CARREGAR FUNDO')
     local strips = cameras.background(currentRoom)or roomBitmaps[currentRoom]
     local native = not not strips
     if native and cameras.enabled and cameras.active then
+        boot349.stage('PALETA DO CENARIO')
         cameras.nativePalette(currentRoom,bitmapPalette,ui.palset)
     else
         for i,color in ipairs(native and bitmapPalette or Palette)do ui.palset(i-1,color)end
@@ -2227,6 +2241,7 @@ function update()
     ui.palset(240,0);ui.palset(241,32767)
     if native then
         for index, strip in ipairs(strips) do
+            boot349.stage('DESENHAR FUNDO '..index)
             local ok, result = pcall(ui.spr, strip, 0, (index-1)*(metric.rooms[currentRoom] and 90 or 82))
             if not ok or result == false then
                 if currentRoom ~= "sala" then
@@ -2251,7 +2266,7 @@ function update()
     end
     ui.rectfill(0,0,479,15,240)
     local motion = walking and (running and " / CORRIDA" or " / PASSOS") or ""
-    ui.print("15.92 TESTE "..status..motion,8,3,241)
+    ui.print("15.93 TESTE "..status..motion,8,3,241)
     frameTime.hud(ui)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do
@@ -2267,6 +2282,7 @@ function update()
     enemy.palette(ui)
     local enemyBehind=enemy.beforePlayer(currentRoom,x,y)
     if enemyBehind then enemy.draw(currentRoom)end
+    boot349.stage('DESENHAR PERSONAGEM')
     courier()
     if not enemyBehind then enemy.draw(currentRoom)end
     if currentRoom==enemy.room then
@@ -2298,6 +2314,7 @@ function update()
         for i,color in ipairs(actorPalette)do set(actorInk(i-1),color)end
         crowbar.palette(deathScreen.proxy);enemy.palette(deathScreen.proxy)
     end
+    boot349.stage('HUD E LEGENDAS')
     life.hud(ui)
     if currentRoom=='frente'and not life.dead and not inventory.visible then
         local gx,gy=metric.ground('frente',x,y)
@@ -2307,4 +2324,15 @@ function update()
             streetMode=true;streetCooldown=1
         end
     end
+end
+
+local rawUpdate349=update
+function update()
+ if boot349.error then
+  if ui.btn(BTN_G or 13)then boot349.reset();titleOpen=true;previousA=true;return end
+  boot349.drawError();return
+ end
+ local ok,err
+ if boot349.pending then ok,err=pcall(boot349.tick)else ok,err=pcall(rawUpdate349)end
+ if not ok then boot349.fail(err);boot349.drawError()end
 end

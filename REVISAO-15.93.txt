@@ -1,0 +1,5 @@
+15.93 - diagnostico de Novo Jogo no console
+
+Carregamento separado em seis etapas com nome visivel: camera, profundidade, tres faixas do fundo e personagem. Erros Lua do update ficam capturados em tela de alto contraste com etapa e mensagem. A retorna ao menu.
+Removido remapeamento de botoes exclusivo da previa de navegador que estava no arquivo de publicacao. Nenhuma mudanca em imagens, qualidade, modelos ou animacoes.
+O primeiro inimigo permanece; o segundo continua removido. Esta revisao identifica a falha fisica, nao presume uma causa ainda nao reproduzida localmente.
