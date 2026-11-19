@@ -1,5 +1,5 @@
 {
-  "version": "16.43",
+  "version": "16.44",
   "checks": {
     "normal_title_and_new_game": true,
     "native_sprite_descriptors": true,
@@ -19,5 +19,10 @@
   "published": false,
   "sprites_read_only_tested": true,
   "sprite_descriptors_read_only_tested": true,
-  "legacy_alias_module_removed": true
+  "legacy_alias_module_removed": true,
+  "guarded_entrypoint_tested": true,
+  "new_game_through_guard": true,
+  "injected_missing_image_captured": true,
+  "injected_missing_module_captured": true,
+  "injected_2MiB_memory_limit_captured": true
 }

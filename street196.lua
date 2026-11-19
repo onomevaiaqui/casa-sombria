@@ -398,7 +398,7 @@ end
  for i,v in ipairs(actor.palette)do ui.palset(ink(i-1),v)end
  if equipped=='crowbar'and actor.weapon then actor.weapon.palette(ui)end
  drawActor(clip,phase,clipName)
- ui.rectfill(0,0,479,13,240);ui.print('16.43 / '..(insideFacility and house39.roomTitle()or inside39 and ((insideMarket and 'MERCADINHO - 'or(inside31 and 'CASA 31 - 'or 'CASA 39 - '))..house39.room(x,y))or(front39 and yard39.zone(x,y)or cameras[shot].name)),5,3,241)
+ ui.rectfill(0,0,479,13,240);ui.print('16.44 / '..(insideFacility and house39.roomTitle()or inside39 and ((insideMarket and 'MERCADINHO - 'or(inside31 and 'CASA 31 - 'or 'CASA 39 - '))..house39.room(x,y))or(front39 and yard39.zone(x,y)or cameras[shot].name)),5,3,241)
  if noticeTime>0 then noticeTime=noticeTime-dt;ui.rectfill(0,247,479,269,240);ui.print(notice,8,253,241)end
  if dogPhase>0 then
   if dogPhase==3 then
