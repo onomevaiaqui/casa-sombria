@@ -1,3 +1,4 @@
+local cameraModuleCache=type(package)=='table'and package.loaded or nil
 local D=require('house31_data')
 local M={cameras=D.cameras,palette=D.palette,doors={},bits=0}
 local depth,key
@@ -34,8 +35,10 @@ function M.selectCamera(x,y,old)
 end
 function M.prefix(i)return 'h31_'..D.cameras[i].name end
 function M.prepare(i)
+ local camera=D.cameras[i];if camera.cineDepth then local n=camera.cineDepth..tostring(0);if key==n then return end;require('cinema356').pressure();local raw=require(n);depth=require('cinema356').unpack(raw);key=n;assert(#depth==8160);if type(package)=='table'and package.loaded then package.loaded[n]=nil end;return end
+
  local n='h31d_'..D.cameras[i].name;if key==n then return end
- local raw=require(n);local parts={};for j=1,#raw,2 do local a,b=raw:byte(j,j+1);parts[#parts+1]=string.rep(string.char(b),a)end
+ require('cinema356').pressure();local raw=require(n);local parts={};for j=1,#raw,2 do local a,b=raw:byte(j,j+1);parts[#parts+1]=string.rep(string.char(b),a)end
  depth=table.concat(parts);key=n;assert(#depth==8160)
  if type(package)=='table'and package.loaded then package.loaded[n]=nil end
 end
@@ -51,4 +54,8 @@ function M.action(x,y)
  return 'A casa parece abandonada.'
 end
 function M.release()depth,key=nil,nil end
+
+local cinema=require('cinema356')
+function M.selectCamera(x,y,previous)return cinema.select(D.cameras,x,y,previous,M.room(x,y))end
+function M.prefix(i)local c=D.cameras[i];return c.cinePrefix..tostring(0)end
 return M

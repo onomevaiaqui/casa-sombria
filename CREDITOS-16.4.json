@@ -1,0 +1,44 @@
+[
+  {
+    "artist": "Elegant Crow",
+    "source": "https://elegantcrow.itch.io/retro-house-pack",
+    "license": "CC0",
+    "use": "Casas 12, 14, 16, 10 e 08"
+  },
+  {
+    "artist": "Mutum Studios",
+    "source": "https://mutum-studios.itch.io/3d-retroworld",
+    "use": "Bombas, cobertura, pilares, lixo do posto"
+  },
+  {
+    "artist": "Kenney",
+    "use": "Janelas e persianas do kit ja utilizado"
+  },
+  {
+    "artist": "valsekamerplant",
+    "use": "Cercas e portoes do kit ja utilizado"
+  },
+  {
+    "artist": "Tri Hard Studio",
+    "use": "Modulos de fachada de farmacia ja utilizados"
+  },
+  {
+    "artist": "Renafox",
+    "use": "Destroyed Car 03 reaproveitado na rua",
+    "source": "https://sketchfab.com/3d-models/destroyed-car-03-backrooms-car-gameready-ver-efc4dfe2c7284a64bc9281eb4f61d402",
+    "license": "CC BY 4.0",
+    "changes": "Escala, rotacao, iluminacao e conversao do render para a paleta"
+  },
+  {
+    "artist": "Kenney",
+    "source": "https://sketchfab.com/3d-models/destroyed-car-03-backrooms-car-gameready-ver-efc4dfe2c7284a64bc9281eb4f61d402",
+    "use": "detail-light-single.glb - postes da nova area",
+    "license": "CC BY 4.0",
+    "changes": "Escala, rotacao, iluminacao e conversao do render para a paleta"
+  },
+  {
+    "artist": "Kenney",
+    "source": "https://kenney.nl/assets/retro-urban-kit",
+    "use": "detail-light-single.glb - postes da nova area"
+  }
+]

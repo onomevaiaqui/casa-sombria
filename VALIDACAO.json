@@ -1,0 +1,21 @@
+{
+  "version": "16.42",
+  "checks": {
+    "normal_title_and_new_game": true,
+    "native_sprite_descriptors": true,
+    "lua_memory_limit_bytes": 4194304,
+    "package_global_absent": true,
+    "yard_views_checked": 1276,
+    "house39_views_checked": 7040,
+    "hidden_character_views": 0,
+    "house39_front_and_back_exit": true,
+    "corridor_both_directions": true,
+    "optional_swing_dialogue": true,
+    "gate_camera_reveal": true,
+    "all_lua_syntax": true,
+    "literal_dependencies": true
+  },
+  "physical_lupi_tested": false,
+  "published": false,
+  "sprites_read_only_tested": true
+}

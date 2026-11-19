@@ -101,6 +101,8 @@ M.plan=require('layout140')
 for room,c in pairs(M.plan.rooms)do M.rooms[room]=M.plan.logical[room];boxes[room]=c.boxes;sizes[room]=c.size end
 M.banks.area=M.banks.sala
 M.banks.ferramentas=M.banks.sala
+-- Tree trunk only; foliage and rope stay nonblocking.
+boxes.quintal[#boxes.quintal+1]={1.8436,2.0836,2.2408,2.4808}
 nativeCollision.prepare(boxes)
 M.boxes,M.sizes=boxes,sizes
 return M

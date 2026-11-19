@@ -1,3 +1,4 @@
+local cameraModuleCache=type(package)=='table'and package.loaded or nil
 local D=require('house39_data')
 local M={cameras=D.cameras,palette=D.palette,doors=D.doors,boxes=D.boxes,bits=0}
 local depth,key,baseDepth,baseKey
@@ -68,6 +69,8 @@ function M.prefix(shot)
  return prefixName
 end
 function M.prepare(shot)
+ local camera=D.cameras[shot];if camera.cineDepth then local n=camera.cineDepth..string.format('%d',M.bits);if key==n then return end;require('cinema356').pressure();local raw=require(n);depth=require('cinema356').unpack(raw);key=n;assert(#depth==8160);if type(package)=='table'and package.loaded then package.loaded[n]=nil end;return end
+
  local name=M.prefix(shot);if name==key then return end
  local function expand(raw,base)
   local parts,chunk={},{};local cursor=1
@@ -140,4 +143,8 @@ function M.action(x,y)
 end
 function M.release()depth,key,baseDepth,baseKey=nil,nil,nil,nil end
 function M.room(x,y)return room(x,y)end
+
+local cinema=require('cinema356')
+function M.selectCamera(x,y,previous)return cinema.select(D.cameras,x,y,previous,M.room(x,y))end
+function M.prefix(i)local c=D.cameras[i];return c.cinePrefix..string.format('%d',M.bits)end
 return M

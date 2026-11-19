@@ -1,3 +1,5 @@
+KICK_X397=(BTN_Q and BTN_X and BTN_Z and BTN_G)and BTN_E or 14
+do if BTN_Q and BTN_X and BTN_Z and BTN_G then BTN_F,BTN_Z,BTN_G,BTN_E=BTN_Q,BTN_X,BTN_Z,BTN_G end end
 require('sprite_aliases345')
 local boot349=require('boot349')
 local interaction287=require('interaction287')
@@ -12,7 +14,7 @@ local life=require('survival158')
 local steering=require('steering157')
 local enemy=require('enemy153')
 local memoryControl=require('gc150');memoryControl.configure()
-local frameTime = require("frame_time");frameTime.details=true
+local frameTime = require("frame_time");frameTime.details=false
 local metric = require("metric_rooms")
 local cameras=require("cameras168")
 local doors=require("doors131")
@@ -137,9 +139,9 @@ local sceneSprites
 local itemSprites = {}
 local inventory
 if type(require) == "function" and type(ui.spr) == "function" then
-    local _, spritesModule = pcall(require, "sprites")
+    local _, spritesModule = pcall(require, "sprite_aliases345")
     local _, paletteModule = pcall(require, "palette")
-    local sprites = type(Sprites) == "table" and Sprites or spritesModule
+    local sprites = spritesModule
     local colors = type(_G.Palette) == "table" and _G.Palette or paletteModule
     if type(sprites) == "table" and sprites.sala75_0 and sprites.sala75_1 and sprites.sala75_2
         and type(colors) == "table" and #colors > 1 and #colors <= 224 then
@@ -1630,6 +1632,8 @@ local function walkable(px,py)
 end
 local transitionCarry
 local aiming,strike,running = false,0,false
+local strikeKind397='punch'
+local previousKick397=false
 
 local function checkPassage(dx,dy,keyDx,keyDy)
     roomNotice = ""
@@ -1665,7 +1669,7 @@ local function checkPassage(dx,dy,keyDx,keyDy)
                     end
                     local safeX,safeY=passagePlacement.arrival(metric,doors,exit.to,arrivalX,arrivalY,exit.transfer)
                     if not safeX then
-                        roomNotice="A passagem estÃƒÂ¡ obstruÃƒÂ­da."
+                        roomNotice="A passagem estÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ obstruÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­da."
                         crossing=false;transitionCarry=nil
                         return
                     end
@@ -1725,6 +1729,23 @@ for i=1,#actorTriangles/7 do courierPool[i]={0,0,0,0,0}end
 local function beginDoorInteraction(door)
  -- Doors open on action; the player crosses with normal movement.
  doors.open(door.id)
+ -- Opening a leaf can overlap the actor. Move only to the nearest free point
+ -- on the same side of this doorway; never transfer rooms during this correction.
+ local gx,gy=metric.ground(currentRoom,x,y)
+ if not doors.walkable(currentRoom,gx,gy)then
+  local ending=door.ends[currentRoom]
+  local bestX,bestY,bestDistance
+  for ix=-28,28 do for iy=-28,28 do
+   local tx,ty=gx+ix*.025,gy+iy*.025
+   local distance=(tx-gx)^2+(ty-gy)^2
+   local sameSide=not ending or (ending.axis==1 and (tx-ending.x)*(gx-ending.x)>=0)or(ending.axis==2 and (ty-ending.y)*(gy-ending.y)>=0)
+   if distance<=.7*.7 and sameSide and (not bestDistance or distance<bestDistance)and doors.walkable(currentRoom,tx,ty)and enemy.walkable(currentRoom,tx,ty)then
+    local px,py=metric.project(currentRoom,tx,ty,0)
+    if metric.walkable(currentRoom,px,py)then bestX,bestY,bestDistance=px,py,distance end
+   end
+  end end
+  if bestX then x,y=bestX,bestY else doors.close(door.id);return false end
+ end
  courierCache=nil
  return true
 end
@@ -1735,6 +1756,7 @@ for i=1,#actorTriangles,7 do
  local a,b,c,d,e,f,k=actorTriangles:byte(i,i+6);local n=#actorIndex339
  actorIndex339[n+1],actorIndex339[n+2],actorIndex339[n+3],actorIndex339[n+4]=a+b*256+1,c+d*256+1,e+f*256+1,k
 end
+local traversal361
 local function courier()
     local clip, position, clipName = actorClips.idle, 0, "idle"
     if life.dead then
@@ -1743,8 +1765,8 @@ local function courier()
         clip,position,clipName=life.hitClip,math.min(life.hitClip.count-1,life.hitTime*life.hitClip.fps),'hit'
     elseif aiming then
         if strike > 0 then
-            clip, position = combat.attack(actorClips,inventory and inventory.equipped), strike-1
-            clipName = combat.isBaton(inventory and inventory.equipped)and "swing"or "punch"
+            clip, position = combat.attack(actorClips,inventory and inventory.equipped,strikeKind397), strike-1
+            clipName = strikeKind397=="kick"and "kick"or(combat.isBaton(inventory and inventory.equipped)and "swing"or "punch")
         else
             clip = combat.guard(actorClips,inventory and inventory.equipped)
             clipName = combat.isBaton(inventory and inventory.equipped)and "ready"or "guard"
@@ -1759,6 +1781,7 @@ local function courier()
     end
     local interactionClip,interactionPhase,interactionName=interaction287.pose(actorClips.walk,actorClips.idle)
     if interactionClip then clip,position,clipName=interactionClip,interactionPhase,interactionName end
+    if traversal361 and traversal361.active then clip,position,clipName=traversal361.pose()end
     local doorMask=doors.stateMask(courierDoorBits)
     local equipped=inventory and inventory.equipped
     if courierCache and combat.stable()then
@@ -1807,7 +1830,7 @@ local function courier()
         end
     end
     local gripSocket=combat.blendSocket(combat.socket(clipName,position,courierRawSocket),courierSocket)
-    if hand and inventory and not life.dead and not interaction287.busy()then
+    if hand and inventory and clipName~="kick"and not life.dead and not interaction287.busy()then
         if inventory.equipped=="crowbar" then
             crowbar.held(project,gripSocket,faces)
         elseif inventory.equipped=="phone" then
@@ -2010,6 +2033,10 @@ end
 function update()
     frameTime.sample(ui)
     if titleOpen then drawTitle(); return end
+    if require('clue209').active then
+        local clue=require('clue209');clue.tick(frameTime.dt,held(LEFT or 4),held(RIGHT or 2),held(UP or 1),held(DOWN or 3),held(BTN_Z or 4),held(BTN_G or 13))
+        if clue.active then clue.draw(ui)else previousA,previousB=held(BTN_G or 13),held(BTN_Z or 4)end;return
+    end
     if familyPhoto.active then
         familyPhoto.tick(frameTime.dt,held(LEFT or 4),held(RIGHT or 2),held(UP or 1),held(DOWN or 3),held(BTN_Z or 4),held(BTN_G or 13))
         if familyPhoto.active then familyPhoto.draw(ui)else previousA,previousB=held(BTN_G or 13),held(BTN_Z or 4)end
@@ -2017,6 +2044,11 @@ function update()
     end
     boot349.stage('ATUALIZAR VIDA')
     life.tick(animationDelta())
+    if traversal361 then
+     traversal361.tick(animationDelta())
+     if held(BTN_Z or 4)then traversal361.finish()end
+     if held(BTN_G or 13)then traversal361.cancel()end
+    end
     if life.dead then
         if interaction287.busy()then interaction287.cancel()end
         local action=life.input(held(BTN_G or 13),held(BTN_Z or 4))
@@ -2037,7 +2069,7 @@ function update()
     if pendingStreet then
         -- A frame boundary separates house rendering, release, require and first street draw.
         ui.cls(240);ui.palset(240,0);ui.palset(241,32767)
-        ui.print('15.93 - PREPARANDO RUA '..pendingStreet.phase..'/3',95,125,241)
+        ui.print('16.21 - PREPARANDO RUA '..pendingStreet.phase..'/3',95,125,241)
         frameTime.hud(ui)
         if pendingStreet.phase==1 then
             cameras.release();courierCache=nil
@@ -2094,7 +2126,8 @@ function update()
     local dy = (held(DOWN or 3) and 1 or 0) - (held(UP or 1) and 1 or 0)
     local a, b = held(BTN_G or 13), held(BTN_Z or 4)
     local run, guard = held(BTN_F or 12), held(BTN_E or 15)
-    if life.dead or life.hitTime then dx,dy,a,b,run,guard=0,0,false,false,false,false end
+    local kickDown397=held(KICK_X397 or 14);local kickAttack397=guard and kickDown397 and not previousKick397;previousKick397=kickDown397
+    if life.dead or life.hitTime or(traversal361 and traversal361.active)then dx,dy,a,b,run,guard=0,0,false,false,false,false end
     if life.hitTime then aiming,strike,walking,running=false,0,false,false;queuedStrike=false end
     local cancel, confirm, attack = a and not previousA, b and not previousB, run and not previousY
     previousA, previousB, previousY = a, b, run
@@ -2130,21 +2163,21 @@ function update()
     aiming = guard and not aimCancelled
     if not aiming then
         strike = 0;queuedStrike=false
-    elseif attack and strike == 0 then
-        strike = 1;queuedStrike=false
+    elseif (attack or kickAttack397)and strike == 0 then
+        strikeKind397=kickAttack397 and "kick"or "punch";strike = 1;queuedStrike=false
     elseif strike > 0 then
-        local attackClip=combat.attack(actorClips,inventory.equipped)
-        if attack and combat.isBaton(inventory.equipped)and strike>=attackClip.count-7 then queuedStrike=true end
+        local attackClip=combat.attack(actorClips,inventory.equipped,strikeKind397)
+        if attack and strikeKind397~="kick"and combat.isBaton(inventory.equipped)and strike>=attackClip.count-7 then queuedStrike=true end
         strike = strike + animationDelta()*(attackClip.fps or 60)
         if strike > attackClip.count then strike=queuedStrike and 1 or 0;queuedStrike=false end
     end
     if strike<=1 or strike<oldStrike then enemyHitThisSwing=false end
     if strike>0 and not enemyHitThisSwing then
-        local clip=combat.attack(actorClips,inventory.equipped)
-        if strike>=math.floor(clip.count*.35) then
+        local clip=combat.attack(actorClips,inventory.equipped,strikeKind397)
+        if strike>=math.floor(clip.count*(strikeKind397=="kick"and .5 or .35)) then
             enemyHitThisSwing=true
             local gx,gy=metric.ground(currentRoom,x,y)
-            enemy.tryHit(currentRoom,gx,gy,facing,combat.isBaton(inventory.equipped))
+            enemy.tryHit(currentRoom,gx,gy,facing,strikeKind397~="kick"and combat.isBaton(inventory.equipped))
         end
     end
     local inputDx,inputDy=dx,dy
@@ -2185,7 +2218,7 @@ function update()
     local nearbyDoor=doors.nearby(currentRoom,ix,iy)
     local status = roomNotice ~= "" and roomNotice or rooms[currentRoom].label
     if aiming then
-        status = combat.isBaton(inventory.equipped)and(strike>0 and "GOLPE"or "MACHADINHA")or(strike > 0 and "SOCO" or "PUNHOS LEVANTADOS")
+        status = strike>0 and strikeKind397=="kick"and "CHUTE"or combat.isBaton(inventory.equipped)and(strike>0 and "GOLPE"or "MACHADINHA")or(strike > 0 and "SOCO" or "PUNHOS LEVANTADOS")
     elseif confirm and not guard and not reading then
         if nearbyDoor then
             local refusal=progression.message(nearbyDoor.id,currentRoom,enemy,doors)
@@ -2203,14 +2236,23 @@ function update()
             walking,running=false,false
             transitionCarry=nil
         elseif familyPhoto.near(currentRoom,ix,iy)then
-            familyPhoto.begin();walking,running,aiming,strike=false,false,false,0
-            inventory:collect({id='family_photo',document=true})
+            walking,running,aiming,strike=false,false,false,0
+            if inventory.collected.family_photo then familyPhoto.begin()
+            else dialogue:ask('Ha um desenho junto da foto. Pegar o desenho?',function()
+                inventory:collect({id='family_photo',document=true});familyPhoto.begin()
+            end)end
         else
-            local pickup = inventory:nearby(currentRoom,x,y)
-            local result=pickup and inventory:collect(pickup)or "NADA PARA USAR"
-            local messages={['ITEM COLETADO']='Item coletado.',['ARQUIVO COLETADO']='Arquivo coletado.',
-                ['INVENTARIO CHEIO']='O inventÃƒÂ¡rio estÃƒÂ¡ cheio.',['NADA PARA USAR']='NÃƒÂ£o hÃƒÂ¡ nada para usar aqui.'}
-            dialogue:notify(messages[result]or result)
+            local pickup=inventory:nearby(currentRoom,x,y)
+            if pickup then
+                local name=inventory:pickupName(pickup)
+                dialogue:ask('Pegar '..name..'?',function()
+                    local result=inventory:collect(pickup)
+                    if result=='INVENTARIO CHEIO'then dialogue:notify('O inventario esta cheio.');return end
+                    inventory:open();inventory.tab=pickup.document and 2 or 1;inventory.focus=pickup.document and 'files'or 'items'
+                    if pickup.document then inventory.fileSelected=#inventory.files else inventory.selected=#inventory.bag end
+                    inventory.previous={b=true};inventory.message='Encontrou: '..name
+                end)
+            else dialogue:notify('Nao ha nada para pegar aqui.')end
         end
     end
     local pickup = inventory:nearby(currentRoom,x,y)
@@ -2219,7 +2261,7 @@ function update()
     elseif nearbyDoor and not aiming then
         status=nearbyDoor.id=="casinha"and "B: EXAMINAR CADEADO"or nearbyDoor.id=="garagem_externa"and "B: EXAMINAR PORTA DE ROLO"or nearbyDoor.id=="jardim_quintal"and "B: ABRIR PORTAO"or "B: ABRIR PORTA"
     elseif interaction and not aiming then
-        status="B: EXAMINAR QUADROS"
+        status=interaction.id=='ghost_girl_swing'and 'B: FALAR COM A MENINA'or 'B: EXAMINAR QUADROS'
     elseif familyPhoto.near(currentRoom,ix,iy)and not aiming then
         status='B: EXAMINAR FOTO'
     elseif pickup and not aiming then
@@ -2266,7 +2308,7 @@ function update()
     end
     ui.rectfill(0,0,479,15,240)
     local motion = walking and (running and " / CORRIDA" or " / PASSOS") or ""
-    ui.print("15.93 TESTE "..status..motion,8,3,241)
+    ui.print("16.42 / "..status..motion,8,3,241)
     frameTime.hud(ui)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do
@@ -2282,8 +2324,11 @@ function update()
     enemy.palette(ui)
     local enemyBehind=enemy.beforePlayer(currentRoom,x,y)
     if enemyBehind then enemy.draw(currentRoom)end
+    local ghost523=require('ghost523');local ghostFront523=ghost523.prepare(metric,currentRoom,x,y,animationDelta())
+    if not ghostFront523 then ghost523.draw(ui,metric,currentRoom)end
     boot349.stage('DESENHAR PERSONAGEM')
     courier()
+    if ghostFront523 then ghost523.draw(ui,metric,currentRoom)end
     if not enemyBehind then enemy.draw(currentRoom)end
     if currentRoom==enemy.room then
         ui.rectfill(0,16,245,26,240)

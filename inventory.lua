@@ -3,6 +3,9 @@ local theme=require('inventory_theme163')
 local Inventory = {}
 
 local items = {
+    back_key39={name='Chave',detail='Uma pequena chave encontrada no campinho. A etiqueta diz: Fundos - 39.',usable=true},
+    market_key={name='Chave pequena',detail='Uma etiqueta gasta diz: DEPOSITO DO MERCADINHO.',usable=true},
+    house12_key={name='Chave da Casa 12',detail='Chave antiga com uma etiqueta marcada 12. A anotacao menciona a Rua dos Cedros.',usable=true},
     pills = {name="Analgesico",detail="Alivia as dores.",usable=true,heal=1},
     medkit = {name="Kit medico",detail="Um kit de primeiros socorros. Recupera toda a vida ao usar.",usable=true,fullHeal=true},
     shed_key = {name="Chave",detail="Chave pequena de um cadeado. A etiqueta diz: FERRAMENTAS.",usable=true},
@@ -12,15 +15,18 @@ local items = {
     phone = {name="Celular", detail="Meu celular. A tela funciona, mas esta sem sinal.", equippable=true},
     battery = {name="Pilha", detail="Pilha pequena. Parece servir no controle do portao.", usable=true},
     remote = {name="Controle", detail="Controle de portao eletronico. Falta uma pilha.", usable=true},
-    collar = {name="Coleira", detail="A placa diz BENTO. Ha marcas profundas no couro.", usable=true},
+    collar = {name="Coleira", detail="Uma coleira velha. O nome Cloe esta gravado na placa em forma de osso.", usable=true},
     valve = {name="Volante", detail="Volante de valvula avulso. Tem um encaixe quadrado.", usable=true},
     screwdriver = {name="Chave Phillips", detail="Ponta cruzada para parafusos pequenos.", usable=true},
     cutters = {name="Corta-cadeado", detail="Mandibulas pesadas para cortar metal fino.", usable=true},
-    crowbar = {name="Pe de cabra", detail="Pesado e resistente. Posso usá-lo como arma ou para fazer alavanca.", equippable=true}
+    crowbar = {name="Machadinha", detail="Uma machadinha resistente. Posso usa-la como arma e para quebrar tabuas.", equippable=true}
 }
 
 local documents = {
-    family_photo={title='Desenho infantil',text='Um desenho encontrado junto da foto no quarto.'},
+ mother_note39={title='Recado da mae',text='Filha, seu irmao foi jogar bola e levou a chave. Ele deve estar no campinho. - Mae'},
+    gazebo_order={title='Bilhete no coreto',text='Nao espere na frente. A persiana do mercadinho travou de novo. Use a porta de servico, no canto direito. Deixei a chave do deposito perto do caixa. - N.'},
+    market_ledger={title='Anotacao do deposito',text='Catarina deixou a chave da Casa 12 comigo. Disse que alguem levou o copo para a praca. As luzes apagaram logo depois. Guardei a chave junto das caixas. A casa fica na Rua dos Cedros.'},
+    family_photo={title='Desenho infantil',text='Um desenho encontrado enrolado no compartimento da coleira da Cloe. Ha algo escrito no verso.'},
     order = {title="Pedido de entrega", text="Pedido 37. Uma pizza grande. Entrega na casa 37. Pagamento na entrega. O cliente pediu para insistir na campainha."},
     letter = {title="Carta antiga", text="Achei a carta de voces da faculdade. Nao acredito que ainda guardam o copo. Se forem repetir aquela brincadeira, me esperem. Quero ver se alguem tem coragem."},
     note = {title="Bilhete na cozinha", text="A pizza ja foi pedida. Volto antes de esfriar. Deixei as coisas em cima da mesa. Nao comecem sem mim."}
@@ -31,8 +37,7 @@ local pickups = {{["id"]='door_key',["room"]='quarto',["x"]=161.05263157894734,[
 
 -- Story progression: the first weapon belongs inside the locked tool shed.
 for i=#pickups,1,-1 do if pickups[i].id=='crowbar'or pickups[i].room=='quintal'then table.remove(pickups,i)end end
-local cx,cy=require('metric_rooms').project('ferramentas',1.30,1.72,0)
-pickups[#pickups+1]={id='crowbar',room='ferramentas',x=cx,y=cy}
+-- Machadinha relocated to the Casa39 combination-locked shed (house39_story433).
 
 local function wrapped(text, x, y, width, color, maxLines)
     local line, count = "", 0
@@ -52,8 +57,8 @@ function Inventory.new(sprites)
     state.sprites = sprites or {}
 
     function state:reset()
-        require('photo162').reset()
-        self.bag = {"car_key","lighter","phone"}
+        require('photo162').reset();require('clue209').reset();self.clueRevealed=false;self.collarBoxOpen=false
+        self.bag = {}
         self.files = {"order"}
         self.collected = {}
         self.visible,self.tab,self.focus = false,1,"items"
@@ -77,6 +82,8 @@ function Inventory.new(sprites)
     end
 
     function state:icon(id,x,y)
+        if id=="collar"then ui.spr(self.sprites.item_collar215 or self.sprites.item_collar,x,y);return end
+        if id=="back_key39"then ui.spr(self.sprites.item_back_key214,x,y);return end
         if id=="crowbar"then require("crowbar160").icon(ui,x,y);return end
         local ref = self.sprites["item_"..(id=="shed_key"and "door_key"or id)]
         if ref and type(ui.spr)=="function" then
@@ -102,6 +109,7 @@ function Inventory.new(sprites)
             self.inspected=false
             return item.fullHeal and "Usei o kit. Minha vida foi restaurada."or "Usei o analgesico. Recuperei 1 ponto de vida."
         end
+        if id=='market_key'then return 'Aproxime-se da porta do deposito e pressione B.'elseif id=='house12_key'then return 'Preciso localizar a Casa 12 na Rua dos Cedros.'end
         if id=="shed_key"then return "Aproxime-se do cadeado da casinha e pressione B."
         elseif id=="lighter" then
             self.lit = not self.lit
@@ -137,6 +145,7 @@ function Inventory.new(sprites)
                 local item = id and items[id]
                 if not item then self.mode="grid";return end
                 if self.action==3 then
+                    if id=="collar"or id=="back_key39"then require("clue209").begin(id,self);self.mode="grid";return end
                     self.inspected,self.message,self.mode = true,nil,"grid"
                 elseif self.action==2 then
                     self.combineSource,self.mode,self.message = id,"combine","Escolha o segundo item."
@@ -155,7 +164,7 @@ function Inventory.new(sprites)
             if pressed.up then self.fileSelected=math.max(1,self.fileSelected-1);self.mode='grid'end
             if pressed.down then self.fileSelected=math.min(#self.files,self.fileSelected+1);self.mode='grid'end
             if pressed.b and self.files[self.fileSelected]then
-                if self.files[self.fileSelected]=='family_photo'then require('photo162').begin()
+                if self.files[self.fileSelected]=='family_photo'then require('photo162').begin(self)
                 else self.mode=self.mode=='read'and 'grid'or 'read'end
             end
             return
@@ -199,6 +208,8 @@ function Inventory.new(sprites)
             end
         end
     end
+
+    function state:pickupName(p)return p.document and documents[p.id].title or items[p.id].name end
 
     function state:collect(pickup)
         if self.collected[pickup.id] then return "" end

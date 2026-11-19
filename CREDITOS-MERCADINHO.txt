@@ -1,0 +1,7 @@
+Previa local de progressao - mercadinho
+Caixa registradora, mesa de preparo e latas: heyheythere, PSX Kitchen and Food Free Assets (ja catalogado).
+Prateleiras: PSX Derelict Furniture Standard, pacote fornecido pelo desenvolvedor; conferir autoria no registro antes da publicacao final.
+Caixas: PSX Waste, pacote fornecido pelo desenvolvedor; conferir autoria no registro antes da publicacao final.
+Portas: PSX Doors (pacote comprado), Door 4.
+Papel de jornal e materiais de paredes e pisos: mesmos assets humanos do bairro ja catalogados.
+Sem imagens geradas por IA. Geometria de montagem, composicao e conversao feitas por codigo; somente o jogador e os itens dinamicos sao desenhados em tempo real.

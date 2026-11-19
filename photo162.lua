@@ -2,8 +2,8 @@ local inspection=require('inspection165')
 -- Environmental photo inspection; no 3D model or per-frame allocations.
 local P={active=false,angle=0,tilt=0,found=false,transcription=false,previousB=true,previousA=true}
 local texture,sprites
-function P.near(room,x,y)return room=='quarto'and (x-3.5)^2+(y-3.0)^2<.58^2 end
-function P.begin()P.active=true;P.angle=0;P.tilt=0;P.previousA=true;P.previousB=true;P.transcription=false;P.reading=nil;texture=require('photo_texture162');sprites=require('sprites');return true end
+function P.near()return false end
+function P.begin(inventory)P.inventory=inventory or P.inventory;P.active=true;P.angle=0;P.tilt=0;P.previousA=true;P.previousB=true;P.transcription=false;P.reading=nil;texture=require('photo_texture162');sprites=require('sprite_aliases345');return true end
 function P.reset()P.active=false;P.found=false;P.transcription=false;P.reading=nil;texture=nil end
 function P.tick(dt,left,right,up,down,confirm,cancel)
  if left or right or up or down then P.reading=nil;P.transcription=false end
@@ -15,7 +15,7 @@ function P.tick(dt,left,right,up,down,confirm,cancel)
  if math.cos(P.angle)<-.72 then P.found=true end
  if confirm and not P.previousB then
   P.reading=inspection.text('Um desenho infantil.','Catarina 2019',P.angle,P.found)
-  P.transcription=P.reading=='Catarina 2019'
+  P.transcription=P.reading=='Catarina 2019';if P.transcription and P.inventory then P.inventory.collected.shed_code39_known=true end
  end
  local close=cancel and not P.previousA
  P.previousA,P.previousB=cancel,confirm

@@ -11,14 +11,13 @@ local function expand(packed)
  return table.concat(parts)
 end
 local function delta(base,packed)
- local parts,chunk={},{};local cursor=1
+ local parts,chunk={},{};local cursor=1;local xorValue
+ local function xorByte(c)return string.char(c:byte()~xorValue)end
  for i=1,#packed,2 do
   local n,v=packed:byte(i,i+1)
   if v==0 then chunk[#chunk+1]=base:sub(cursor,cursor+n-1)
   else
-   local changed={}
-   for j=cursor,cursor+n-1 do changed[#changed+1]=string.char(base:byte(j)~v)end
-   chunk[#chunk+1]=table.concat(changed)
+   xorValue=v;chunk[#chunk+1]=(base:sub(cursor,cursor+n-1):gsub('.',xorByte))
   end
   cursor=cursor+n
   if #chunk==256 then parts[#parts+1]=table.concat(chunk);for j=256,1,-1 do chunk[j]=nil end end
@@ -30,6 +29,7 @@ end
 function M.depth(s)
  if previous~=s then
   previous,depth=nil,nil
+  require('cinema356').pressure()
   if s.depthBasePacked then
    if baseKey~=s.depthBasePacked then baseDepth=expand(s.depthBasePacked);baseKey=s.depthBasePacked end
    depth=#s.depthPacked==0 and baseDepth or delta(baseDepth,s.depthPacked)

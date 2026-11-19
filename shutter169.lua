@@ -9,6 +9,7 @@ function M.draw(camera,room,spr)
  local roomData=data[room];local view=roomData and roomData[camera.shot]
  if not view then return end
  local c=camera.data[room][camera.shot]
+ if c.cinema356 then return end
  local states=view[doors.stateMask(c.doorBits)]
  local tiles=states and states[doors.isOpen('garagem_externa')and 1 or 0]
  if tiles then for _,tile in ipairs(tiles)do

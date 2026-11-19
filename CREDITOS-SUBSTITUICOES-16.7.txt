@@ -1,0 +1,20 @@
+SUBSTITUICOES 16.7 — PREVIA LOCAL, NAO PUBLICADA
+GameDevDeck — Dusk House PSX Free Kitchen — CC0 — pia, balcoes, fogao, geladeira, mesa, cadeiras e latas; escala e posicionamento adaptados.
+Nickben12 — PSX Horror Starter Pack — licenca propria, uso pessoal/comercial sem redistribuicao dos arquivos brutos — cama adaptada para casal no mesmo espaco aprovado.
+Animimo Studios — PSX Electronics / Silent Inventory — CC0 — TV, rack/criados-mudos, icone de kit medico. Materiais corrigidos a partir das texturas originais incluidas no GLB.
+3Dexter3D — Horror Player Item Pack — CC0 — novo icone da chave de porta.
+Slinc / Poly Haven — Vintage Lighter — CC0 — novo icone do isqueiro, render offline, sem carregar a malha de 3 mil triangulos no Lupi.
+Arrangemonk — Prison Toilet free tier — CC0 — pia/vaso da Casa39 ja utilizavam esse pacote; preservados.
+Elegant Crow — Retro House Pack — CC0 — modelos das casas 14 e 10 adaptados para dois pavimentos; cercas, portoes e navegacao preservados.
+Referencias de variedade arquitetonica consultadas: Planta Pronta, projetos 96A, 97A, 115A. Usados como referencia visual; nenhuma planta, textura ou modelo do site foi incorporado.
+https://www.plantapronta.com.br/projeto/96A/planta-de-sobrado-com-sacada
+https://www.plantapronta.com.br/projeto/97A/planta-de-sobrado-pequeno-e-moderno
+https://www.plantapronta.com.br/projeto/115A/planta-de-casa-com-telhado-duas-aguas
+
+PENDENCIAS
+O zumbi RisingForce3D nao foi integrado: falta confirmar licenca comercial. A pizza Quaternius nao foi baixada por quota do Google Drive. Coleira/chave da Cloe, foto ficticia, menu/GIF/tema e icones sem equivalente ainda conservam a origem anterior indicada na auditoria. Carne estragada, pneus e demais objetos de packs assistidos que nao tinham equivalente adequado continuam pendentes. Esta versao NAO e inteiramente sem assets de IA.
+
+LIMITES
+Fundos continuam pre-renderizados; tiras nativas 480x90, 43200 bytes (limite observado 46059); paleta existente preservada. Novas fontes 3D dos moveis nao entram no runtime. Nao foi feito teste no Lupi fisico nem push para GitHub.
+
+PERSONAGEM E INIMIGOS: preservados conforme a previa 16.6, por solicitacao do desenvolvedor. Substituicoes limitadas ao cenario e itens funcionais.

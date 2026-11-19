@@ -1,5 +1,6 @@
+local cameraModuleCache=type(package)=='table'and package.loaded or nil
 -- Load only one room; require cache is explicitly released on transitions.
-local D={firstprefix={["area"]="scene158_area_0_0",["sala"]="scene168_sala_0_0",["banheiro"]="scene158_banheiro_0_0",["quintal"]="scene158_quintal_0_0",["corredor"]="scene158_corredor_0_0",["quarto"]="scene158_quarto_0_0",["garagem"]="scene158_garagem_0_0",["ferramentas"]="scene158_ferramentas_0_0",["frente"]="scene158_frente_0_0",["cozinha"]="scene168_cozinha_0_0"}}
+local D={firstprefix={["area"]="q377_main_area_1_0",["banheiro"]="q377_main_banheiro_1_0",["corredor"]="q377_main_corredor_1_0",["cozinha"]="q377_main_cozinha_1_0",["ferramentas"]="q377_main_ferramentas_1_0",["frente"]="q377_main_frente_1_0",["garagem"]="q377_main_garagem_1_0",["quarto"]="q377_main_quarto_1_0",["quintal"]="q377_main_quintal_1_0",["sala"]="q377_main_sala_1_0"}}
 local current,views
 setmetatable(D,{__index=function(_,room)
  if room==current then return views end
@@ -10,7 +11,7 @@ setmetatable(D,{__index=function(_,room)
  local factory=require(name)
  local loaded=factory()
  -- The physical Lupi sandbox does not expose the package global.
- if type(package)=='table'and type(package.loaded)=='table'then package.loaded[name]=nil end
+ if cameraModuleCache then cameraModuleCache[name]=nil end
  current,views=room,loaded
  return views
 end})

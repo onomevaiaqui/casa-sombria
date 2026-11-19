@@ -89,8 +89,12 @@ end
 function C.select(room,x,y)
  local views=data[room];if not views then return end
  if C.room~=room then C.shot=nil end;C.room=room
- -- The shed doorway has a deliberate approach shot: keep the roof and clerestory in frame.
- if room=='quintal'and x>=.75 and x<=3.2 and y>=4.4 and y<=6.3 and views[7]and clearance(views[7],x,y)>=8 then C.shot=7;return true end
+ if room=='quintal'and views[8]and views[9]then
+  local preferred=(C.shot==8 and y<3.35 or y<2.85)and 8 or 9
+  local alternate=preferred==8 and 9 or 8
+  C.shot=clearance(views[preferred],x,y)>=5 and preferred or(clearance(views[alternate],x,y)>=5 and alternate or preferred)
+  return true
+ end
  local score=C.shot and clearance(views[C.shot],x,y)or-1e6
  if score<5 then
   local best,bs=C.shot,score
@@ -147,8 +151,8 @@ function C.occlusion(room)
  occlusionFunction=function(a,b,c)
   local x,y=(a[1]+b[1]+c[1])/3,(a[2]+b[2]+c[2])/3
   if x<0 or x>=480 or y<0 or y>=270 then return false end
-  local z=depth:byte(math.floor(y*sy)*width+math.floor(x*sx)+1)*step
-  return(a[3]+b[3]+c[3])/3<=z+.14
+  local sample=depth:byte(math.floor(y*sy)*width+math.floor(x*sx)+1)
+  return sample==255 or(a[3]+b[3]+c[3])/3<=sample*step+.14
  end
  return occlusionFunction
 end
@@ -157,4 +161,23 @@ function C.release()
  occlusionState,occlusionFunction,paletteState,paletteMaster,finalPalette=nil,nil,nil,nil,nil
  C.room,C.shot=nil,nil;data.release()
 end
+
+-- Alpha composite the apparition against the current indexed background.
+local ghostBlend525={}
+function C.ghostBlend(room,kind)
+ local c=current(room);if not c then return end;local st=state(c)
+ local key=kind or 'swing';local cached=ghostBlend525[key];if cached and cached.state==st then return cached.sample end
+ local crop=require('ghost525_bg')[st.prefix];if not crop then return end;local raw=crop.raw;local sourcePalette=require('ghost_source_palette541')
+ local colors={};eachColor(st,function(key,value)local slot=map[key];if slot then colors[slot]={value%32,math.floor(value/32)%32,math.floor(value/1024)%32}end end)
+ local lookup={{},{}}
+ for source,rgb in pairs(colors)do for ink=0,1 do for level=1,3 do
+  local alpha=(kind=='hanging'and 1 or(ink==1 and .26 or .20))*(kind=='hanging'and 1 or ({.35,.70,1})[level]);local target=ink==1 and 26 or 6;local rr,gg,bb=rgb[1]*(1-alpha)+target*alpha,rgb[2]*(1-alpha)+target*alpha,rgb[3]*(1-alpha)+target*alpha
+  local best,error=source,1e9
+  for slot,col in pairs(colors)do local e=(col[1]-rr)^2+(col[2]-gg)^2+(col[3]-bb)^2;if e<error then error=e;best=slot end end
+  lookup[ink+1][source]=lookup[ink+1][source]or{};lookup[ink+1][source][level]=best
+ end end end
+ local function sample(x,y,ink,level)if x<crop.x or y<crop.y or x>=crop.x+crop.w or y>=crop.y+crop.h then return 240 end;local bg=raw:byte((y-crop.y)*crop.w+x-crop.x+1);bg=map[sourcePalette[bg+1]]or bg;local row=lookup[ink+1][bg];return row and row[level or 3]or bg or 240 end
+ ghostBlend525[key]={state=st,sample=sample};return sample
+end
+
 return C

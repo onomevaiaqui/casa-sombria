@@ -1,11 +1,13 @@
+local cameraModuleCache=type(package)=='table'and package.loaded or nil
 local D=require('yard39_data')
 local installNames346=require('asset_names346')
 local Y={cameras=D.cameras,opened=false,hits=0}
 local depth,key
-local function decode(raw)
- local t={};for i=1,#raw,2 do local n,v=raw:byte(i,i+1);t[#t+1]=string.rep(string.char(v),n)end;return table.concat(t)
-end
+local function decode(raw)return require('cinema356').unpack(raw)end
+
 function Y.walkable(x,y)
+ if x>5.5 and x<19.93 and y> -1.212 and y<11.277 then return false end
+ if x>6.6 and x<17.65 and y> -3.05 and y< -1.3 then return true end
  for _,r in ipairs(D.solidBlocks or {})do if x>r[1]and x<r[2]and y>r[3]and y<r[4]then return false end end
  if x>17.65 and x<18.3 and y<-3.3 and y>-15.8 then return false end
  if math.abs(y+15.8)<.23 and x>5.5 and x<24.7 and(x<16.55 or x>17.45)then return false end
@@ -89,6 +91,7 @@ function Y.selectCamera(x,y,previous)
 end
 
 function Y.zone(x,y)
+ if x> -30 and x< -17 and y> -82 and y< -73 then return 'BAR - PROTOTIPO'end
  if y<-37.1 then return 'PRACA DO BAIRRO' end
  if y<-16.4 then return 'MATA - trilha para a praca' end
  if y<-14 then return 'CASA 41 - grade rompida' end
@@ -96,18 +99,23 @@ function Y.zone(x,y)
  if y<-3.6 then return 'CASA 41 - lateral' end
  return 'JARDIM 39'
 end
-function Y.prefix(shot)return 'yard39_'..D.cameras[shot].name..(Y.opened and '1'or '0')end
+local function marketState350()local f=Y.marketInventory and Y.marketInventory.collected or{};return(f.market_service_open and 1 or 0)+(f.market_front_open and 2 or 0)end
+function Y.prefix(shot)local c=D.cameras[shot];if c.stylePrefix then return c.stylePrefix..((c.styleVariants and Y.opened)and '1'or '0')end;if c.marketCamera then return c.marketPrefix..marketState350()end;return 'yard39_'..c.name..(Y.opened and '1'or '0')end
 function Y.prepare(shot)
  local name=Y.prefix(shot);if key==name then return end
  local module='y39d_'..D.cameras[shot].name..(Y.opened and '1'or '0')
+ if D.cameras[shot].marketCamera then module=D.cameras[shot].marketDepth..marketState350()end
+ if D.cameras[shot].styleDepth then local c=D.cameras[shot];module=c.styleDepth..((c.styleVariants and Y.opened)and '1'or '0')end
  module=installNames346[module]or module
- depth=nil;depth=decode((require(module)));key=name;assert(#depth==8160,'Profundidade quintal incompleta')
+ depth=nil;require('cinema356').pressure();depth=decode((require(module)));key=name;assert(#depth==8160,'Profundidade quintal incompleta')
  if type(package)=='table'and package.loaded then package.loaded[module]=nil end
 end
 function Y.triangleVisible(a,b,c)
  local ix,iy=math.floor((a[1]+b[1]+c[1])/12),math.floor((a[2]+b[2]+c[2])/3*68/270)
  if ix<0 or ix>=120 or iy<0 or iy>=68 then return false end
- return (a[3]+b[3]+c[3])/3<=(depth:byte(iy*120+ix+1)or 255)/10+.14
+ local sample=depth:byte(iy*120+ix+1)or 255
+ -- 255 is the far/no-hit sentinel, not an opaque plane at 25.5 m.
+ return sample==255 or (a[3]+b[3]+c[3])/3<=sample/10+.14
 end
 function Y.nearBoards(x,y)return (x-6.9)^2+(y+3.35)^2<1.25^2 end
 function Y.hit(x,y,angle,equipped,inv)
@@ -189,7 +197,7 @@ local oldWalk323=Y.walkable
 function Y.walkable(x,y)
  if x<7.4 and y< -5.5 and y> -18 and not safehole325(x,y)then return false end
  local street=y< -5.5 and y> -73 and ((y> -17.6 and math.abs(x)<5.2)or corridor323(x,y,D.acacias,5.25))and safehole325(x,y)
- if street or corridor323(x,y,D.accessA,.68)or corridor323(x,y,D.accessB,.62)then
+ if street or corridor323(x,y,D.accessA,.96)or corridor323(x,y,D.accessB,.96)then
   for _,p in ipairs(D.obstacles or {})do if(x-p[1])^2+(y-p[2])^2<p[3]^2 then return false end end
   return true
  end
@@ -272,7 +280,7 @@ local walkBefore335=Y.walkable
 local function corridor335(x,y)
  local route=D.parkSouthRoute
  for i=1,#route-3,3 do local a,b=route[i],route[i+3];local dx,dy=b[1]-a[1],b[2]-a[2];local t=math.max(0,math.min(1,((x-a[1])*dx+(y-a[2])*dy)/(dx*dx+dy*dy)))
- if(x-a[1]-t*dx)^2+(y-a[2]-t*dy)^2<1.8^2 then return true end end
+ if(x-a[1]-t*dx)^2+(y-a[2]-t*dy)^2<1.95^2 then return true end end
  return false
 end
 function Y.walkable(x,y)
@@ -356,7 +364,7 @@ function Y.selectCamera(x,y,previous)
 end
 local zoneBefore337=Y.zone
 function Y.zone(x,y)
- if y< -72.6 and x<19 then return x< -19 and 'AVENIDA PRINCIPAL - MERCADINHO'or(x< -4 and 'AVENIDA PRINCIPAL - FARMACIA'or'AVENIDA PRINCIPAL - CASA 22')end
+ if y< -72.6 and x<19 then return x< -19 and 'AVENIDA PRINCIPAL - CASA 31'or(x< -4 and 'AVENIDA PRINCIPAL - FARMACIA'or'AVENIDA PRINCIPAL - CASA 22')end
  return zoneBefore337(x,y)
 end
 local noticeBefore337=Y.noticeAt
@@ -386,12 +394,116 @@ function Y.selectCamera(x,y,previous)
  return cameraBefore340(x,y,previous)
 end
 
+local oldCamera350=Y.selectCamera
+local marketShots350={};for i,c in ipairs(D.cameras)do if c.marketCamera then marketShots350[c.name]=i end end
+function Y.selectCamera(x,y,previous)
+ local name=(x> -22.0 and x< -18.8 and y< -80.7 and y> -86.0)and 'mkt_servico'or((x> -28.5 and x< -22.0 and y< -80.6 and y> -86)and 'mkt_fachada')
+ local i=name and marketShots350[name]
+ if i and sees(D.cameras[i],x,y)and Y.clearance(D.cameras[i],x,y)>5 then return i end
+ if previous and D.cameras[previous].marketCamera then previous=nil end
+ return oldCamera350(x,y,previous)
+end
+
 -- Exact memoization: stationary camera queries do not rescan every view.
 local choose339=Y.selectCamera
 local mx339,my339,mp339,mr339,mo339,mh339
 function Y.selectCamera(x,y,p)
  if x==mx339 and y==my339 and Y.opened==mo339 and Y.hits==mh339 and p==mp339 then return mr339 end
  local r=choose339(x,y,p);mx339,my339,mp339,mr339,mo339,mh339=x,y,p,r,Y.opened,Y.hits;return r
+end
+
+-- Close frontage view for the redesigned Casa33, with a small hold band.
+local selectBeforeFacades352=Y.selectCamera
+function Y.selectCamera(x,y,previous)
+ local active=previous==56;local pad=active and .35 or 0
+ if x< -2.6+pad and x> -5.45 and y> -46-pad and y< -38+pad and sees(D.cameras[56],x,y)and Y.clearance(D.cameras[56],x,y)>5 then return 56 end
+ if active then previous=nil end
+ return selectBeforeFacades352(x,y,previous)
+end
+local N=require('district_data355')
+local beforeWalk355=Y.walkable
+local function near355(x,y,pts,r)
+ for i=1,#pts-1 do local a,b=pts[i],pts[i+1];local dx,dy=b[1]-a[1],b[2]-a[2];local t=math.max(0,math.min(1,((x-a[1])*dx+(y-a[2])*dy)/(dx*dx+dy*dy)));if(x-a[1]-t*dx)^2+(y-a[2]-t*dy)^2<r*r then return true end end
+ return false
+end
+local function district355(x,y)
+ return(x>26.5 and y< -5.2)or(x>24.1 and near355(x,y,N.bridge,1.1))or(x>17.1 and y< -73.0)
+end
+function Y.walkable(x,y)
+ if not district355(x,y)then return beforeWalk355(x,y)end
+ local c=N.circle;local g=N.gas
+ local free=near355(x,y,N.cedros,5.04)or near355(x,y,N.avenue,6.05)or near355(x,y,N.bridge,1.02)or((x-c[1])^2+(y-c[2])^2<c[3]^2)or(x>g[1]and x<g[2]and y>g[3]and y<g[4])
+ for _,r in ipairs(N.forecourts or{})do if x>r[1]and x<r[2]and y>r[3]and y<r[4]then free=true;break end end
+ if not free or x>61 or y> -5.2 then return false end
+ for _,b in ipairs(N.blocks)do if x>b[1]-.17 and x<b[2]+.17 and y>b[3]-.17 and y<b[4]+.17 then return false end end
+ return true
+end
+local beforeCamera355=Y.selectCamera
+local shots355={};for i,c in ipairs(D.cameras)do if c.district355 then shots355[#shots355+1]=i end end
+function Y.selectCamera(x,y,previous)
+ if not district355(x,y)then if previous and D.cameras[previous].district355 then previous=nil end;return beforeCamera355(x,y,previous)end
+ local best,score;local old=previous and D.cameras[previous]
+ if old and old.district355 and not old.reserve355 and sees(old,x,y)and Y.clearance(old,x,y)>17 then return previous end
+ for _,i in ipairs(shots355)do local c=D.cameras[i];if sees(c,x,y)then local edge=Y.clearance(c,x,y);if edge>5 then local p=c.pos;local dist=(p[1]-x)^2+(p[2]-y)^2;local v=edge-dist*.18+(c.reserve355 and -500 or 300)+(i==previous and 24 or 0);if not score or v>score then best,score=i,v end end end end
+ if best then return best end
+ return beforeCamera355(x,y,nil)
+end
+local beforeZone355=Y.zone
+function Y.zone(x,y)
+ if not district355(x,y)then return beforeZone355(x,y)end
+ if y< -84 and x>30 and x<46 then return 'POSTO DE GASOLINA - PROTOTIPO'end
+ if y< -72 then return 'AVENIDA PRINCIPAL - LESTE'end
+ if y< -60 and x>38 then return 'POSTO DE SAUDE - FACHADA'end
+ return y> -18 and 'RUA DOS CEDROS - RETORNO'or'RUA DOS CEDROS'
+end
+local beforeNotice355=Y.noticeAt
+function Y.noticeAt(x,y)
+ if not district355(x,y)then return beforeNotice355(x,y)end
+ if x>59 then return 'O entulho bloqueia a continuacao da avenida.'end
+ if x>38 and y< -62 and y> -68 then return 'O posto de saude esta fechado. Preciso encontrar outra entrada.'end
+ if y< -85 then return 'A porta esta trancada. Interior ainda em preparacao.'end
+ if x<29.4 or x>38.2 then return 'O portao esta trancado.'end
+ return nil
+end
+-- Cache exact stationary queries without changing cuts while moving.
+local select355=Y.selectCamera
+local qx355,qy355,qp355,qo355,qr355
+function Y.selectCamera(x,y,p)
+ if x==qx355 and y==qy355 and p==qp355 and Y.opened==qo355 then return qr355 end
+ local r=select355(x,y,p);qx355,qy355,qp355,qo355,qr355=x,y,p,Y.opened,r;return r
+end
+
+local cinema=require('cinema356')
+local cameraZones374=require('camera_zones374')
+function Y.selectCamera(x,y,previous)
+ local shot=cameraZones374.select(D.cameras,cinema,x,y,previous)
+ -- No unrelated global camera is eligible after entering this exterior scene.
+ return shot or previous or 1
+end
+Y.cameraZones=cameraZones374
+
+local previousWalk364=Y.walkable
+function Y.walkable(x,y)
+ -- Exchanged lots: market frontage at former Casa31; Casa31 faces the avenue.
+ if x> -19 and x< -5.4 and y> -66.5 and y< -52.4 then
+  if math.abs(x+5.65)<.25 and math.abs(y+55.8)>.65 then return false end
+  return x> -9.0 and x< -5.4 and y> -65.8 and y< -52.8
+ end
+ if x> -31.2 and x< -18.8 and y> -96 and y< -84.2 then
+  return y> -84.95 or(x< -27.32 and x> -29.35 and y> -94.7)
+ end
+ return previousWalk364(x,y)
+end
+local previousNotice364=Y.noticeAt
+function Y.noticeAt(x,y)
+ if (x+27.8)^2+(y+86.65)^2<1.2 then return 'A parede cedeu. Posso entrar por aqui.'end
+ return previousNotice364(x,y)
+end
+local previousZone364=Y.zone
+function Y.zone(x,y)
+ if x< -5.4 and x> -19 and y< -52.4 and y> -66.5 then return 'MERCADINHO - RUA DAS ACACIAS'end
+ if x< -18.8 and y< -84.2 then return 'CASA 31 - SOBRADO'end
+ return previousZone364(x,y)
 end
 
 return Y
