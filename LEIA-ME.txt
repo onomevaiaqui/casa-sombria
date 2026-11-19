@@ -1,7 +1,7 @@
-A Última Entrega — 16.42
+A Última Entrega — 16.43
 Pacote fonte nativo Lupi. Extraia o conteúdo na raiz do repositório do jogo e sincronize pelo Lupi.
 Início normal pelo menu Novo Jogo. B: interagir. R+Y: soco. R+X: chute.
 Teste: sair da cozinha da primeira casa; câmera da menina no balanço; interação opcional; seguir ao portão para revelar a mulher na árvore. Continuar até Casa 39 e depósito.
 Validação local não substitui teste no aparelho.
 
-16.42: compatibilidade com Sprites somente leitura; aliases privados, sem alterar a tabela do console.
+16.43: compatibilidade com Sprites somente leitura; aliases privados, sem alterar a tabela do console.

@@ -1,6 +1,6 @@
 KICK_X397=(BTN_Q and BTN_X and BTN_Z and BTN_G)and BTN_E or 14
 do if BTN_Q and BTN_X and BTN_Z and BTN_G then BTN_F,BTN_Z,BTN_G,BTN_E=BTN_Q,BTN_X,BTN_Z,BTN_G end end
-require('sprite_aliases345')
+require('sprite_refs543')
 local boot349=require('boot349')
 local interaction287=require('interaction287')
 local deathScreen=require('death171')
@@ -139,7 +139,7 @@ local sceneSprites
 local itemSprites = {}
 local inventory
 if type(require) == "function" and type(ui.spr) == "function" then
-    local _, spritesModule = pcall(require, "sprite_aliases345")
+    local _, spritesModule = pcall(require, "sprite_refs543")
     local _, paletteModule = pcall(require, "palette")
     local sprites = spritesModule
     local colors = type(_G.Palette) == "table" and _G.Palette or paletteModule
@@ -2308,7 +2308,7 @@ function update()
     end
     ui.rectfill(0,0,479,15,240)
     local motion = walking and (running and " / CORRIDA" or " / PASSOS") or ""
-    ui.print("16.42 / "..status..motion,8,3,241)
+    ui.print("16.43 / "..status..motion,8,3,241)
     frameTime.hud(ui)
     if not native and not fine and gridPatches then
         for _, patch in ipairs(gridPatches) do
