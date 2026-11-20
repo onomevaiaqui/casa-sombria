@@ -27,10 +27,11 @@ function E.hit(x,y,angle,equipped,canWalk)
  if dist>reach or(dx*math.sin(angle)-dy*math.cos(angle))/math.max(.001,dist)<.4 then return false end
  for i=1,3 do if not canWalk(x+dx*i/4,y+dy*i/4)then return false end end
  E.hp=math.max(0,math.floor(E.hp*10+.5)-(equipped=='crowbar'and 12 or 8))/10
- state(E.hp==0 and 'dead'or 'hit');E.cooldown=.45;return true
+ require('sound626').emit(E.hp==0 and 'inimigo_morte'or 'inimigo_dor');state(E.hp==0 and 'dead'or 'hit');E.cooldown=.45;return true
 end
 function E.tick(dt,x,y,paused,canWalk)
  if paused then return end
+ require('sound626').presence('street',E.state=='walk',(x-E.x)^2+(y-E.y)^2<49,dt)
  dt=math.min(.1,math.max(0,dt));E.time=E.time+dt*(E.state=='rise'and 1.6 or E.state=='attack'and 1.35 or E.state=='hit'and 1.5 or 1);E.cooldown=math.max(0,(E.cooldown or 0)-dt)
  if E.state=='sleep'then
   -- The trigger is beyond the bend, not while approaching the house from the street.
@@ -56,7 +57,7 @@ function E.tick(dt,x,y,paused,canWalk)
  -- No pursuing into either house or past the entrance to the side trail.
  if x<6.2 or x>18.1 or y<5 or y>12.6 or distance>12 then return end
  E.angle=math.atan(dx,-dy)
- if distance<.86 and E.cooldown<=0 then E.connected=false;state('attack');return end
+ if distance<.86 and E.cooldown<=0 then E.connected=false;state('attack');require('sound626').emit('inimigo_ataque');return end
  if distance<=.68 then return end
  local amount=math.min(1.5*dt,math.max(0,distance-.72));local n=math.max(1,math.ceil(amount/.04));local ax,ay=dx/distance*amount/n,dy/distance*amount/n
  for i=1,n do

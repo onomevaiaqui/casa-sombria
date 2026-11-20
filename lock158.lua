@@ -47,4 +47,3 @@ function L:draw(ui)
  ui.print('B CONFIRMAR   A VOLTAR',24,253,241)
 end
 return L
-

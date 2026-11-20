@@ -139,7 +139,7 @@ function M.action(x,y)
  local bit=2^(best-1);M.bits=M.bits+(open(best)and -bit or bit)
  -- A leaf cannot close through the player or swing onto their position.
  if not M.walkable(x,y)then M.bits=M.bits+(open(best)and -bit or bit);key=nil;return 'B: ABRIR PORTA'end
- key=nil;return open(best)and 'Porta aberta.'or 'Porta fechada.'
+ key=nil;if open(best)then require('sound626').emit('porta_abrir')end;return open(best)and 'Porta aberta.'or 'Porta fechada.'
 end
 function M.release()depth,key,baseDepth,baseKey=nil,nil,nil,nil end
 function M.room(x,y)return room(x,y)end

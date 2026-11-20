@@ -5,6 +5,7 @@ function L.reset()L.hp=4;L.dead=false;L.time=0;L.hitTime=nil;L.previousA=true;L.
 function L.damage()
  if L.dead then return false end
  L.hp=math.max(0,L.hp-1)
+ require('sound626').emit('soco_impacto');require('sound626').emit(L.hp==0 and 'personagem_morte'or 'personagem_dor')
  if L.hp>0 then L.hitTime=0 end
  if L.hp==0 then L.dead=true;L.time=0;L.hitTime=nil;L.previousA=true;L.previousB=true end
  return true

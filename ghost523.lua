@@ -45,6 +45,6 @@ function G.draw(ui,metric,room)
   if ghost then for pixel,col in pairs(mask532)do local x,y=pixel%480,math.floor(pixel/480);local n=(mask532[pixel-1]and 1 or 0)+(mask532[pixel+1]and 1 or 0)+(mask532[pixel-480]and 1 or 0)+(mask532[pixel+480]and 1 or 0);local level=n<3 and 1 or(n<4 and 2 or 3);ui.line(x,y,x,y,blendPixel525 and blendPixel525(x,y,col==241 and 1 or 0,level)or col)end;mask532=nil end
  end
  mesh(D.sv,D.sf,false);mesh(D.v,D.f,true)
- if require('cameras168').shot==8 then H=H or require('ghost531_data');for i,color in ipairs(H.palette)do ui.palset(hangingSlots540[i],color)end;mesh(H.v,H.f,false,true)end
+ if require('cameras168').shot==8 then H=H or require('ghost531_data');for i,color in ipairs(H.palette)do ui.palset(hangingSlots540[i],require('lighting593').color(color,room,H.x,H.y))end;mesh(H.v,H.f,false,true)end
 end
 return G

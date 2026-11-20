@@ -1,9 +1,9 @@
-A Última Entrega — 16.44
-Pacote fonte nativo Lupi. Extraia o conteúdo na raiz do repositório do jogo e sincronize pelo Lupi.
-Início normal pelo menu Novo Jogo. B: interagir. R+Y: soco. R+X: chute.
-Teste: sair da cozinha da primeira casa; câmera da menina no balanço; interação opcional; seguir ao portão para revelar a mulher na árvore. Continuar até Casa 39 e depósito.
-Validação local não substitui teste no aparelho.
-
-16.44: compatibilidade com Sprites somente leitura; aliases privados, sem alterar a tabela do console.
-
-16.44: inicializacao protegida e dividida por modulo. Tela de erro permanece visivel com etapa e memoria. Nenhuma imagem de areas futuras e exigida durante a abertura. Fundos legados nao utilizados foram removidos da decodificacao nativa.
+A Ultima Entrega - 16.45
+Pacote fonte nativo Lupi. Inicio pelo menu Novo Jogo.
+B: interagir. R+Y: soco. R+X: chute. Mira automatica nas opcoes.
+Campinho: menino de camiseta vermelha; ativa ao entrar na regiao de confronto; persegue no campo; deixa a chave da Casa 39 quando morre.
+Camera de combate obliqua para mostrar jogador e inimigo sem vegetacao na frente.
+Audio nativo em Furnace: menu, vidro, combate, portas, vozes e passos por superficie.
+A API de musica possui uma unica reproducao: efeitos prioritarios interrompem e retomam a trilha. Passos gravados nao interrompem trilhas de suspense.
+Carregamento de dados por comodo para reduzir memoria. Sprites e descritores permanecem somente leitura.
+Validado localmente em Lua 5.4 com teto de 4 MiB e 31 arquivos Furnace reproduzidos. Teste fisico no Lupi ainda necessario.

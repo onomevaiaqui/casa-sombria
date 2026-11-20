@@ -1,11 +1,18 @@
-local Q={mode=nil,cursor=1,digits={0,0,0,0},choice=1,key={22,11.5,.12}}
+local Q={mode=nil,cursor=1,digits={0,0,0,0},choice=1,key=nil}
 local inv,refs
-function Q.setup(i,r)inv,refs=i,r end
+function Q.setup(i,r)
+ inv,refs=i,r;Q.mode=nil
+ Q.key=inv.collected.field641_key_dropped and {inv.collected.field641_key_x,inv.collected.field641_key_y,.12}or nil
+end
+function Q.dropFieldKey(x,y)
+ if not inv or inv.collected.back_key39 then return end
+ Q.key={x,y,.12};inv.collected.field641_key_dropped=true;inv.collected.field641_key_x=x;inv.collected.field641_key_y=y
+end
 function Q.busy()return Q.mode~=nil end
 local function near(x,y,a,b)return(x-a)^2+(y-b)^2<1 end
 function Q.action(room,x,y)
  if room=='c39casinha'and(x-1.2)^2+(y-1.65)^2<.65^2 and not inv.collected.crowbar then Q.mode='axe';Q.choice=1;Q.prev={};return true end
- if room=='campo'and near(x,y,Q.key[1],Q.key[2])and not inv.collected.back_key39 then Q.mode='key';Q.choice=1;Q.prev={};return true end
+ if room=='campo'and Q.key and near(x,y,Q.key[1],Q.key[2])and not inv.collected.back_key39 then Q.mode='key';Q.choice=1;Q.prev={};return true end
  if room=='c39quintal'and near(x,y,-4.925,16.3)and not inv.collected.house39_shed_open then Q.mode='code';Q.cursor=1;Q.digits={0,0,0,0};Q.error=nil;Q.prev={};return true end
  return false
 end
@@ -46,7 +53,7 @@ function Q.drawPickup(ui,m,room,visible)
   require('axe441').draw(ui,m,visible)
   return
  end
- if room~='campo'or not inv or inv.collected.back_key39 then return end
+ if room~='campo'or not Q.key or not inv or inv.collected.back_key39 then return end
  local a,b,z=Q.key[1],Q.key[2],Q.key[3];local w=m[4][1]*a+m[4][2]*b+m[4][3]*z+m[4][4];if w<=.1 then return end
  local x=((m[1][1]*a+m[1][2]*b+m[1][3]*z+m[1][4])/w+1)*240;local y=(1-(m[2][1]*a+m[2][2]*b+m[2][3]*z+m[2][4])/w)*135
  local v={x,y,w};if x>8 and x<472 and y>18 and y<260 and(not visible or visible(v,v,v))then ui.spr(refs.w350_key,x-8,y-8)end

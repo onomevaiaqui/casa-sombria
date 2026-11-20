@@ -5,7 +5,7 @@ table.insert(D.list,{id='jardim_quintal',label='PORTAO DO QUINTAL',bit=64,asset=
 D.list[5].ends.quintal.y=6.3
 table.insert(D.list,{id='garagem_externa',label='PORTA DE ROLO',bit=256,asset=0,ends={garagem={x=3.2,y=0,axis=2},frente={x=14.4,y=5.9,axis=2}}})
 function D.reset()D.opened={};D.unlocked={}end
-function D.open(id)D.opened[id]=true;D.unlocked[id]=true end
+function D.open(id)if not D.opened[id]then require('sound626').emit('porta_abrir')end;D.opened[id]=true;D.unlocked[id]=true end
 function D.close(id)D.opened[id]=nil end
 function D.unlock(id)D.unlocked[id]=true end
 function D.isOpen(id)return not not D.opened[id]end

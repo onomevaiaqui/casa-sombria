@@ -19,10 +19,24 @@ function M.tick(moved,dt,running,surface,paused)
  progress=progress+moved/(running and 1.5059204352 or .8788280859)
  if progress<1 or cooldown>0 then return end
  progress=progress%1;cooldown=.22;M.count=M.count+1
- if M.preview then print('STEP292|'..surface);M.status='PREVIA FUR';return end
- if type(music)~='table'or type(music.play)~='function'then M.status='SEM API';return end
- local ok,value,reason=pcall(music.play,paths[surface],0)
- if not ok or value==false or(value==nil and type(reason)=='string')then M.status='ERRO AUDIO'
- else M.status='FUR SOLICITADO'end
+ require('audio645').effect(surface);M.status='FUR NATIVO'
 end
+
+function M.houseSurface(room,x,y)
+ if room=='banheiro'then return 'azulejo'end
+ if room=='quintal'then return 'grama'end
+ if room=='frente'then
+  if y<1 or (x>13.1 and x<15.7)then return 'calcada'end
+  return 'grama'
+ end
+ if room=='garagem'or room=='area'then return 'azulejo'end
+ return 'madeira'
+end
+local field624='gggggggggggggggggggggggggggggggggttttttggggggggggggggttggttttttggggggggggggggtggttttttttggtgtgggggggggttttttttttttgtgttgggggggtttttttttttttggttgggtggttgttttttttttttttgggtttttttttttttttttttgggggggtttttttttttttttgtggggggggttttttttttttttttgggggggtttttttttttttttttgggggggtttttttttttttttttgtgggggggtttttttttttttgggtgggggtttttttttttttttttgggggggtttttttttttttttttggggggggttttttttttttttttgggggggtgtttttttttttttttgggggggggtttttttttttttttggggggtgtttttttttttttttgttggggggtttttttttttttttttgggggggttgttttttttttttgggggggtttttttttttttttttgtgggggtttttttttttttttttttgggggttttttttttttttttttggggggtttttttttttttttttttttgggtggtttttttttttttttgggggggggttttttttttttttttgggtggttttttttttttttttgttggggggtttttgttttttttgtggggggtttttttttttttttttttgggggttgttttttttttttttttgggggttgtggttttttttttttggggggggggtttttttttttggttgggggggggggtttttttggggggggggggggggggttttttggggggggggggggggggggggggggggggggg'
+function M.fieldSurface(x,y)
+ local ix=math.floor((x-.5)/23*24);local iy=math.floor((y-4.5)/35*36)
+ if ix<0 or ix>=24 or iy<0 or iy>=36 then return 'grama'end
+ return field624:sub(iy*24+ix+1,iy*24+ix+1)=='g'and 'grama'or 'terra'
+end
+
 return M

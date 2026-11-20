@@ -112,5 +112,3 @@ function Z.select(views,C,x,y,previous)
  lastZone,lastX,lastY,lastShot=z,x,y,shot;return shot,z.id
 end
 return Z
-
-

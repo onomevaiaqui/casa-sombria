@@ -1,10 +1,20 @@
 local cache=type(package)=='table'and package.loaded or nil
-local D=require('facility_data363')
+local D
+local loadedData
 local cinema=require('cinema356')
-local M={cameras=D.cameras,palette={},doors={},bits=0,current='loja'}
+local M={cameras={},palette={},doors={},bits=0,current='loja'}
 for i=1,205 do M.palette[i]=0 end
 local depth,key
-function M.enter(r)assert(D.rooms[r],'Comodo ausente');M.current=r;M.release()end
+function M.enter(r)
+ M.release()
+ local name='facility_room645_'..r
+ if loadedData~=name then
+  D=nil;M.cameras={};if cache and loadedData then cache[loadedData]=nil end
+  cinema.pressure();collectgarbage('collect')
+  D=require(name);loadedData=name;if cache then cache[name]=nil end
+ end
+ assert(D.rooms[r],'Comodo ausente');M.cameras=D.cameras;M.current=r
+end
 function M.room()return M.current end
 local titles415={c39p_sala='SALA',c39p_cozinha='COZINHA',c39p_casal='QUARTO CASAL',c39p_solteiro='QUARTO DUAS CAMAS',c39p_banho='BANHEIRO',c39p_corredor='CORREDOR'}
 function M.roomTitle()local c=M.selected415 and D.cameras[M.selected415];return M.current=='c39teste'and c and('CASA 39 - '..(titles415[c.name]or'INTERIOR'))or D.rooms[M.current].title end
@@ -20,6 +30,18 @@ function M.defaultSpawn()
  return assert(best,'Comodo sem area livre')
 end
 function M.selectCamera(x,y,old)
+ if M.current=='campo'and x>=4.5 and x<=22.5 and y>=22 and y<=38.8 then
+  for k,c in ipairs(D.cameras)do if c.name=='campo_10'and cinema.sees(c,x,y)and cinema.framing(c,x,y)>7 then
+   M.selected415=k;for j=1,#c.bank do M.palette[j]=c.bank[j]end;return k
+  end end
+ end
+
+ if M.current=='campo'and x>=4.5 and x<=22.5 and y>=22 and y<=38.8 then
+  for k,c in ipairs(D.cameras)do if c.name=='campo_10'and cinema.sees(c,x,y)and cinema.framing(c,x,y)>7 then
+   M.selected415=k;for j=1,#c.bank do M.palette[j]=c.bank[j]end;return k
+  end end
+ end
+
  local i=cinema.select(D.cameras,x,y,old,M.current);if M.current=='c39quintal'and x>.65 and x<9.5 and y>15.8 then for k,c in ipairs(D.cameras)do if c.name=='q409_integrada_0'and cinema.sees(c,x,y)and cinema.framing(c,x,y)>7 then i=k;break end end end;if M.current=='c39quintal'and x>8.5 and y>5.5 and y<9 then for k,c in ipairs(D.cameras)do if c.name=='q421_patio_direito'and cinema.sees(c,x,y)and cinema.framing(c,x,y)>6 then i=k;break end end end;if M.current=='c39quintal'and x>6 and x<8 and y>5.5 and y<7 then for k,c in ipairs(D.cameras)do if c.name=='q421_porta_frente'and cinema.sees(c,x,y)and cinema.framing(c,x,y)>6 then i=k;break end end end;if M.current=='c39quintal'and x>6.1 and x<8.5 and y>15.6 then for k,c in ipairs(D.cameras)do if c.name=='q420_fundos_porta'and cinema.sees(c,x,y)and cinema.framing(c,x,y)>6 then i=k;break end end end;if M.current=='c39quintal'and x>9.1 and x<9.5 and y>5.6 and y<6.1 and cinema.framing(D.cameras[52],x,y)>10 then i=52 end;if M.current=='c39quintal'and x<.3 and y>6.37 then local k=y<12.6 and 47 or 53;if cinema.sees(D.cameras[k],x,y)and cinema.framing(D.cameras[k],x,y)>7 then i=k end end;if M.current=='c39quintal'and x> -5.7 and x<9 and y>17.5 and cinema.sees(D.cameras[55],x,y)and cinema.framing(D.cameras[55],x,y)>7 then i=55 end;if M.current=='c39quintal'and(x+4.925)^2+(y-16.3)^2<2.5 and cinema.sees(D.cameras[62],x,y)and cinema.framing(D.cameras[62],x,y)>7 then i=62 end;if M.current=='c39quintal'and x>10.8 and y>12 then local k=y<15.4 and 48 or 60;if cinema.sees(D.cameras[k],x,y)and cinema.framing(D.cameras[k],x,y)>4 then i=k end end;M.selected415=i;local bank=D.cameras[i].bank
  for j=1,#bank do M.palette[j]=bank[j]end
  return i

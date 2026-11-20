@@ -1,0 +1,6 @@
+Wall Lamp - 2048px2 (L03), by Mark Peters
+https://sketchfab.com/3d-models/wall-lamp-2048px2-487c69d1748c46d2b3cc433fe6885a5e
+Creative Commons Attribution 4.0
+https://creativecommons.org/licenses/by/4.0/
+Adaptations: scaled to 34cm high, positioned twice in the first-house corridor,
+embedded source textures, bulb emission and cloth shadow response adjusted.

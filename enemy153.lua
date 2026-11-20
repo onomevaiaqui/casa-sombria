@@ -51,7 +51,7 @@ local function paint()
 end
 local slots={205,206,207,208,209,210,211,212,213,214,215,219,220,221,222,223}
 local function ink(n)return slots[n+1]end
-function E.palette(ui)for i,color in ipairs(D.palette)do ui.palset(slots[i],color)end end
+function E.palette(ui)for i,color in ipairs(D.palette)do ui.palset(slots[i],require('lighting593').color(color,E.room,E.x,E.y))end end
 function E.reset()
  E.hp=E.maxHp;E.x,E.y=homeX,homeY;E.state='alive';E.time=0;E.runTime=0;E.attackTime=nil;E.cooldown=.15;E.mode='idle';E.moving=false;E.enabled=true;nav.clear();corpseRoom=nil
 end
@@ -73,6 +73,7 @@ function E.tryHit(room,x,y,facing,baton)
  -- Integer tenths avoid fractional residues delaying the death animation.
  local damage=baton and 12 or 8
  E.hp=math.max(0,math.floor(E.hp*10+.5)-damage)/10
+ require('sound626').emit(E.hp<=0 and 'mulher_morte'or 'mulher_dor')
  if E.hp<=0 then E.state='dying';E.time=0;E.attackTime=nil end
  return true
 end
@@ -109,6 +110,7 @@ end
 function E.tick(dt,room,px,py)
  if not E.enabled then return end
  E.moving=false
+ require('sound626').presence('front',E.state=='alive'and not E.attackTime,room==E.room and (px-E.x)^2+(py-E.y)^2<49,dt)
  if E.state=='dying'then E.time=math.min(D.clips.death.duration,E.time+dt);if E.time>=D.clips.death.duration then E.state='dead'end;return end
  if E.state=='dead'then return end
  E.time=(E.time+dt)%D.clips.idle.duration
@@ -133,7 +135,7 @@ function E.tick(dt,room,px,py)
   local dx,dy=px-E.x,py-E.y
   if dx*dx+dy*dy<=.95^2 then
    E.angle=math.atan(dx,-dy)
-   if E.cooldown==0 then E.attackTime=0;E.attackHit=false end
+   if E.cooldown==0 then E.attackTime=0;E.attackHit=false;require('sound626').emit('mulher_ataque') end
   else moveToward(px,py,dt,px,py,true)end
  elseif(E.x-homeX)^2+(E.y-homeY)^2>.15^2 then moveToward(homeX,homeY,dt,px,py,false)end
 end

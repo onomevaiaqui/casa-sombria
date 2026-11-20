@@ -119,4 +119,3 @@ function E.draw(ui,m,visible)
  table.sort(faces,far);for _,f in ipairs(faces)do ui.trisfill(f[1][1],f[1][2],f[2][1],f[2][2],f[3][1],f[3][2],f[5])end
 end
 return E
-

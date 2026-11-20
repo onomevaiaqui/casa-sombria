@@ -1,0 +1,23 @@
+{
+  "version": "16.45",
+  "lua_version": "5.4",
+  "lua_memory_test_cap_bytes": 4194304,
+  "physical_console_tested": false,
+  "menu_new_game_staged_exit_field_combat_key": true,
+  "facility_rooms_lazy": 18,
+  "immutable_sprites": true,
+  "package_absent_runtime": true,
+  "png_count": 1787,
+  "max_bitmap_pixels": 43520,
+  "max_bitmap_colors": 191,
+  "icon_size": [
+    64,
+    32
+  ],
+  "icon_frames": 12,
+  "furnace_files_rendered": 31,
+  "max_sample_bytes": 192000,
+  "audio_contract_reference": "https://github.com/onomevaiaqui/lupi3d/blob/main/audio.lua",
+  "audio_single_stream": true,
+  "download_sync_server_conversion_tested": false
+}

@@ -29,6 +29,7 @@ function I.tick(dt)
  if s.stage=='align'then
   local t=p*p*(3-2*p);s.set(interpolate(s.from[1],s.dock[1],t),interpolate(s.from[2],s.dock[2],t),turn(s.from[3],s.face,t))
  elseif s.stage=='open'then
+  if s.kind~='pickup'and not s.sound629 and p>=.17 then s.sound629=true;require('sound626').emit('porta_abrir')end
   if s.kind~='pickup'and not s.opened and p>=.90 then s.opened=true;s.open()end
  elseif s.stage=='cross'then s.advance(p)
  elseif s.stage=='close'then

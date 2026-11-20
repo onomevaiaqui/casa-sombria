@@ -39,7 +39,7 @@ function P.draw(ui)
  ui.cls(240);ui.palset(240,0);ui.palset(241,32767)
  if not inspectionSlots339 then local by={};for i,c in ipairs(require('palette'))do by[c]=i-1 end;inspectionSlots339={};for i,c in ipairs(inspectionKeys339)do inspectionSlots339[i]=assert(by[c],'Inspection palette missing')end end
  for i,c in ipairs(palette)do ui.palset(inspectionSlots339[i],c)end
- if not sprites then sprites=require('sprite_refs544')end
+ if not sprites then sprites=require('sprite_refs645')end
  local frame=math.floor(angle/(2*math.pi)*16+.5)%16
  local level=tilt>.15 and 1 or 0
  local state=id=='back_key39'and 'key'or(bag.collarBoxOpen and frame>=5 and frame<=11 and 'open'or 'closed')

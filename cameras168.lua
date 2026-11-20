@@ -89,6 +89,10 @@ end
 function C.select(room,x,y)
  local views=data[room];if not views then return end
  if C.room~=room then C.shot=nil end;C.room=room
+ if room=='banheiro'and views[2]then
+  local sx,sy=project(views[2],x,y,0);local hx,hy=project(views[2],x,y,1.85)
+  if sx>12 and sx<468 and sy>22 and sy<265 and hx>12 and hx<468 and hy>22 and hy<265 then C.shot=2;return true end
+ end
  if room=='quintal'and views[8]and views[9]then
   local preferred=(C.shot==8 and y<3.35 or y<2.85)and 8 or 9
   local alternate=preferred==8 and 9 or 8

@@ -103,6 +103,12 @@ M.banks.area=M.banks.sala
 M.banks.ferramentas=M.banks.sala
 -- Tree trunk only; foliage and rope stay nonblocking.
 boxes.quintal[#boxes.quintal+1]={1.8436,2.0836,2.2408,2.4808}
+-- Bathroom 580: rear shower, fixtures on west wall, clear right entrance.
+boxes.banheiro={{.10,.50,.375,.925},{.15,.65,1.15,1.81},{.10,1.45,1.935,1.965},{.085,.115,1.95,2.85}}
+-- Bed headboard clears the rear wall by 4.6cm after its 10cm inward move.
+for _,b in ipairs(boxes.quarto)do
+ if math.abs(b[1]-1.55)<.01 and math.abs(b[2]-3.15)<.01 then b[3],b[4]=b[3]-.10,b[4]-.10 end
+end
 nativeCollision.prepare(boxes)
 M.boxes,M.sizes=boxes,sizes
 return M

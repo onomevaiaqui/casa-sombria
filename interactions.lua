@@ -8,7 +8,9 @@ I.paintings={
  }
 }
 I.ghostGirl={id='ghost_girl_swing',room='quintal',lookX=0,lookY=1,pages={'Mamãe foi brincar na árvore.'}}
+I.rottenFood={id='cozinha_comida_podre',room='cozinha',lookX=0,lookY=1,pages={'A comida esta podre. O cheiro neste ambiente e insuportavel.'}}
 function I.nearby(room,x,y)
+ if room=='cozinha'and x>=.3 and x<=3.4 and y>=2.8 and y<=3.65 then return I.rottenFood end
  if room=='quintal'and (x-1.4585)^2+(y-7.676)^2<1.4^2 then
   local d=math.max(.001,math.sqrt((x-1.4585)^2+(y-7.676)^2));I.ghostGirl.lookX=(1.4585-x)/d;I.ghostGirl.lookY=(7.676-y)/d;return I.ghostGirl
  end

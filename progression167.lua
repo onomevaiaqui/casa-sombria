@@ -1,7 +1,7 @@
 -- Story locks use existing door/enemy state. No invented key or new save flag.
 local P={}
 local entrance='Tem alguma coisa la fora. Melhor procurar outra saida.'
-local inner='Parece estar trancada pelo outro lado.'
+local inner='Esta emperrada.'
 function P.defeated(enemy)return enemy.hp<=0 end
 function P.message(id,room,enemy,doors)
  if id=='entrada'and not P.defeated(enemy)then return entrance end

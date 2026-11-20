@@ -1,0 +1,12 @@
+Horror game chase theme - Seizawa
+https://opengameart.org/content/horror-game-chase-theme
+CC BY-SA 4.0 - https://creativecommons.org/licenses/by-sa/4.0/
+Adaptations: loudness adjustment and OGG conversion. Derived music files remain CC BY-SA 4.0.
+
+Alternative Chase! - Ted Kerr / Wolfgang_
+https://opengameart.org/content/chase - CC0.
+
+Hollow - CAPTNPHANTOM, PSX Ambient Pack, existing asset library.
+
+Native PCM conversion: NES / signed 8-bit mono. Original sources and conversion report retained in local outputs/Publicacao-Lupi-645/audio-assets.json.
+Footsteps: Hazard Pay / 40 FREE PSX Crunchy Footsteps, royalty-free per author. Combat impacts: Independent.nu (CC0). Player grunts: EZduzziteh (CC0). Female voices: AuraVoice (CC0). Door sounds and zombie voices retain original catalog credits.
