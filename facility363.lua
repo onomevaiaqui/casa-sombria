@@ -7,7 +7,7 @@ for i=1,205 do M.palette[i]=0 end
 local depth,key
 function M.enter(r)
  M.release()
- local name='facility_room645_'..r
+ local name='facility_room656_'..r
  if loadedData~=name then
   D=nil;M.cameras={};if cache and loadedData then cache[loadedData]=nil end
   cinema.pressure();collectgarbage('collect')

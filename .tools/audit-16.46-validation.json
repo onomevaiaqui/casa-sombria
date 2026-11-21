@@ -1,0 +1,24 @@
+{
+  "version": "16.46",
+  "lua_version": "5.4",
+  "lua_memory_test_cap_bytes": 4194304,
+  "menu_new_game_and_field_combat_key_tested": true,
+  "inventory_manual_pages_tested": 6,
+  "palette_colors": 205,
+  "bitmap_roundtrips_verified": 2352,
+  "unique_png_count": 1815,
+  "max_bitmap_pixels": 43520,
+  "max_bitmap_colors": 191,
+  "icon_size": [
+    64,
+    32
+  ],
+  "icon_frames": 12,
+  "furnace_files": 31,
+  "audio_unchanged_from_validated_1645": true,
+  "audio_api_tests_passed": true,
+  "physical_console_tested": false,
+  "server_conversion_tested": false,
+  "menu_pizza_removed": true,
+  "file_reader": "black background, paginated serif overlay"
+}

@@ -1,9 +1,11 @@
-A Ultima Entrega - 16.45
-Pacote fonte nativo Lupi. Inicio pelo menu Novo Jogo.
-B: interagir. R+Y: soco. R+X: chute. Mira automatica nas opcoes.
-Campinho: menino de camiseta vermelha; ativa ao entrar na regiao de confronto; persegue no campo; deixa a chave da Casa 39 quando morre.
-Camera de combate obliqua para mostrar jogador e inimigo sem vegetacao na frente.
-Audio nativo em Furnace: menu, vidro, combate, portas, vozes e passos por superficie.
-A API de musica possui uma unica reproducao: efeitos prioritarios interrompem e retomam a trilha. Passos gravados nao interrompem trilhas de suspense.
-Carregamento de dados por comodo para reduzir memoria. Sprites e descritores permanecem somente leitura.
-Validado localmente em Lua 5.4 com teto de 4 MiB e 31 arquivos Furnace reproduzidos. Teste fisico no Lupi ainda necessario.
+A Ultima Entrega - 16.46
+Inicio normal pelo menu Novo Jogo.
+Menu: pizza retirada; casa ao fundo preservada.
+Casa 39: bilhete N04 com fita, escrita azul velha e sem assinatura.
+B alterna imagem/transcricao do bilhete. A fecha.
+Inventario > Arquivos: B abre leitura em tela cheia. Direcional muda paginas. A volta a lista.
+Pedido de entrega: texto original mais manual em seis paginas, incluindo comandos do Lupi e teclado da previa.
+Audio nativo: 31 arquivos Furnace; chamadas de reproducao/fade conforme o contrato usado no Lupi Combat 3D.
+A API documentada possui uma unica reproducao de musica: efeitos prioritarios interrompem e retomam a trilha. Passos gravados nao interrompem a trilha de suspense.
+Sprites somente leitura. Dados por comodo para reduzir picos de memoria.
+Validacao local em Lua 5.4 com teto de 4 MiB; 2352 bitmaps conferidos apos conversao. Teste fisico no console e conversao no servidor ainda precisam ser confirmados.

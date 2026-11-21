@@ -1,7 +1,7 @@
 local B={label='ABRIR JOGO',error=nil,loaded=false}
 local core,frames= nil,0
 local pending=1
-local modules={'sprite_refs645','interaction287','death171','shutter169','turn168','progression167','photo162','survival158','steering157','enemy153','gc150','frame_time','metric_rooms','cameras168','doors131','passage156','lock158','crowbar160','combat164','interactions','subtitles','perspective','navigation'}
+local modules={'sprite_refs656','interaction287','death171','shutter169','turn168','progression167','photo162','survival158','steering157','enemy153','gc150','frame_time','metric_rooms','cameras168','doors131','passage156','lock158','crowbar160','combat164','interactions','subtitles','perspective','navigation'}
 local reserve=string.rep(' ',16384)
 local function memory()if type(collectgarbage)=='function'then local ok,k=pcall(collectgarbage,'count');if ok then return math.floor(k)end end;return 0 end
 function B.stage(label)B.label=label end
@@ -17,7 +17,7 @@ local function fail(err)
 end
 function B.tick()
  if B.error then
-  canvas();ui.print('16.45 - FALHA NA INICIALIZACAO',10,15,241)
+  canvas();ui.print('16.46 - FALHA NA INICIALIZACAO',10,15,241)
   ui.print('ETAPA: '..B.label,10,37,241)
   ui.print('MEMORIA LUA: '..memory()..' KB',10,55,241)
   local row=0
@@ -28,7 +28,7 @@ function B.tick()
   ui.print('Envie uma foto desta tela.',10,246,241);return
  end
  if not B.loaded then
-  frames=frames+1;canvas();ui.print('16.45 - CARREGANDO JOGO',14,85,241)
+  frames=frames+1;canvas();ui.print('16.46 - CARREGANDO JOGO',14,85,241)
   ui.print('MEMORIA LUA: '..memory()..' KB',14,110,241)
   if frames<3 then return end
   if modules[pending]then
@@ -37,7 +37,7 @@ function B.tick()
    if type(collectgarbage)=='function'then pcall(collectgarbage,'collect')end
    pending=pending+1;return
   end
-  local ok,err=pcall(require,'game_core645')
+  local ok,err=pcall(require,'game_core656')
   local candidate=update;update=function()B.tick()end
   if not ok then fail(err);return end
   core=candidate;B.loaded=true;reserve=nil

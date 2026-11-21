@@ -1,0 +1,1 @@
+Menu sem pizza e bilhete N04: imagens geradas/editadas com a ferramenta image_gen, sob orientacao do projeto. Fontes e arquivos de trabalho locais: outputs/Menu-Sem-Pizza-656/SOURCE.json e outputs/Bilhete-Escrita-Gasta-652/SOURCE.json. A tipografia das transcricoes foi rasterizada; nenhum arquivo de fonte foi incluido.

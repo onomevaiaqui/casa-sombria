@@ -23,7 +23,7 @@ local items = {
 }
 
 local documents = {
- mother_note39={title='Recado da mae',text='Filha, seu irmao foi jogar bola e levou a chave. Ele deve estar no campinho. - Mae'},
+ mother_note39={title='Recado da mae',text='Filha, seu irmao foi jogar bola e levou a chave. Ele deve estar no campinho.'},
     gazebo_order={title='Bilhete no coreto',text='Nao espere na frente. A persiana do mercadinho travou de novo. Use a porta de servico, no canto direito. Deixei a chave do deposito perto do caixa. - N.'},
     market_ledger={title='Anotacao do deposito',text='Catarina deixou a chave da Casa 12 comigo. Disse que alguem levou o copo para a praca. As luzes apagaram logo depois. Guardei a chave junto das caixas. A casa fica na Rua dos Cedros.'},
     family_photo={title='Desenho infantil',text='Um desenho encontrado enrolado no compartimento da coleira da Cloe. Ha algo escrito no verso.'},
@@ -67,6 +67,7 @@ function Inventory.new(sprites)
         self.equipped,self.combineSource = nil,nil
         self.remoteReady,self.lit = false,false
         self.previous = {}
+        self.reader = nil
     end
 
     function state:open()
@@ -74,11 +75,12 @@ function Inventory.new(sprites)
         self.mode,self.inspected,self.message = "grid",false,nil
         self.focus=self.tab==1 and "items"or "files"
         self.previous = {}
+        self.reader = nil
     end
 
     function state:close()
         self.visible,self.message,self.combineSource = false,nil,nil
-        self.mode = "grid"
+        self.mode = "grid";self.reader=nil
     end
 
     function state:icon(id,x,y)
@@ -132,6 +134,10 @@ function Inventory.new(sprites)
             pressed[key] = value and not self.previous[key]
         end
         self.previous = input
+        if self.mode=='read'and self.reader then
+            if self.reader:handle(pressed)then self.mode='grid';self.reader=nil end
+            return
+        end
         if pressed.l or pressed.r then
             self.tab=self.tab==1 and 2 or 1;self.focus=self.tab==1 and "items"or "files"
             self.mode,self.inspected,self.message,self.combineSource="grid",false,nil,nil
@@ -165,7 +171,7 @@ function Inventory.new(sprites)
             if pressed.down then self.fileSelected=math.min(#self.files,self.fileSelected+1);self.mode='grid'end
             if pressed.b and self.files[self.fileSelected]then
                 if self.files[self.fileSelected]=='family_photo'then require('photo162').begin(self)
-                else self.mode=self.mode=='read'and 'grid'or 'read'end
+                else self.reader=require('document_reader655').new(self.files[self.fileSelected]);self.mode='read'end
             end
             return
         end
@@ -226,11 +232,12 @@ function Inventory.new(sprites)
 
 
     function state:back()
-        if self.mode~='grid'then self.mode,self.message,self.combineSource='grid',nil,nil
+        if self.mode~='grid'then self.mode,self.message,self.combineSource='grid',nil,nil;self.reader=nil
         else self:close()end
     end
 
     function state:draw(palette)
+        if self.mode=='read'and self.reader then self.reader:draw();return end
         for i,color in ipairs(palette)do ui.palset(i-1,color)end
         theme.palette(ui);ui.cls(240)
         local frame=theme.frame
@@ -284,7 +291,7 @@ function Inventory.new(sprites)
             if doc then
                 ui.print(doc.title,29,190,241)
                 if id=='family_photo'then ui.print('B: EXAMINAR DESENHO',29,205,243)
-                elseif self.mode=='read'then wrapped(inspection.text(doc.text,doc.reverseText,0,false),29,205,66,243,4)end
+                else ui.print('B: LER ARQUIVO',29,205,243)end
             end
         end
         ui.print('A: VOLTAR   B: ACOES   L/R: ITENS / ARQUIVOS',29,251,243)
