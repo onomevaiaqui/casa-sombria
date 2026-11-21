@@ -46,6 +46,9 @@ local function drawLine(ui,line,x,y,count)
  ui.print(plain,x,y,241)
  for _,a in ipairs(marks)do mark(ui,a[1],a[2],y,241)end
 end
+function S.text(ui,text,x,y,width)
+ for _,line in ipairs(S.wrap(text,width or 70))do drawLine(ui,line,x or 32,y,math.huge);y=y+14 end
+end
 function S.new()
  local d={active=false,clock=0,page=1,revealed=0,toastTime=0}
  function d:close()self.active=false;self.pages=nil;self.question=false;self.answer=nil end

@@ -22,7 +22,14 @@ function P.tick(dt,left,right,up,down,b,a)
    if not bag.collarBoxOpen then bag.collarBoxOpen=true;reading='Abri o compartimento. Ha um desenho enrolado.'
    elseif not bag.collected.family_photo then
     question:ask('Retirar o desenho enrolado?',function()
-     bag:collect({id='family_photo',document=true});reading='Guardei o desenho em Arquivos.'
+     local inventory=bag
+     inventory:collect({id='family_photo',document=true})
+     for i=#inventory.bag,1,-1 do if inventory.bag[i]=='collar'then table.remove(inventory.bag,i)end end
+     inventory.selected=math.max(1,math.min(inventory.selected,#inventory.bag))
+     if inventory.equipped=='collar'then inventory.equipped=nil end
+     inventory.mode='grid';inventory.inspected=false;inventory.message=nil
+     P.active=false;mesh=nil;bag=nil;buffers={}
+     require('photo162').begin(inventory)
     end)
    else reading='O compartimento da coleira esta vazio.'end
   elseif id=='back_key39' then reading='Uma etiqueta desbotada diz: Fundos - 39.'
@@ -39,7 +46,7 @@ function P.draw(ui)
  ui.cls(240);ui.palset(240,0);ui.palset(241,32767)
  if not inspectionSlots339 then local by={};for i,c in ipairs(require('palette'))do by[c]=i-1 end;inspectionSlots339={};for i,c in ipairs(inspectionKeys339)do inspectionSlots339[i]=assert(by[c],'Inspection palette missing')end end
  for i,c in ipairs(palette)do ui.palset(inspectionSlots339[i],c)end
- if not sprites then sprites=require('sprite_refs656')end
+ if not sprites then sprites=require('sprite_refs697')end
  local frame=math.floor(angle/(2*math.pi)*16+.5)%16
  local level=tilt>.15 and 1 or 0
  local state=id=='back_key39'and 'key'or(bag.collarBoxOpen and frame>=5 and frame<=11 and 'open'or 'closed')

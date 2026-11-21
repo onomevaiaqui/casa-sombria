@@ -1,0 +1,6 @@
+PASS native Lua 5.4 with 4 MiB cap: startup, menu, New Game, field rise/chase/attack/death/key, field -> Casa 39 shed -> manual exit, immutable sprite descriptors, package absent, native audio API.
+PASS 37 Furnace files rendered to non-silent WAV; PCM samples <=192000 bytes.
+PASS 2559 bitmap conversions round-tripped; dimensions <=511 and <=46059 pixels.
+PASS regression: continuous enemy vertices across room cameras, collar drawing inspection/removal, healing, note/file reading, wall collisions, axe-only planks, 2612 interior camera draws without hidden actor.
+LIMITATION console filesystem persistence: io/os are not exposed; phone save fails cleanly without consuming token. Browser persistence remains available.
+Physical console and server-side processing are not locally verifiable.

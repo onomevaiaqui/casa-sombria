@@ -96,7 +96,9 @@ end
 local function selectCamera(px,py,previous)
  if inside39 then return house39.selectCamera(px,py,previous)end
  if front39 then return yard39.selectCamera(px,py,previous)end
- local C=require('cinema356');if cameras[19]and px>1.6 and px<4.6 and py>3.3 and py<9.2 and C.sees(cameras[19],px,py)then return 19 end;local r=previous==14 and 2.65 or 2.05;if (px-4.9)^2+(py+5.3)^2<r*r and C.sees(cameras[14],px,py)and C.framing(cameras[14],px,py)>7 then return 14 end
+ local C=require('cinema356');local phone682=cameras[20];local radius682=previous==20 and 1.85 or 1.45
+ if phone682 and(px+3.678833)^2+(py+4.8)^2<radius682^2 and C.sees(phone682,px,py)and C.framing(phone682,px,py)>8 then return 20 end
+ if cameras[19]and px>1.6 and px<4.6 and py>3.3 and py<9.2 and C.sees(cameras[19],px,py)then return 19 end;local r=previous==14 and 2.65 or 2.05;if (px-4.9)^2+(py+5.3)^2<r*r and C.sees(cameras[14],px,py)and C.framing(cameras[14],px,py)>7 then return 14 end
  return C.select(cameras,px,py,previous)
 end
 local function retiredSelectCamera(px,py,previous)
@@ -121,7 +123,7 @@ local function retiredSelectCamera(px,py,previous)
  for i,c in ipairs(cameras)do if (px>5.2 and py<12.7 and i>=10)or(not(px>5.2 and py<12.7)and i<=9)then local v=clearance(c,px,py);if v>score then best,score=i,v end end end
  return best
 end
-local obstacles={{-5.15,-4.65,7.75,8.25},{4.65,5.15,-2.25,-1.75},{-5.25,-4.75,-24.25,-23.75},{4.75,5.25,-30.25,-29.75},{4.4,5.5,3.2,4.5},{-5.3,-4.4,-4.3,-3.1},{1.15,2.85,-4.9,-4.1},{-3.4,-2.0,-5.1,-4.4}}
+local obstacles={{-4.00,-3.35767,-5.03577,-4.56423},{-5.15,-4.65,7.75,8.25},{4.65,5.15,-2.25,-1.75},{-5.25,-4.75,-24.25,-23.75},{4.75,5.25,-30.25,-29.75},{4.4,5.5,3.2,4.5},{-5.3,-4.4,-4.3,-3.1},{1.15,2.85,-4.9,-4.1}}
 local holeMinX,holeMaxX,holeMinY,holeMaxY=1e9,-1e9,1e9,-1e9
 for _,p in ipairs(hole)do holeMinX=math.min(holeMinX,p[1]-.32);holeMaxX=math.max(holeMaxX,p[1]+.32);holeMinY=math.min(holeMinY,p[2]-.32);holeMaxY=math.max(holeMaxY,p[2]+.32)end
 local trailPoints={{6.3, 11.6}, {6.47041, 11.60479}, {6.69766, 11.61641}, {6.96826, 11.63076}, {7.26875, 11.64375}, {7.58564, 11.65127}, {7.90547, 11.64922}, {8.21475, 11.6335}, {8.5, 11.6}, {8.7625, 11.53779}, {9.01562, 11.44609}, {9.26406, 11.33604}, {9.5125, 11.21875}, {9.76562, 11.10537}, {10.02813, 11.00703}, {10.30469, 10.93486}, {10.6, 10.9}, {10.92061, 10.90439}, {11.26484, 10.93828}, {11.6251, 10.99521}, {11.99375, 11.06875}, {12.36318, 11.15244}, {12.72578, 11.23984}, {13.07393, 11.32451}, {13.4, 11.4}, {13.70508, 11.48047}, {13.99688, 11.57812}, {14.27773, 11.68359}, {14.55, 11.7875}, {14.81602, 11.88047}, {15.07813, 11.95312}, {15.33867, 11.99609}, {16.8, 12.0}, {16.8119, 11.96611}, {16.85391, 11.90391}, {16.83936, 11.81631}, {16.81875, 11.70625}, {16.21833, 11.57666}, {17.22422, 11.43047}, {17.43271, 11.27061}, {17.45, 11.1}, {17.45, 10.9083}, {17.45, 10.68828}, {17.45, 10.44756}, {17.45, 10.19375}, {17.45, 9.93447}, {17.45, 9.67734}, {17.45, 9.42998}, {17.45, 9.2}, {17.45, 8.98701}, {17.45, 8.78359}, {17.45, 8.58682}, {17.45, 8.39375}, {17.45, 8.20146}, {17.375, 8.00703}, {17.29707, 7.80752}, {17.25, 7.6}, {17.23569, 7.37227}, {17.24492, 7.12188}, {17.27153, 6.86055}, {17.30937, 6.6}, {17.35229, 6.35195}, {17.39414, 6.12812}, {17.42876, 5.94023}, {17.45, 5.8}}
@@ -232,29 +234,14 @@ local function startDogPickup()
   end})
 end
 local function startShed442(exiting)
- if interaction287.busy()then return end
- local dock=exiting and{.7,.60}or{-4.925,16.35};local switched=false
- interaction287.begin({kind=exiting and'open_out'or'open_in',from={x,y,angle},dock=dock,face=0,crossSeconds=1.0,visualFamily='shed442',visualDoor='shed39',
-  set=function(a,b,c)x,y,angle=a,b,c;poseClip=nil end,
-  open=function()shed442.opened=true end,
-  advance=function(t)
-   if exiting then
-    if t<.45 then x,y,angle=.7,.60-.36*t/.45,0
-    else if not switched then M.enterFacility('casa39yard','c39quintal',{-4.925,15.91,math.pi});switched=true end;x,y,angle=-4.925,15.91+(t-.45)/.55*.54,math.pi end
-   else
-    if t<.55 then x,y,angle=-4.925,16.35-.59*t/.55,0
-    else if not switched then M.enterFacility('casa39yard','c39casinha',{.7,.24,math.pi});switched=true end;x,y,angle=.7,.24+(t-.55)/.45*.66,math.pi end
-   end;poseClip=nil
-  end,
-  faceBack=function()angle=0;poseClip=nil end,
-  close=function()shed442.opened=false end,
-  finish=function()angle=math.pi;poseClip=nil;shed442.release()end,
-  cancel=function()shed442.opened=false;shed442.release();M.enterFacility('casa39yard',exiting and'c39casinha'or'c39quintal',exiting and{.7,.6,0}or{-4.925,16.35,0})end})
+ -- Opening the leaf never changes the actor's position, facing or pose.
+ shed442.open()
 end
 function M.update(paused,elapsed)
  local fps=60
  if ui.stat then local ok,v=pcall(ui.stat,7);if ok and type(v)=='number' and v>=2 and v<=240 then fps=v end end
  local dt=math.max(0,math.min(.5,elapsed or 1/fps))
+ shed442.tick(dt)
  local interactionWasBusy=interaction287.busy();if interactionWasBusy then interaction287.tick(dt)end
  local a,b=held(BTN_G or 13),held(BTN_Z or 4)
  if interactionWasBusy or interaction287.busy()then paused=true end
@@ -262,6 +249,8 @@ function M.update(paused,elapsed)
  local chapterWasActive=chapter350.busy()
  chapter350.tick(dt,x,y,front39,b and not previousB,a and not previousA,held(LEFT or 4)or held(UP or 1),held(RIGHT or 2)or held(DOWN or 3))
  if chapterWasActive or chapter350.busy()then paused=true end
+ local saveWasActive680=require('save680').busy()
+ if saveWasActive680 then require('save680').input(held(LEFT or 4),held(RIGHT or 2),b and not previousB,a and not previousA);paused=true end
  local medicineWasActive=inside39 and medicine and medicine.busy()
  if medicineWasActive then
   local message=medicine.input(held(LEFT or 4),held(RIGHT or 2),b and not previousB,a and not previousA,medicineInventory)
@@ -291,15 +280,16 @@ function M.update(paused,elapsed)
    end
   end
  elseif not paused and not medicineWasActive and b and not previousB then
-  if inside39 then
-   if insideFacility or not medicine.ask(x,y,medicineInventory)then
-    local result;local handled=insideFacility and story433.action(house39.room(),x,y);if not handled then if insideMarket then result=chapter350.actionInside(x,y)else result=house39.action(x,y)end end;poseClip=nil
+  if not inside39 and not front39 and require('save680').near(x,y)then require('save680').begin(medicineInventory)
+  elseif inside39 then
+   if (insideFacility and insideFacility~='casa39p')or not medicine.ask(x,y,medicineInventory)then
+    local result;local handled=insideFacility=='campo'and fieldEnemy641 and fieldEnemy641.action(x,y);if not handled then handled=insideFacility and story433.action(house39.room(),x,y)end;if not handled then if insideMarket then result=chapter350.actionInside(x,y)else result=house39.action(x,y)end end;poseClip=nil
     if type(result)=='table'and result.enterHouse409 then
  if result.enterHouse409=='rear'and clueInventory and doorNote432.begin(clueInventory)then noticeTime=0
  elseif clueInventory and(clueInventory.collected.house39_rear_open or clueInventory:has('back_key39'))then clueInventory.collected.house39_rear_open=true;require('sound626').emit('porta_abrir');M.enterFacility('casa39p','c39teste',result.enterHouse409=='rear'and{4.44,9.3,math.pi}or{4.94,2.16,0})else notice='Esta trancada. Preciso encontrar a chave.';noticeTime=3 end
  elseif type(result)=='table'and result.shedDoor433 then if clueInventory.collected.house39_shed_open then startShed442(false)else story433.action('c39quintal',x,y)end
  elseif type(result)=='table'and result.shedExit442 then startShed442(true)
- elseif type(result)=='table'and result.facilityRoom then require('sound626').emit('porta_abrir');M.enterFacility(insideFacility,result.facilityRoom,result.spawn)elseif result=='exit_facility'then M.leaveFacility()elseif result=='exit_market_service'then require('sound626').emit('porta_abrir');M.leaveMarket('service')elseif result=='exit_market_front'then require('sound626').emit('porta_abrir');M.leaveMarket('front')elseif result=='exit31'then require('sound626').emit('porta_abrir');M.leave31()elseif result=='exit'then require('sound626').emit('porta_abrir');M.leave39()elseif result=='front'then M.enterFront39()elseif result then notice=result;noticeTime=2 end
+ elseif type(result)=='table'and result.facilityRoom then require('sound626').emit('porta_abrir');M.enterFacility(insideFacility,result.facilityRoom,result.spawn)elseif result=='exit_facility'then M.leaveFacility()elseif result=='exit_market_service'then require('sound626').emit('porta_abrir');M.leaveMarket('service')elseif result=='exit_market_front'then require('sound626').emit('porta_abrir');M.leaveMarket('front')elseif result=='exit31'then require('sound626').emit('porta_abrir');M.leave31()elseif result=='exit'then require('sound626').emit('porta_abrir');M.leave39()elseif result=='front'then M.enterFront39()elseif result then notice=result;noticeTime=result:find('madeira esta podre',1,true)and 4 or 2 end
    end
   elseif front39 then
    if (x+23)^2+(y+73.55)^2<1.5^2 then require('sound626').emit('porta_abrir');M.enterFacility('bar','bar',{3.5,.65,math.pi})
@@ -338,6 +328,7 @@ function M.update(paused,elapsed)
   local attackClip=actor.combat.attack(actor.clips,equipped,strikeKind397);strikeTime=strikeTime+dt
   if not hitThisSwing and strikeTime*(attackClip.fps or 60)>=math.floor(attackClip.count*(strikeKind397=="kick"and .5 or .35))then
    hitThisSwing=true
+   if insideFacility=='casa39yard'and strikeKind397~='kick'then local msg=house39.hit675(x,y,angle,equipped);if msg then notice=msg;noticeTime=2;if equipped=='crowbar'then require('sound626').emit('soco_impacto')end end end
    if insideFacility=='campo'and fieldEnemy641 then local equipment=medicineInventory.equipped;if strikeKind397=='kick'then equipment=nil end;if fieldEnemy641.hit(x,y,angle,equipment,house39.walkable)then require('sound626').emit(strikeKind397=='kick'and 'chute_impacto'or 'soco_impacto')end end
    if ambush360 and not inside39 and not front39 then local hitEquipped=equipped;if strikeKind397=='kick'then hitEquipped=nil end;if ambush360.hit(x,y,angle,hitEquipped,sceneWalkable360)then require('sound626').emit(strikeKind397=='kick'and 'chute_impacto'or 'soco_impacto')end end
    if front39 and strikeKind397~='kick'then local message=chapter350.hit(x,y,angle,equipped)or yard39.hit(x,y,angle,equipped,medicineInventory);if message then notice=message;noticeTime=2;poseClip=nil end end
@@ -358,6 +349,7 @@ function M.update(paused,elapsed)
   elseif walkable(x,y+dy)then y=y+dy;moved=moved+math.abs(dy)end
  end
  if not inside39 and not front39 and moved>0 and x>4.55 and x<5.65 and y>5.85 and y<7.25 then M.enterFacility('casa39yard','c39quintal',{5.4,2.3,0})
+ elseif insideFacility=='campo'and moved>0 and x>28.65 and math.abs(y-4.5)<1.0 then M.leaveFacility()
  elseif not inside39 and not front39 and moved>0 and x< -6.2 and y>12.5 and y<17 then M.enterFacility('campo','campo',{27,6,-2.03444})
  elseif insideMarket and moved>0 and x>9.62 and math.abs(y-1.2)<.5 then M.leaveMarket('service')
  elseif insideMarket and moved>0 and y<.35 and x>3.5 and x<6.5 and medicineInventory.collected.market_front_open then M.leaveMarket('front')
@@ -366,15 +358,22 @@ function M.update(paused,elapsed)
  elseif not interaction287.busy()and front39 and moved>0 and x> -28 and x< -27.45 and math.abs(y+86.65)<.55 then M.enter31()
  elseif not interaction287.busy()and front39 and moved>0 and yard39.atDoor(x,y)then M.returnFront39()
 end
+ if moved>0 and insideFacility=='casa39yard'and shed442.opened then
+  if house39.room()=='c39quintal'and math.abs(x+4.925)<.34 and y<16.04 and y>15.7 then
+   M.enterFacility('casa39yard','c39casinha',{2.2,.65,(angle+math.pi)%(2*math.pi)})
+  elseif house39.room()=='c39casinha'and math.abs(x-2.2)<.34 and y<.50 then
+   M.enterFacility('casa39yard','c39quintal',{-4.925,16.25,(angle+math.pi)%(2*math.pi)})
+  end
+ end
  footsteps292.tick(moved,dt,run,M.surface624(),paused or interaction287.busy())
  shot=selectCamera(x,y,shot)
- if not inside39 and not front39 and x>5.5 and y>4.5 and y<14 then ambush360=ambush360 or require('enemy360');ambush360.bind(medicineInventory.collected)end
- if insideFacility=='campo'then fieldEnemy641=fieldEnemy641 or require('field_enemy641');fieldEnemy641.bind(medicineInventory.collected);fieldEnemy641.tick(dt,x,y,paused or life360.dead,house39.walkable)end
+ if not inside39 and not front39 and x>5.5 and y>4.5 and y<14 then ambush360=ambush360 or require('enemy360');ambush360.bind(medicineInventory.collected);require('save680').applyEnemy('enemy360',ambush360)end
+ if insideFacility=='campo'then fieldEnemy641=fieldEnemy641 or require('field_enemy641');fieldEnemy641.bind(medicineInventory.collected);require('save680').applyEnemy('field_enemy641',fieldEnemy641);fieldEnemy641.tick(dt,x,y,paused or life360.dead,house39.walkable)end
  if ambush360 then ambush360.tick(dt,x,y,paused or inside39 or front39 or life360.dead,sceneWalkable360)end
 
  ui.cls(0)
  M.backgroundPalette(ui.palset)
- for i,v in ipairs(actor.palette)do if insideFacility=='campo'then local r,g,b=v&31,(v>>5)&31,(v>>10)&31;v=math.floor(r*.34)|(math.floor(g*.40)<<5)|(math.floor(b*.50)<<10)end;ui.palset(ink(i-1),v)end
+ for i,v in ipairs(actor.palette)do if insideFacility=='campo'then local r,g,b=v&31,(v>>5)&31,(v>>10)&31;v=math.floor(r*.34)|(math.floor(g*.40)<<5)|(math.floor(b*.50)<<10)elseif(insideFacility=='casa39p'or insideFacility=='casa39yard')then v=house39.actorColor(v,x,y)elseif not inside39 and not front39 then v=require('lighting593').color(v,'rua',x,y)end;ui.palset(ink(i-1),v)end
  ui.palset(240,0);ui.palset(241,32767)
  for i=0,2 do
   local cameraName=(cameras[shot].name=='fundos39'and clueInventory and clueInventory.collected.house39_rear_open)and 'fundos39_aberta'or cameras[shot].name;local name=inside39 and (house39.prefix(shot)..'_'..i)or(front39 and(yard39.prefix(shot)..'_'..i)or((cameras[shot].cinePrefix and cameras[shot].cinePrefix..((medicineInventory and medicineInventory.collected.yard39_open)and '1'or '0')or 'street_'..cameraName..((medicineInventory and medicineInventory.collected.yard39_open)and '_breach'or ''))..'_'..i));local ref=assert(sprites[name],'Fundo ausente: '..name)
@@ -398,23 +397,27 @@ end
  if interactionClip then clip,phase,clipName=interactionClip,interactionPhase,interactionName end
  if equipped=='crowbar'and actor.weapon then actor.weapon.palette(ui)end
  if life360.dead then clip,phase,clipName=life360.clip,math.min(life360.clip.count-1,life360.time*life360.clip.fps),'death' elseif life360.hitTime then clip,phase,clipName=life360.hitClip,math.min(life360.hitClip.count-1,life360.hitTime*life360.hitClip.fps),'hit'end
- if insideFacility=='campo'and fieldEnemy641 then fieldEnemy641.draw(ui,cameras[shot].m,house39.triangleVisible)end
+ if insideFacility=='casa39p'then require('house39_effects666').draw(ui,cameras[shot],x,y,paused and 0 or dt,medicineInventory.collected,house39.triangleVisible)end
+ if insideFacility=='campo'and fieldEnemy641 then fieldEnemy641.draw(ui,cameras[shot].m,house39.triangleVisible);fieldEnemy641.prompt(ui,x,y)end
  if ambush360 and not inside39 and not front39 then prepareCarMask();ambush360.draw(ui,cameras[shot].m,carTriangleVisible)end
- for i,v in ipairs(actor.palette)do if insideFacility=='campo'then local r,g,b=v&31,(v>>5)&31,(v>>10)&31;v=math.floor(r*.34)|(math.floor(g*.40)<<5)|(math.floor(b*.50)<<10)end;ui.palset(ink(i-1),v)end
+ for i,v in ipairs(actor.palette)do if insideFacility=='campo'then local r,g,b=v&31,(v>>5)&31,(v>>10)&31;v=math.floor(r*.34)|(math.floor(g*.40)<<5)|(math.floor(b*.50)<<10)elseif(insideFacility=='casa39p'or insideFacility=='casa39yard')then v=house39.actorColor(v,x,y)elseif not inside39 and not front39 then v=require('lighting593').color(v,'rua',x,y)end;ui.palset(ink(i-1),v)end
  if equipped=='crowbar'and actor.weapon then actor.weapon.palette(ui)end
  drawActor(clip,phase,clipName)
  ui.rectfill(0,0,479,13,240);ui.print('16.40 / '..(insideFacility and house39.roomTitle()or inside39 and ((insideMarket and 'MERCADINHO - 'or(inside31 and 'CASA 31 - 'or 'CASA 39 - '))..house39.room(x,y))or(front39 and yard39.zone(x,y)or cameras[shot].name)),5,3,241)
- if noticeTime>0 then noticeTime=noticeTime-dt;ui.rectfill(0,247,479,269,240);ui.print(notice,8,253,241)end
+ if noticeTime>0 then
+  noticeTime=noticeTime-dt;require('subtitles').text(ui,notice,8,#notice>75 and 239 or 253,75)
+ end
  if dogPhase>0 then
   if dogPhase==3 then
-   ui.rectfill(0,215,479,269,240);ui.print('Pegar a coleira?',8,224,241)
-   ui.print(dogChoice==1 and '> Sim      Nao'or '  Sim    > Nao',8,248,241)
+   require('subtitles').text(ui,'Pegar a coleira?',8,224,75)
+   require('subtitles').text(ui,dogChoice==1 and '> Sim      Nao'or '  Sim    > Nao',8,248,75)
   else
-   ui.rectfill(0,237,479,269,240)
-   ui.print(dogPhase==1 and 'Um pequeno cachorro... Esta morto.'or 'Ele esta usando uma coleira.',8,247,241)
+
+   require('subtitles').text(ui,dogPhase==1 and 'Um pequeno cachorro... Esta morto.'or 'Ele esta usando uma coleira.',8,247,75)
   end
  end
- if inside39 and not insideFacility then medicine.prompt(ui,sprites,medicineInventory)end
+ if inside39 and(not insideFacility or insideFacility=='casa39p')then medicine.prompt(ui,sprites,medicineInventory)end
+ require('save680').draw(ui)
  chapter350.draw(ui)
  doorNote432.draw(ui)
  story433.draw(ui)
@@ -467,10 +470,10 @@ function M.returnStreet39()
 end
 function M.returnFront39()M.enterFacility('casa39yard','c39quintal',{5.4,1.0,0});return true end
 function M.front39()return front39 end
-function M.pickupActive()return doorNote432.busy()or story433.busy()or chapter350.busy()or interaction287.busy()or dogPhase>0 or(inside39 and medicine and medicine.busy())end
+function M.pickupActive()return require('save680').busy()or doorNote432.busy()or story433.busy()or chapter350.busy()or interaction287.busy()or dogPhase>0 or(inside39 and medicine and medicine.busy())end
 function M.inside39()return inside39 end
 function M.position()return x,y,angle,shot end
-function M.reset(px,py,a)if inside39 then M.leave39()end;if front39 then yard39.release();front39=false;cameras=outsideCameras;palette=outsidePalette end;strikeTime=nil;dogPhase,dogChoice=0,1;dogPreviousLeft,dogPreviousRight=false,false;poseClip=nil;x,y,angle=px,py,a or 0;shot=1;noticeTime=0;previousA,previousB=true,true end
+function M.reset(px,py,a)shed442.reset();if inside39 then M.leave39()end;if front39 then yard39.release();front39=false;cameras=outsideCameras;palette=outsidePalette end;strikeTime=nil;dogPhase,dogChoice=0,1;dogPreviousLeft,dogPreviousRight=false,false;poseClip=nil;x,y,angle=px,py,a or 0;shot=1;noticeTime=0;previousA,previousB=true,true end
 function M.review39(px,py,a)x,y,angle=px,py,a or 0;shot=selectCamera(x,y,nil);poseClip=nil end
 
 function M.enter31()insideFacility=nil;insideMarket=false;
@@ -506,11 +509,13 @@ function M.chapterStatus()return chapter350.status()end
 function M.ambushReview360(px,py,a)M.reset(px or 17.45,py or 10.6,a or math.pi)end
 
 function M.enterFacility(family,r,spawn)
+ if insideFacility=='campo'and r~='campo'and fieldEnemy641 then fieldEnemy641.releaseGraphics()end
  if front39 and yard39 then yard39.release()end
  if inside39 and house39 then house39.release()end
  insideFacility=family or 'loja';insideMarket=false;inside31=false;inside39=true;front39=false
- house39=require('facility363');house39.enter(r or(insideFacility=='ubs'and 'recepcao'or'loja'))
+ house39=require('facility363');house39.enter(r or(insideFacility=='ubs'and 'recepcao'or'loja'));house39.bind675(medicineInventory.collected)
  medicine={cancel=function()end,busy=function()return false end,ask=function()return false end,draw=function()end,prompt=function()end}
+ if insideFacility=='casa39p'then medicine=require('medicine672');medicine.cancel()end
  cameras=house39.cameras;palette=house39.palette
  local p=spawn or(r and house39.defaultSpawn())or(insideFacility=='ubs'and{4,1,math.pi}or{7,1,math.pi});x,y,angle=p[1],p[2],p[3]
  assert(house39.walkable(x,y),'Chegada bloqueada: '..house39.room())
@@ -519,7 +524,7 @@ end
 function M.leaveFacility()
  local f=insideFacility;local north403=house39.exitNorth403;local streetExit416=house39.exitStreet416;house39.release();inside39=false;insideFacility=nil
  medicine=require('medicine244');house39=require('house39')
- if f=='casa39p'then M.enterFacility('casa39yard','c39quintal',north403 and{6.94,16.05,math.pi}or{6.94,6.65,math.pi});return elseif f=='casa39yard'then if streetExit416 then cameras=outsideCameras;palette=outsidePalette;M.reset(4.15,6.55,-math.pi/2)else M.enterFront39(7.51,-1.65,0)end;return elseif f=='campo'then cameras=outsideCameras;palette=outsidePalette;M.reset(-5.8,14.5,math.pi/2)elseif f=='bar'then M.enterFront39(-23,-74.8,0)elseif f=='ubs'then M.enterFront39(46,-64.9,0)else M.enterFront39(39,-95.3,0)end
+ if f=='casa39p'then M.enterFacility('casa39yard','c39quintal',north403 and{6.94,16.05,math.pi}or{6.94,6.65,math.pi});return elseif f=='casa39yard'then if streetExit416 then cameras=outsideCameras;palette=outsidePalette;M.reset(4.15,6.55,-math.pi/2)else M.enterFront39(7.51,-1.65,0)end;return elseif f=='campo'then cameras=outsideCameras;palette=outsidePalette;M.reset(-5.8,14.5,math.pi/2);shot=selectCamera(x,y,nil)elseif f=='bar'then M.enterFront39(-23,-74.8,0)elseif f=='ubs'then M.enterFront39(46,-64.9,0)else M.enterFront39(39,-95.3,0)end
 end
 
 function M.combatState397()return strikeKind397,strikeTime end

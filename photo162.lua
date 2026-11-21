@@ -3,7 +3,7 @@ local inspection=require('inspection165')
 local P={active=false,angle=0,tilt=0,found=false,transcription=false,previousB=true,previousA=true}
 local texture,sprites
 function P.near()return false end
-function P.begin(inventory)P.inventory=inventory or P.inventory;P.active=true;P.angle=0;P.tilt=0;P.previousA=true;P.previousB=true;P.transcription=false;P.reading=nil;texture=require('photo_texture162');sprites=require('sprite_refs656');return true end
+function P.begin(inventory)P.inventory=inventory or P.inventory;P.active=true;P.angle=0;P.tilt=0;P.previousA=true;P.previousB=true;P.transcription=false;P.reading=nil;texture=require('photo_texture162');sprites=require('sprite_refs697');return true end
 function P.reset()P.active=false;P.found=false;P.transcription=false;P.reading=nil;texture=nil end
 function P.tick(dt,left,right,up,down,confirm,cancel)
  if left or right or up or down then P.reading=nil;P.transcription=false end

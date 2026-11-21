@@ -19,7 +19,7 @@ function M.tick(moved,dt,running,surface,paused)
  progress=progress+moved/(running and 1.5059204352 or .8788280859)
  if progress<1 or cooldown>0 then return end
  progress=progress%1;cooldown=.22;M.count=M.count+1
- require('audio656').effect(surface);M.status='FUR NATIVO'
+ require('audio697').effect(surface);M.status='FUR NATIVO'
 end
 
 function M.houseSurface(room,x,y)

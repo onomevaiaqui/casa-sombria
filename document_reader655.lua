@@ -12,7 +12,7 @@ function Reader.new(id)
   return false
  end
  function state:draw()
-  local sprites=require('sprite_refs656')
+  local sprites=require('sprite_refs697')
   local colors=require(self.doc.mother and 'note649_palette'or'doc655_paper_palette')
   ui.palset(240,0);ui.palset(241,32767);ui.cls(240)
   for i,v in ipairs(colors)do

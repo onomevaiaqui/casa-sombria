@@ -3,6 +3,9 @@ local theme=require('inventory_theme163')
 local Inventory = {}
 
 local items = {
+    phone_token={name='Ficha telefonica',detail='Uma ficha antiga. Permite salvar o jogo em um telefone publico. Consumida ao salvar.',usable=false},
+    remedy_r05={name='Frasco de remedio',detail='R05. Recupera 2 pontos de vida.',usable=true,heal=2},
+    remedy_r02={name='Remedio completo',detail='R02. Recupera toda a vida.',usable=true,fullHeal=true},
     back_key39={name='Chave',detail='Uma pequena chave encontrada no campinho. A etiqueta diz: Fundos - 39.',usable=true},
     market_key={name='Chave pequena',detail='Uma etiqueta gasta diz: DEPOSITO DO MERCADINHO.',usable=true},
     house12_key={name='Chave da Casa 12',detail='Chave antiga com uma etiqueta marcada 12. A anotacao menciona a Rua dos Cedros.',usable=true},
@@ -84,6 +87,8 @@ function Inventory.new(sprites)
     end
 
     function state:icon(id,x,y)
+        if id=='phone_token'then require('save680').icon(ui,x,y);return end
+        if id=='remedy_r05'or id=='remedy_r02' then require('remedy_icons672').draw(ui,id,x,y);return end
         if id=="collar"then ui.spr(self.sprites.item_collar215 or self.sprites.item_collar,x,y);return end
         if id=="back_key39"then ui.spr(self.sprites.item_back_key214,x,y);return end
         if id=="crowbar"then require("crowbar160").icon(ui,x,y);return end
@@ -109,7 +114,7 @@ function Inventory.new(sprites)
             for i,v in ipairs(self.bag)do if v==id then table.remove(self.bag,i);break end end
             self.selected=math.max(1,math.min(self.selected,#self.bag))
             self.inspected=false
-            return item.fullHeal and "Usei o kit. Minha vida foi restaurada."or "Usei o analgesico. Recuperei 1 ponto de vida."
+            return item.fullHeal and 'Minha vida foi restaurada.'or('Recuperei '..restored..(restored==1 and' ponto de vida.'or' pontos de vida.'))
         end
         if id=='market_key'then return 'Aproxime-se da porta do deposito e pressione B.'elseif id=='house12_key'then return 'Preciso localizar a Casa 12 na Rua dos Cedros.'end
         if id=="shed_key"then return "Aproxime-se do cadeado da casinha e pressione B."
@@ -151,6 +156,7 @@ function Inventory.new(sprites)
                 local item = id and items[id]
                 if not item then self.mode="grid";return end
                 if self.action==3 then
+                    if id=='phone_token'then require('token681').begin();self.mode='grid';return end
                     if id=="collar"or id=="back_key39"then require("clue209").begin(id,self);self.mode="grid";return end
                     self.inspected,self.message,self.mode = true,nil,"grid"
                 elseif self.action==2 then

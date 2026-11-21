@@ -1,6 +1,6 @@
 -- The Wrapped / Codyanka (CC0). Arm-free recovery authored offline.
-local W={room='corredor',state='waiting',hp=3,drawn=0}
-W.tuning={speed=1.9,attackRate=1.15,recovery=.42,punchReach=.80,kickReach=.95,weaponReach=1.10,impactReach=.95}
+local W={room='corredor',state='waiting',hp=5,drawn=0}
+W.tuning={speed=2.65,attackRate=1.65,recovery=.16,punchReach=.80,kickReach=.95,weaponReach=1.10,impactReach=.95}
 local cameras=require('cameras168')
 local metric=require('metric_rooms')
 local doors=require('doors131')
@@ -26,9 +26,9 @@ function W.reset()
  W.glassSound624=false
  W.battleMusic636=false
  W.portal=nil
- W.state='waiting';W.hp=3;W.time=0;W.eventTime=0;W.wait=0;W.cooldown=0;W.attackTime=nil;W.blend=0;W.drawn=0;W.moving=false;W.runTime=0;W.poseBlend=1;W.lastPose=nil;W.previousClip=nil
+ W.state='waiting';W.hp=5;W.time=0;W.eventTime=0;W.wait=0;W.cooldown=0;W.attackTime=nil;W.blend=0;W.drawn=0;W.moving=false;W.runTime=0;W.poseBlend=1;W.lastPose=nil;W.previousClip=nil
  if S then W.x,W.y=S.anchor[1],S.anchor[2];W.angle=-math.pi/2 end
- W.hitTime=nil;W.deathTime=nil
+ W.hitTime=nil;W.deathTime=nil;W.poise=0;W.flinch=0;W.attackStep=0
 end
 W.reset()
 function W.walkable(room,x,y)
@@ -43,11 +43,16 @@ function W.tryHit(room,x,y,facing,weapon,kind)
  if not require('pursuit605').lineClear(room,x,y,W.x,W.y)then return false end
  W.hp=math.max(0,W.hp-(weapon and 1.2 or .8))
  require('sound626').emit(W.hp<=0 and 'janela_morte'or 'janela_dor')
- W.attackTime=nil;W.moving=false;W.cooldown=.35;W.blend=1
- if W.hp<=0 then W.state='dying';W.deathTime=0;W.hitTime=nil
- else W.hitTime=0 end
- -- Snapshot the current pose so an interrupted attack does not snap upright.
- W.fromPose=W.lastPose;W.lastPose={};W.poseBlend=W.fromPose and 0 or 1;W.previousClip=W.hp<=0 and death or hit
+ -- Every valid hit still deals full damage. Only the first hit in a short
+ -- exchange interrupts the attack; follow-ups produce a small visible flinch.
+ local stagger=(W.poise or 0)<=0
+ if W.hp<=0 then W.state='dying';W.deathTime=0;W.hitTime=nil;W.attackTime=nil
+ elseif stagger then
+  W.attackTime=nil;W.moving=false;W.cooldown=.10;W.blend=1;W.hitTime=0;W.poise=.90
+ else W.flinch=.12 end
+ if W.hp<=0 or stagger then
+  W.fromPose=W.lastPose;W.lastPose={};W.poseBlend=W.fromPose and 0 or 1;W.previousClip=W.hp<=0 and death or hit
+ end
  return true
 end
 local function clear(x,y)
@@ -56,7 +61,7 @@ end
 local function turnToward(dx,dy,dt)
  local desired=math.atan(dx,-dy)
  local delta=math.atan(math.sin(desired-W.angle),math.cos(desired-W.angle))
- local amount=math.max(-2.8*dt,math.min(2.8*dt,delta))
+ local amount=math.max(-4.1*dt,math.min(4.1*dt,delta))
  W.angle=W.angle+amount
  local remaining=math.abs(delta-amount)
  if remaining>.12 then
@@ -68,7 +73,7 @@ function W.tick(dt,room,px,py)
  if life.dead or W.state=='escaped'then return end
  if W.state=='waiting'and room~=W.room then return end
  if (W.state=='alive'or W.state=='sequence')and not require('pursuit605').inside[room]then W.state='escaped';W.moving=false;return end
- dt=math.min(.1,math.max(0,dt or 0))
+ dt=math.min(.1,math.max(0,dt or 0));W.poise=math.max(0,(W.poise or 0)-dt);W.flinch=math.max(0,(W.flinch or 0)-dt)
  require('sound626').presence('window',W.state=='alive'and not W.hitTime and not W.attackTime,room==W.room and (px-(W.x or px))^2+(py-(W.y or py))^2<49,dt)
  if W.state=='waiting' then
   W.wait=W.wait+dt
@@ -96,14 +101,23 @@ function W.tick(dt,room,px,py)
  if W.portal then require('pursuit605').advancePortal(W,dt,run.duration);return end
  if room~=W.room then W.attackTime=nil;require('pursuit605').follow(W,room,dt,run.duration);return end
  if W.hitTime then
-  W.poseBlend=math.min(1,W.poseBlend+dt/.08);W.hitTime=W.hitTime+dt*1.1
+  W.poseBlend=math.min(1,W.poseBlend+dt/.08);W.hitTime=W.hitTime+dt*1.65
   if W.hitTime>=hit.duration then W.hitTime=nil end
   return
  end
  local dx,dy=px-W.x,py-W.y;local dist=math.sqrt(dx*dx+dy*dy)
  if W.attackTime then
   local old=W.attackTime;W.attackTime=W.attackTime+dt*W.tuning.attackRate
-  if old<.48 and W.attackTime>=.48 and dist<W.tuning.impactReach then
+  -- A short planted approach during the wind-up, never a range extension.
+  if W.attackTime<.30 then
+   turnToward(dx,dy,dt)
+   local step=math.min(1.4*dt,math.max(0,dist-.58),math.max(0,.25-(W.attackStep or 0)))
+   if dist>.001 and step>0 then
+    local nx,ny=W.x+dx/dist*step,W.y+dy/dist*step
+    if clear(nx,ny)then W.x,W.y=nx,ny;W.attackStep=(W.attackStep or 0)+step;dx,dy=px-W.x,py-W.y;dist=math.sqrt(dx*dx+dy*dy)end
+   end
+  end
+  if old<.48 and W.attackTime>=.48 and dist<W.tuning.impactReach and(dx*math.sin(W.angle)-dy*math.cos(W.angle))/math.max(.001,dist)>.55 then
    local ok=true
    for i=1,4 do if not clear(W.x+dx*i/5,W.y+dy*i/5)then ok=false end end
    if ok then life.damage() end
@@ -111,7 +125,7 @@ function W.tick(dt,room,px,py)
   if W.attackTime>=attack.duration then W.attackTime=nil;W.cooldown=W.tuning.recovery end
  elseif dist<.76 and require('pursuit605').lineClear(W.room,W.x,W.y,px,py)then
   local remaining=turnToward(dx,dy,dt)
-  if W.cooldown==0 and remaining<.18 then W.attackTime=0;W.moving=false;require('sound626').emit('janela_ataque') end
+  if W.cooldown==0 and remaining<.18 then W.attackTime=0;W.attackStep=0;W.moving=false;require('sound626').emit('janela_ataque') end
  else
   local tx,ty,routed=require('pursuit605').waypoint(W.room,W.x,W.y,px,py)
   dx,dy=tx-W.x,ty-W.y;dist=math.sqrt(dx*dx+dy*dy)
@@ -119,8 +133,16 @@ function W.tick(dt,room,px,py)
   if remaining>.50 then return end
   local step=math.min(math.max(0,dist-(routed and .02 or .60)),W.tuning.speed*dt)
   if dist>.001 then
-   local nx,ny=W.x+dx/dist*step,W.y+dy/dist*step
-   if clear(nx,ny) then W.x,W.y=nx,ny;W.moving=step>.0001;W.runTime=(W.runTime+step/1.55)%run.duration end
+   local n=math.max(1,math.ceil(step/.035));local sx,sy=dx/dist*step/n,dy/dist*step/n;local moved=0
+   for i=1,n do
+    local ox,oy=W.x,W.y;local nx,ny=ox+sx,oy+sy
+    if clear(nx,ny)then W.x,W.y=nx,ny
+    elseif clear(nx,oy)then W.x=nx
+    elseif clear(ox,ny)then W.y=ny
+    else break end
+    moved=moved+math.sqrt((W.x-ox)^2+(W.y-oy)^2)
+   end
+   W.moving=moved>.0001;W.runTime=(W.runTime+moved/1.55)%run.duration
   end
  end
 end
@@ -158,11 +180,13 @@ local function sample(clip,pos,i)
  local first=math.min(clip.count-1,math.floor(pos));local second=math.min(clip.count-1,first+1);local blend=pos-first
  local a=first*D.vertices*3+(i-1)*3+1;local b=second*D.vertices*3+(i-1)*3+1
  local x,y,z=clip.data:byte(a,a+2);local u,v,w=clip.data:byte(b,b+2)
- return clip.low[1]+(x+(u-x)*blend)/255*clip.span[1],clip.low[2]+(y+(v-y)*blend)/255*clip.span[2],clip.low[3]+(z+(w-z)*blend)/255*clip.span[3]
+ local ax,ay,az=clip.low[1]+(x+(u-x)*blend)/255*clip.span[1],clip.low[2]+(y+(v-y)*blend)/255*clip.span[2],clip.low[3]+(z+(w-z)*blend)/255*clip.span[3];if(W.flinch or 0)>0 then az=az+.035*math.sin(math.pi*W.flinch/.12)*math.max(0,ay-.55)end;return ax,ay,az
 end
 local function farther(a,b)return a[4]>b[4]end
 function W.draw(room)
- if room~=W.room or W.state=='waiting'or W.state=='escaped' then return end
+ if not require('pursuit605').inside[room]or W.state=='waiting'or W.state=='escaped'then return end
+ local plan=metric.plan.rooms;local source,view=plan[W.room],plan[room];if not source or not view then return end
+ local offsetX,offsetY=source.offset[1]-view.offset[1],source.offset[2]-view.offset[2]
  -- Keep the actor hidden until the same instant that exposes the broken window.
  if W.state=='sequence'and W.time<.4 then W.drawn=0;return end
  W.palette(ui)
@@ -187,7 +211,7 @@ function W.draw(room)
    x=W.x+ax*cos-ay*sin;y=W.y+ax*sin+ay*cos;z=az
    if W.blend<1 then local a,b,c=sample(S,55,i);local t=W.blend*W.blend*(3-2*W.blend);x=a+(x-a)*t;y=b+(y-b)*t;z=c+(z-c)*t end
   end
-  local sx,sy,dep=cameras.project(room,x,y,z);local out=vertices[i];out[1],out[2],out[3]=math.floor(sx+.5),math.floor(sy+.5),dep
+  local sx,sy,dep=cameras.project(room,x+offsetX,y+offsetY,z);local out=vertices[i];out[1],out[2],out[3]=math.floor(sx+.5),math.floor(sy+.5),dep
  end
  for i=#faces,1,-1 do faces[i]=nil end
  local count=0
@@ -202,9 +226,10 @@ function W.draw(room)
  W.drawn=count
 end
 function W.beforePlayer(room,x,y)
- if room~=W.room or W.state=='waiting'then return false end
+ if not require('pursuit605').inside[room]or W.state=='waiting'or W.state=='escaped'then return false end
+ local source,view=metric.plan.rooms[W.room],metric.plan.rooms[room];if not source or not view then return false end
  local gx,gy=metric.ground(room,x,y);local _,_,pd=cameras.project(room,gx,gy,0)
- local _,_,ed=cameras.project(room,W.x,W.y,0)
+ local _,_,ed=cameras.project(room,W.x+source.offset[1]-view.offset[1],W.y+source.offset[2]-view.offset[2],0)
  return ed>pd
 end
 return W

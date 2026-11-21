@@ -209,7 +209,7 @@ local A={palette={32767,314,244,140,4228,4228,63,90,105,104,4230,69,0,0,0,0},tri
 {{1.422479,2.428671,1.299790},{1.412655,2.461257,1.291895},{1.412655,2.461257,1.307685},215},
 }}
 function A.draw(ui,m,visible)
- for i,c in ipairs(A.palette)do ui.palset(207+i,c)end
+ for i,c in ipairs(A.palette)do ui.palset(207+i,require('lighting593').color(c,'c39_shed',1.2,2.4))end
  local function project(v)local a,b,z=v[1],v[2],v[3];local w=m[4][1]*a+m[4][2]*b+m[4][3]*z+m[4][4];return {((m[1][1]*a+m[1][2]*b+m[1][3]*z+m[1][4])/w+1)*240,(1-(m[2][1]*a+m[2][2]*b+m[2][3]*z+m[2][4])/w)*135,w}end
  local faces={};for _,t in ipairs(A.tris)do local a,b,c=project(t[1]),project(t[2]),project(t[3]);faces[#faces+1]={a,b,c,a[3]+b[3]+c[3],t[4]}end;table.sort(faces,function(a,b)return a[4]>b[4]end)
  for _,f in ipairs(faces)do local a,b,c=f[1],f[2],f[3];if not visible or visible(a,b,c)then ui.trisfill(a[1],a[2],b[1],b[2],c[1],c[2],f[5])end end

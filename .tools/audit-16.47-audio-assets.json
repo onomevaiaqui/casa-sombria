@@ -1,0 +1,372 @@
+{
+  "portao_metal": {
+    "source": "C:\\Users\\alexsandro.pinheiro\\Documents\\Codex\\2026-11-03\\referenced-chatgpt-conversation-this-is-an\\outputs\\Previa-Cenario-16.40\\music\\sfx660\\portao-metal.mp3",
+    "sample_bytes": 31721,
+    "seconds": 2.87718820861678,
+    "song_seconds": 2.9166666666666665,
+    "notes_bytes": 948,
+    "chip": 6,
+    "channels": 5,
+    "rate": 11025
+  },
+  "madeira": {
+    "source": "C:\\Users\\alexsandro.pinheiro\\Documents\\Codex\\2026-11-03\\referenced-chatgpt-conversation-this-is-an\\outputs\\Previa-Cenario-16.40\\music\\sfx628\\madeira0.mp3",
+    "sample_bytes": 2651,
+    "seconds": 0.24045351473922902,
+    "song_seconds": 0.2833333333333333,
+    "notes_bytes": 158,
+    "chip": 6,
+    "channels": 5,
+    "rate": 11025
+  },
+  "azulejo": {
+    "source": "C:\\Users\\alexsandro.pinheiro\\Documents\\Codex\\2026-11-03\\referenced-chatgpt-conversation-this-is-an\\outputs\\Previa-Cenario-16.40\\music\\sfx628\\azulejo0.mp3",
+    "sample_bytes": 3928,
+    "seconds": 0.35628117913832197,
+    "song_seconds": 0.4,
+    "notes_bytes": 193,
+    "chip": 6,
+    "channels": 5,
+    "rate": 11025
+  },
+  "grama": {
+    "source": "C:\\Users\\alexsandro.pinheiro\\Documents\\Codex\\2026-11-03\\referenced-chatgpt-conversation-this-is-an\\outputs\\Previa-Cenario-16.40\\music\\sfx628\\grama0.mp3",
+    "sample_bytes": 4789,
+    "seconds": 0.4343764172335601,
+    "song_seconds": 0.48333333333333334,
+    "notes_bytes": 218,
+    "chip": 6,
+    "channels": 5,
+    "rate": 11025
+  },
+  "terra": {
+    "source": "C:\\Users\\alexsandro.pinheiro\\Documents\\Codex\\2026-11-03\\referenced-chatgpt-conversation-this-is-an\\outputs\\Previa-Cenario-16.40\\music\\sfx628\\terra0.mp3",
+    "sample_bytes": 7472,
+    "seconds": 0.6777324263038549,
+    "song_seconds": 0.7166666666666667,
+    "notes_bytes": 288,
+    "chip": 6,
+    "channels": 5,
+    "rate": 11025
+  },
+  "asfalto": {
+    "source": "C:\\Users\\alexsandro.pinheiro\\Documents\\Codex\\2026-11-03\\referenced-chatgpt-conversation-this-is-an\\outputs\\Previa-Cenario-16.40\\music\\sfx628\\asfalto0.mp3",
+    "sample_bytes": 1705,
+    "seconds": 0.1546485260770975,
+    "song_seconds": 0.2,
+    "notes_bytes": 133,
+    "chip": 6,
+    "channels": 5,
+    "rate": 11025
+  },
+  "calcada": {
+    "source": "C:\\Users\\alexsandro.pinheiro\\Documents\\Codex\\2026-11-03\\referenced-chatgpt-conversation-this-is-an\\outputs\\Previa-Cenario-16.40\\music\\sfx628\\calcada0.mp3",
+    "sample_bytes": 3928,
+    "seconds": 0.35628117913832197,
+    "song_seconds": 0.4,
+    "notes_bytes": 193,
+    "chip": 6,
+    "channels": 5,
+    "rate": 11025
+  },
+  "soco_esforco": {
+    "source": "C:\\Users\\alexsandro.pinheiro\\Documents\\Codex\\2026-11-03\\referenced-chatgpt-conversation-this-is-an\\outputs\\Previa-Cenario-16.40\\music\\sfx628\\player3.mp3",
+    "sample_bytes": 1938,
+    "seconds": 0.17578231292517008,
+    "song_seconds": 0.21666666666666667,
+    "notes_bytes": 138,
+    "chip": 6,
+    "channels": 5,
+    "rate": 11025
+  },
+  "chute_esforco": {
+    "source": "C:\\Users\\alexsandro.pinheiro\\Documents\\Codex\\2026-11-03\\referenced-chatgpt-conversation-this-is-an\\outputs\\Previa-Cenario-16.40\\music\\sfx628\\player2.mp3",
+    "sample_bytes": 2799,
+    "seconds": 0.25387755102040815,
+    "song_seconds": 0.3,
+    "notes_bytes": 163,
+    "chip": 6,
+    "channels": 5,
+    "rate": 11025
+  },
+  "soco_impacto": {
+    "source": "C:\\Users\\alexsandro.pinheiro\\Documents\\Codex\\2026-11-03\\referenced-chatgpt-conversation-this-is-an\\outputs\\Previa-Cenario-16.40\\music\\sfx628\\soco_impacto0.mp3",
+    "sample_bytes": 3923,
+    "seconds": 0.35582766439909297,
+    "song_seconds": 0.4,
+    "notes_bytes": 193,
+    "chip": 6,
+    "channels": 5,
+    "rate": 11025
+  },
+  "chute_impacto": {
+    "source": "C:\\Users\\alexsandro.pinheiro\\Documents\\Codex\\2026-11-03\\referenced-chatgpt-conversation-this-is-an\\outputs\\Previa-Cenario-16.40\\music\\sfx628\\chute_impacto2.mp3",
+    "sample_bytes": 3613,
+    "seconds": 0.32770975056689344,
+    "song_seconds": 0.36666666666666664,
+    "notes_bytes": 183,
+    "chip": 6,
+    "channels": 5,
+    "rate": 11025
+  },
+  "personagem_dor": {
+    "source": "C:\\Users\\alexsandro.pinheiro\\Documents\\Codex\\2026-11-03\\referenced-chatgpt-conversation-this-is-an\\outputs\\Previa-Cenario-16.40\\music\\sfx628\\player1.mp3",
+    "sample_bytes": 2752,
+    "seconds": 0.24961451247165534,
+    "song_seconds": 0.2833333333333333,
+    "notes_bytes": 158,
+    "chip": 6,
+    "channels": 5,
+    "rate": 11025
+  },
+  "personagem_morte": {
+    "source": "C:\\Users\\alexsandro.pinheiro\\Documents\\Codex\\2026-11-03\\referenced-chatgpt-conversation-this-is-an\\outputs\\Previa-Cenario-16.40\\music\\sfx628\\player5.mp3",
+    "sample_bytes": 4076,
+    "seconds": 0.36970521541950113,
+    "song_seconds": 0.4166666666666667,
+    "notes_bytes": 198,
+    "chip": 6,
+    "channels": 5,
+    "rate": 11025
+  },
+  "inimigo_presenca": {
+    "source": "C:\\Users\\alexsandro.pinheiro\\Documents\\Codex\\2026-11-03\\referenced-chatgpt-conversation-this-is-an\\outputs\\Previa-Cenario-16.40\\music\\sfx628\\inimigo_presenca0.mp3",
+    "sample_bytes": 8727,
+    "seconds": 0.7915646258503402,
+    "song_seconds": 0.8333333333333334,
+    "notes_bytes": 323,
+    "chip": 6,
+    "channels": 5,
+    "rate": 11025
+  },
+  "inimigo_ataque": {
+    "source": "C:\\Users\\alexsandro.pinheiro\\Documents\\Codex\\2026-11-03\\referenced-chatgpt-conversation-this-is-an\\outputs\\Previa-Cenario-16.40\\music\\sfx628\\inimigo_ataque0.mp3",
+    "sample_bytes": 7856,
+    "seconds": 0.7125623582766439,
+    "song_seconds": 0.75,
+    "notes_bytes": 298,
+    "chip": 6,
+    "channels": 5,
+    "rate": 11025
+  },
+  "inimigo_dor": {
+    "source": "C:\\Users\\alexsandro.pinheiro\\Documents\\Codex\\2026-11-03\\referenced-chatgpt-conversation-this-is-an\\outputs\\Previa-Cenario-16.40\\music\\sfx628\\inimigo_dor0.mp3",
+    "sample_bytes": 8772,
+    "seconds": 0.7956462585034013,
+    "song_seconds": 0.8333333333333334,
+    "notes_bytes": 323,
+    "chip": 6,
+    "channels": 5,
+    "rate": 11025
+  },
+  "inimigo_morte": {
+    "source": "C:\\Users\\alexsandro.pinheiro\\Documents\\Codex\\2026-11-03\\referenced-chatgpt-conversation-this-is-an\\outputs\\Previa-Cenario-16.40\\music\\sfx628\\inimigo_morte0.mp3",
+    "sample_bytes": 9197,
+    "seconds": 0.8341950113378684,
+    "song_seconds": 0.8833333333333333,
+    "notes_bytes": 338,
+    "chip": 6,
+    "channels": 5,
+    "rate": 11025
+  },
+  "vidro": {
+    "source": "C:\\Users\\alexsandro.pinheiro\\Documents\\Codex\\2026-11-03\\referenced-chatgpt-conversation-this-is-an\\outputs\\Previa-Cenario-16.40\\music\\sfx624\\vidro.mp3",
+    "sample_bytes": 32612,
+    "seconds": 2.9580045351473925,
+    "song_seconds": 3.0,
+    "notes_bytes": 973,
+    "chip": 6,
+    "channels": 5,
+    "rate": 11025
+  },
+  "janela_presenca": {
+    "source": "C:\\Users\\alexsandro.pinheiro\\Documents\\Codex\\2026-11-03\\referenced-chatgpt-conversation-this-is-an\\outputs\\Previa-Cenario-16.40\\music\\sfx627\\vomit.mp3",
+    "sample_bytes": 21499,
+    "seconds": 1.9500226757369614,
+    "song_seconds": 2.0,
+    "notes_bytes": 673,
+    "chip": 6,
+    "channels": 5,
+    "rate": 11025
+  },
+  "janela_ataque": {
+    "source": "C:\\Users\\alexsandro.pinheiro\\Documents\\Codex\\2026-11-03\\referenced-chatgpt-conversation-this-is-an\\outputs\\Previa-Cenario-16.40\\music\\sfx627\\gag.mp3",
+    "sample_bytes": 18233,
+    "seconds": 1.6537868480725624,
+    "song_seconds": 1.7,
+    "notes_bytes": 583,
+    "chip": 6,
+    "channels": 5,
+    "rate": 11025
+  },
+  "janela_dor": {
+    "source": "C:\\Users\\alexsandro.pinheiro\\Documents\\Codex\\2026-11-03\\referenced-chatgpt-conversation-this-is-an\\outputs\\Previa-Cenario-16.40\\music\\sfx627\\vomit.mp3",
+    "sample_bytes": 21499,
+    "seconds": 1.9500226757369614,
+    "song_seconds": 2.0,
+    "notes_bytes": 673,
+    "chip": 6,
+    "channels": 5,
+    "rate": 11025
+  },
+  "janela_morte": {
+    "source": "C:\\Users\\alexsandro.pinheiro\\Documents\\Codex\\2026-11-03\\referenced-chatgpt-conversation-this-is-an\\outputs\\Previa-Cenario-16.40\\music\\sfx627\\gag.mp3",
+    "sample_bytes": 18233,
+    "seconds": 1.6537868480725624,
+    "song_seconds": 1.7,
+    "notes_bytes": 583,
+    "chip": 6,
+    "channels": 5,
+    "rate": 11025
+  },
+  "mulher_presenca": {
+    "source": "C:\\Users\\alexsandro.pinheiro\\Documents\\Codex\\2026-11-03\\referenced-chatgpt-conversation-this-is-an\\outputs\\Previa-Cenario-16.40\\music\\sfx628\\female0.mp3",
+    "sample_bytes": 7682,
+    "seconds": 0.696780045351474,
+    "song_seconds": 0.7333333333333333,
+    "notes_bytes": 293,
+    "chip": 6,
+    "channels": 5,
+    "rate": 11025
+  },
+  "mulher_ataque": {
+    "source": "C:\\Users\\alexsandro.pinheiro\\Documents\\Codex\\2026-11-03\\referenced-chatgpt-conversation-this-is-an\\outputs\\Previa-Cenario-16.40\\music\\sfx628\\female2.mp3",
+    "sample_bytes": 4376,
+    "seconds": 0.3969160997732426,
+    "song_seconds": 0.43333333333333335,
+    "notes_bytes": 203,
+    "chip": 6,
+    "channels": 5,
+    "rate": 11025
+  },
+  "mulher_dor": {
+    "source": "C:\\Users\\alexsandro.pinheiro\\Documents\\Codex\\2026-11-03\\referenced-chatgpt-conversation-this-is-an\\outputs\\Previa-Cenario-16.40\\music\\sfx628\\female4.mp3",
+    "sample_bytes": 8365,
+    "seconds": 0.7587301587301587,
+    "song_seconds": 0.8,
+    "notes_bytes": 313,
+    "chip": 6,
+    "channels": 5,
+    "rate": 11025
+  },
+  "mulher_morte": {
+    "source": "C:\\Users\\alexsandro.pinheiro\\Documents\\Codex\\2026-11-03\\referenced-chatgpt-conversation-this-is-an\\outputs\\Previa-Cenario-16.40\\music\\sfx628\\female_scream.mp3",
+    "sample_bytes": 14222,
+    "seconds": 1.2899773242630386,
+    "song_seconds": 1.3333333333333333,
+    "notes_bytes": 473,
+    "chip": 6,
+    "channels": 5,
+    "rate": 11025
+  },
+  "porta_abrir": {
+    "source": "C:\\Users\\alexsandro.pinheiro\\Documents\\Codex\\2026-11-03\\referenced-chatgpt-conversation-this-is-an\\outputs\\Previa-Cenario-16.40\\music\\sfx628\\PT01.mp3",
+    "sample_bytes": 29564,
+    "seconds": 2.681541950113379,
+    "song_seconds": 2.716666666666667,
+    "notes_bytes": 888,
+    "chip": 6,
+    "channels": 5,
+    "rate": 11025
+  },
+  "macaneta": {
+    "source": "C:\\Users\\alexsandro.pinheiro\\Documents\\Codex\\2026-11-03\\referenced-chatgpt-conversation-this-is-an\\outputs\\Previa-Cenario-16.40\\music\\sfx628\\macaneta633.mp3",
+    "sample_bytes": 6064,
+    "seconds": 0.5500226757369614,
+    "song_seconds": 0.6,
+    "notes_bytes": 253,
+    "chip": 6,
+    "channels": 5,
+    "rate": 11025
+  },
+  "menino_presenca": {
+    "source": "C:\\Users\\alexsandro.pinheiro\\Documents\\Codex\\2026-11-03\\referenced-chatgpt-conversation-this-is-an\\outputs\\Previa-Cenario-16.40\\music\\sfx661\\menino_presenca.mp3",
+    "sample_bytes": 8499,
+    "seconds": 0.7708843537414966,
+    "song_seconds": 0.8166666666666667,
+    "notes_bytes": 318,
+    "chip": 6,
+    "channels": 5,
+    "rate": 11025
+  },
+  "menino_ataque": {
+    "source": "C:\\Users\\alexsandro.pinheiro\\Documents\\Codex\\2026-11-03\\referenced-chatgpt-conversation-this-is-an\\outputs\\Previa-Cenario-16.40\\music\\sfx661\\menino_ataque.mp3",
+    "sample_bytes": 7717,
+    "seconds": 0.6999546485260771,
+    "song_seconds": 0.7333333333333333,
+    "notes_bytes": 293,
+    "chip": 6,
+    "channels": 5,
+    "rate": 11025
+  },
+  "menino_dor": {
+    "source": "C:\\Users\\alexsandro.pinheiro\\Documents\\Codex\\2026-11-03\\referenced-chatgpt-conversation-this-is-an\\outputs\\Previa-Cenario-16.40\\music\\sfx661\\menino_dor.mp3",
+    "sample_bytes": 8545,
+    "seconds": 0.7750566893424037,
+    "song_seconds": 0.8166666666666667,
+    "notes_bytes": 318,
+    "chip": 6,
+    "channels": 5,
+    "rate": 11025
+  },
+  "menino_morte": {
+    "source": "C:\\Users\\alexsandro.pinheiro\\Documents\\Codex\\2026-11-03\\referenced-chatgpt-conversation-this-is-an\\outputs\\Previa-Cenario-16.40\\music\\sfx661\\menino_morte.mp3",
+    "sample_bytes": 8953,
+    "seconds": 0.812063492063492,
+    "song_seconds": 0.85,
+    "notes_bytes": 328,
+    "chip": 6,
+    "channels": 5,
+    "rate": 11025
+  },
+  "menino_levantar": {
+    "source": "C:\\Users\\alexsandro.pinheiro\\Documents\\Codex\\2026-11-03\\referenced-chatgpt-conversation-this-is-an\\outputs\\Previa-Cenario-16.40\\music\\sfx661\\menino_levantar.mp3",
+    "sample_bytes": 4992,
+    "seconds": 0.4527891156462585,
+    "song_seconds": 0.5,
+    "notes_bytes": 223,
+    "chip": 6,
+    "channels": 5,
+    "rate": 11025
+  },
+  "L01": {
+    "source": "C:\\Users\\alexsandro.pinheiro\\Documents\\Codex\\2026-11-03\\referenced-chatgpt-conversation-this-is-an\\outputs\\Previa-Cenario-16.40\\music\\ambient623\\L01.ogg",
+    "sample_bytes": 192000,
+    "seconds": 24.0,
+    "song_seconds": 24.2,
+    "notes_bytes": 1283,
+    "chip": 6,
+    "channels": 5,
+    "rate": 8000
+  },
+  "N02": {
+    "source": "C:\\Users\\alexsandro.pinheiro\\Documents\\Codex\\2026-11-03\\referenced-chatgpt-conversation-this-is-an\\outputs\\Previa-Cenario-16.40\\music\\ambient623\\N02.ogg",
+    "sample_bytes": 192000,
+    "seconds": 24.0,
+    "song_seconds": 24.2,
+    "notes_bytes": 1283,
+    "chip": 6,
+    "channels": 5,
+    "rate": 8000
+  },
+  "D02": {
+    "source": "C:\\Users\\alexsandro.pinheiro\\Documents\\Codex\\2026-11-03\\referenced-chatgpt-conversation-this-is-an\\outputs\\Previa-Cenario-16.40\\music\\ambient623\\D02.ogg",
+    "sample_bytes": 192000,
+    "seconds": 24.0,
+    "song_seconds": 24.2,
+    "notes_bytes": 1283,
+    "chip": 6,
+    "channels": 5,
+    "rate": 8000
+  },
+  "B01": {
+    "source": "C:\\Users\\alexsandro.pinheiro\\Documents\\Codex\\2026-11-03\\referenced-chatgpt-conversation-this-is-an\\outputs\\Previa-Cenario-16.40\\music\\ambient631\\battle-loop.ogg",
+    "sample_bytes": 63832,
+    "seconds": 7.979,
+    "song_seconds": 8.2,
+    "notes_bytes": 483,
+    "chip": 6,
+    "channels": 5,
+    "rate": 8000
+  }
+}

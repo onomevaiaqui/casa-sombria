@@ -1,0 +1,224 @@
+[
+  {
+    "file": "asfalto.fur",
+    "peak": 8176,
+    "seconds": 0.2000453514739229,
+    "wav_bytes": 35332
+  },
+  {
+    "file": "azulejo.fur",
+    "peak": 12584,
+    "seconds": 0.4000453514739229,
+    "wav_bytes": 70612
+  },
+  {
+    "file": "B01.fur",
+    "peak": 8438,
+    "seconds": 8.200045351473923,
+    "wav_bytes": 1446532
+  },
+  {
+    "file": "calcada.fur",
+    "peak": 12584,
+    "seconds": 0.4000453514739229,
+    "wav_bytes": 70612
+  },
+  {
+    "file": "chute_esforco.fur",
+    "peak": 12580,
+    "seconds": 0.3000453514739229,
+    "wav_bytes": 52972
+  },
+  {
+    "file": "chute_impacto.fur",
+    "peak": 13614,
+    "seconds": 0.36671201814058957,
+    "wav_bytes": 64732
+  },
+  {
+    "file": "D02.fur",
+    "peak": 15050,
+    "seconds": 24.20004535147392,
+    "wav_bytes": 4268932
+  },
+  {
+    "file": "grama.fur",
+    "peak": 3906,
+    "seconds": 0.4833786848072562,
+    "wav_bytes": 85312
+  },
+  {
+    "file": "inimigo_ataque.fur",
+    "peak": 11024,
+    "seconds": 0.7500453514739229,
+    "wav_bytes": 132352
+  },
+  {
+    "file": "inimigo_dor.fur",
+    "peak": 7714,
+    "seconds": 0.8333786848072562,
+    "wav_bytes": 147052
+  },
+  {
+    "file": "inimigo_morte.fur",
+    "peak": 10280,
+    "seconds": 0.8833786848072562,
+    "wav_bytes": 155872
+  },
+  {
+    "file": "inimigo_presenca.fur",
+    "peak": 8848,
+    "seconds": 0.8333786848072562,
+    "wav_bytes": 147052
+  },
+  {
+    "file": "janela_ataque.fur",
+    "peak": 6552,
+    "seconds": 1.7000453514739229,
+    "wav_bytes": 299932
+  },
+  {
+    "file": "janela_dor.fur",
+    "peak": 6908,
+    "seconds": 2.000045351473923,
+    "wav_bytes": 352852
+  },
+  {
+    "file": "janela_morte.fur",
+    "peak": 6552,
+    "seconds": 1.7000453514739229,
+    "wav_bytes": 299932
+  },
+  {
+    "file": "janela_presenca.fur",
+    "peak": 6908,
+    "seconds": 2.000045351473923,
+    "wav_bytes": 352852
+  },
+  {
+    "file": "L01.fur",
+    "peak": 2876,
+    "seconds": 24.20004535147392,
+    "wav_bytes": 4268932
+  },
+  {
+    "file": "macaneta.fur",
+    "peak": 6926,
+    "seconds": 0.6000453514739229,
+    "wav_bytes": 105892
+  },
+  {
+    "file": "madeira.fur",
+    "peak": 7916,
+    "seconds": 0.28337868480725625,
+    "wav_bytes": 50032
+  },
+  {
+    "file": "menino_ataque.fur",
+    "peak": 9286,
+    "seconds": 0.7333786848072562,
+    "wav_bytes": 129412
+  },
+  {
+    "file": "menino_dor.fur",
+    "peak": 7254,
+    "seconds": 0.8167120181405896,
+    "wav_bytes": 144112
+  },
+  {
+    "file": "menino_levantar.fur",
+    "peak": 8360,
+    "seconds": 0.5000453514739229,
+    "wav_bytes": 88252
+  },
+  {
+    "file": "menino_morte.fur",
+    "peak": 8532,
+    "seconds": 0.8500453514739229,
+    "wav_bytes": 149992
+  },
+  {
+    "file": "menino_presenca.fur",
+    "peak": 7330,
+    "seconds": 0.8167120181405896,
+    "wav_bytes": 144112
+  },
+  {
+    "file": "mulher_ataque.fur",
+    "peak": 5424,
+    "seconds": 0.4333786848072562,
+    "wav_bytes": 76492
+  },
+  {
+    "file": "mulher_dor.fur",
+    "peak": 6842,
+    "seconds": 0.8000453514739229,
+    "wav_bytes": 141172
+  },
+  {
+    "file": "mulher_morte.fur",
+    "peak": 3564,
+    "seconds": 1.3333786848072562,
+    "wav_bytes": 235252
+  },
+  {
+    "file": "mulher_presenca.fur",
+    "peak": 6938,
+    "seconds": 0.7333786848072562,
+    "wav_bytes": 129412
+  },
+  {
+    "file": "N02.fur",
+    "peak": 1370,
+    "seconds": 24.20004535147392,
+    "wav_bytes": 4268932
+  },
+  {
+    "file": "personagem_dor.fur",
+    "peak": 7614,
+    "seconds": 0.28337868480725625,
+    "wav_bytes": 50032
+  },
+  {
+    "file": "personagem_morte.fur",
+    "peak": 4280,
+    "seconds": 0.41671201814058956,
+    "wav_bytes": 73552
+  },
+  {
+    "file": "porta_abrir.fur",
+    "peak": 6364,
+    "seconds": 2.7167120181405897,
+    "wav_bytes": 479272
+  },
+  {
+    "file": "portao_metal.fur",
+    "peak": 4606,
+    "seconds": 2.9167120181405894,
+    "wav_bytes": 514552
+  },
+  {
+    "file": "soco_esforco.fur",
+    "peak": 10118,
+    "seconds": 0.21671201814058957,
+    "wav_bytes": 38272
+  },
+  {
+    "file": "soco_impacto.fur",
+    "peak": 10438,
+    "seconds": 0.4000453514739229,
+    "wav_bytes": 70612
+  },
+  {
+    "file": "terra.fur",
+    "peak": 4224,
+    "seconds": 0.7167120181405896,
+    "wav_bytes": 126472
+  },
+  {
+    "file": "vidro.fur",
+    "peak": 7232,
+    "seconds": 3.000045351473923,
+    "wav_bytes": 529252
+  }
+]

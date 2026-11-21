@@ -2,6 +2,15 @@
 -- RGB555 material palettes remain untouched; exterior C lighting follows visible fixtures.
 local L={}
 local rooms={
+ c39_shed={ambient=.33,sources={{1.45,1.35,.28,1.65}}},
+ c39_quintal={ambient=.35,sources={{8.05,6.85,.30,2.1},{8.05,15.85,.30,2.1},{-4.9,16.3,.13,1.5}}},
+ c39_sala={ambient=.33,sources={{3.901,2.4,0.28,1.65}}},
+ c39_cozinha={ambient=.33,sources={{4.95,9.549,0.28,1.65}}},
+ c39_casal={ambient=.33,sources={{3.175,0.64,0.28,1.65},{3.175,2.91,0.28,1.65}}},
+ c39_solteiro={ambient=.33,sources={{3.2,8.0,.12,1.65},{.2,9.0,.28,1.65}}},
+ c39_banho={ambient=.33,sources={{1.1,6.469,0.28,1.1}}},
+ c39_corredor={ambient=.33,sources={{2.681,5.45,0.28,1.1}}},
+ rua={ambient=.35,sources={{-1.05,0,.28,3.2},{18.03,5.01,.30,2.2}}},
  quintal={ambient=.36,sources={{6.135,2.3,.30,2.2},{6.135,6.3,.175,1.8},{.8,1,.24,1.6}}},
  frente={ambient=.36,sources={{8,8.535,.30,2.2},{14.4,5.79,.27,2.1}}},
  sala={ambient=.32,sources={{.5,.6,.52,1.85}}},

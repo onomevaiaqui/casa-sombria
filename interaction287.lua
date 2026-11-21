@@ -7,7 +7,11 @@ local function release()
  module=nil
 end
 local function load(kind)
- release();module='interaction287_'..kind;clip=require(module)
+ release()
+ -- Doors and gates animate their leaves; the actor stays in the idle pose.
+ -- Keep their original timing without loading the removed hand/arm gestures.
+ if kind=='open_in'or kind=='open_out'then clip={duration=kind=='open_in'and 1.25 or 1.15};return end
+ module='interaction287_'..kind;clip=require(module)
  assert(type(clip)=='table'and #clip.data==clip.count*1224,'Animacao de interacao incompleta')
 end
 local function interpolate(a,b,t)return a+(b-a)*t end
@@ -50,6 +54,7 @@ function I.pose(walk,idle)
  local s=active;if not s then return nil end
  if s.stage=='align'then return idle,0,'interaction_align'end
  if s.stage=='cross'then return walk,s.progress*(walk.count-1),'interaction_cross'end
+ if s.kind~='pickup'then return idle,0,'interaction_door_idle'end
  return clip,(s.stage=='close'and(1-s.progress)or s.progress)*(clip.count-1),'interaction_'..s.kind
 end
 function I.doorVisual()

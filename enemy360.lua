@@ -70,7 +70,7 @@ end
 local function far(a,b)return a[4]>b[4]end
 function E.draw(ui,m,visible)
  if not E.enabled then return end
- for i,c in ipairs(D.palette)do ui.palset(slots[i],c)end
+ for i,c in ipairs(D.palette)do ui.palset(slots[i],require('lighting593').color(c,'rua',E.x,E.y))end
  local clip=pose();local phase
  if E.state=='sleep'then phase=0
  elseif E.state=='dead'then phase=math.max(0,(clip.count-1)*(1-E.time/1.1))

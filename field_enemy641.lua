@@ -1,35 +1,49 @@
 -- User-provided red-shirt boy. Field encounter persists across camera changes.
 local D=require('teen642_data')
-local E={x=12,y=31,hp=3,maxHp=3,state='idle',time=0,angle=0,motion=0,enabled=true}
+local E={x=12,y=32,hp=6,maxHp=6,state='dormant',time=0,angle=0,motion=0,enabled=true}
 local life=require('survival158')
-local verts,faces,pool,tris={},{},{},{}
+local verts,faces,pool,tris
 local slots={205,206,207,208,209,210,211,212,213,214,215,219,220,221,222,223}
+local function allocateGraphics()
+ if verts then return end
+ verts,faces,pool,tris={},{},{},{}
 for i=1,D.vertices do verts[i]={0,0,0}end
 for i=1,#D.triangles,7 do local a,b,c,d,e,f,k=D.triangles:byte(i,i+6);tris[#tris+1]={a+b*256+1,c+d*256+1,e+f*256+1,k};pool[#pool+1]={}end
+end
 local current,currentName
 local function pose()
- local name=E.state=='dead'and 'death'or E.state
+ allocateGraphics()
+ local name=E.state=='dead'and 'death'or E.state=='dormant'and 'rise'or E.state
  if name~=currentName then
   current=nil;currentName=name
+  require('cinema356').pressure()
   local key='teen642_'..name;current=require(key)
   if type(package)=='table'and package.loaded then package.loaded[key]=nil end
  end
  return current
 end
 local function state(name)E.state=name;E.time=0;pose()end
+function E.releaseGraphics()current=nil;currentName=nil;verts,faces,pool,tris=nil,nil,nil,nil end
 function E.bind(session)
  if E.session~=session then
-  E.session=session;E.x,E.y=12,31;E.hp=3;E.state='idle';E.time=0;E.motion=0;E.angle=0;E.connected=false;E.cooldown=0;E.dropped=false;E.route=nil;E.routeTime=0;current,currentName=nil,nil
-  if session.field641_defeated then E.hp=0;E.state='dead';E.time=10;E.dropped=true;E.x=session.field641_key_x or 12;E.y=session.field641_key_y or 31 end
+  E.session=session;E.x,E.y=12,32;E.hp=6;E.state='dormant';E.time=0;E.motion=0;E.angle=0;E.connected=false;E.cooldown=0;E.dropped=false;E.route=nil;E.routeTime=0;E.poise=0;E.flinch=0;E.attackStep=0;current,currentName=nil,nil
+  if session.field641_defeated then E.hp=0;E.state='dead';E.time=10;E.dropped=true;E.x=session.field641_key_x or 12;E.y=session.field641_key_y or 32 end
+  if session.field661_awakened and not session.field641_defeated then E.state='walk'end
  end
 end
-function E.trigger(x,y)return x>=5.5 and x<=20 and y>=24 and y<=38 end
+-- Only inspecting the motionless body starts this encounter.
+function E.nearBody(x,y)return E.state=='dormant'and(x-E.x)^2+(y-E.y)^2<1.65^2 end
+function E.action(x,y)
+ if not E.nearBody(x,y)then return false end
+ state('rise');E.session.field661_awakened=true;require('sound626').emit('menino_levantar');return true
+end
+function E.prompt(ui,x,y)if E.nearBody(x,y)then ui.print('B: examinar o corpo',12,248,241)end end
 local function waypoint(x,y,canWalk)
  local dx,dy=x-E.x,y-E.y;local length=math.sqrt(dx*dx+dy*dy);local clear=true
  for i=1,math.ceil(length/.25)do local t=i/math.max(1,math.ceil(length/.25));if not canWalk(E.x+dx*t,E.y+dy*t)then clear=false;break end end
  if clear then return x,y end
  if E.routeTime<=0 or not E.route then
-  E.routeTime=.6;local step=.5;local width,height=61,81
+  E.routeTime=.25;local step=.5;local width,height=61,81
   local function id(a,b)return math.floor(a/step+.5)+math.floor(b/step+.5)*width end
   local function point(n)return(n%width)*step,math.floor(n/width)*step end
   local a,b=id(E.x,E.y),id(x,y);local q,prev={a},{[a]=a};local head=1
@@ -45,21 +59,25 @@ local function waypoint(x,y,canWalk)
  if(E.x-p[1])^2+(E.y-p[2])^2<.12^2 then table.remove(E.route,1);p=E.route[1]end
  return p and p[1]or x,p and p[2]or y
 end
-function E.blocks(x,y)return E.hp>0 and E.state~='idle'and(x-E.x)^2+(y-E.y)^2<.42^2 end
+function E.blocks(x,y)return E.hp>0 and E.state~='dormant'and(x-E.x)^2+(y-E.y)^2<.32^2 end
 function E.hit(x,y,angle,equipped,canWalk)
- if E.hp<=0 then return false end
+ if E.hp<=0 or E.state=='dormant'or E.state=='rise'then return false end
  local dx,dy=E.x-x,E.y-y;local dist=math.sqrt(dx*dx+dy*dy);local reach=equipped=='crowbar'and 1.5 or 1.1
  if dist>reach or(dx*math.sin(angle)-dy*math.cos(angle))/math.max(.001,dist)<.4 then return false end
  for i=1,3 do if not canWalk(x+dx*i/4,y+dy*i/4)then return false end end
  E.hp=math.max(0,math.floor(E.hp*10+.5)-(equipped=='crowbar'and 12 or 8))/10
- require('sound626').emit(E.hp==0 and 'inimigo_morte'or 'inimigo_dor');state(E.hp==0 and 'dead'or 'hit');E.cooldown=.32;return true
+ require('sound626').emit(E.hp==0 and 'menino_morte'or 'menino_dor')
+ if E.hp==0 then state('dead')
+ elseif(E.poise or 0)<=0 then state('hit');E.cooldown=.08;E.poise=.85
+ else E.flinch=.12 end
+ return true
 end
 function E.tick(dt,x,y,paused,canWalk)
  if paused then return end
  require('sound626').presence('field',E.state=='walk',(x-E.x)^2+(y-E.y)^2<49,dt)
- dt=math.min(.1,math.max(0,dt));E.time=E.time+dt*(E.state=='rise'and 1.6 or E.state=='attack'and 1.8 or E.state=='hit'and 1.5 or 1);E.cooldown=math.max(0,(E.cooldown or 0)-dt)
- E.routeTime=math.max(0,(E.routeTime or 0)-dt)
- if E.state=='idle'then if E.trigger(x,y)then state('walk')end;return end
+ dt=math.min(.1,math.max(0,dt));E.time=E.time+dt*(E.state=='rise'and 1.6 or E.state=='attack'and 2.65 or E.state=='hit'and 2.0 or 1);E.cooldown=math.max(0,(E.cooldown or 0)-dt)
+ E.routeTime=math.max(0,(E.routeTime or 0)-dt);E.poise=math.max(0,(E.poise or 0)-dt);E.flinch=math.max(0,(E.flinch or 0)-dt)
+ if E.state=='dormant'then E.time=0;return end
  if E.state=='dead'then
   local duration=pose().duration;E.time=math.min(duration,E.time)
   if E.time>=duration and not E.dropped then
@@ -73,6 +91,14 @@ function E.tick(dt,x,y,paused,canWalk)
  local dx,dy=x-E.x,y-E.y;local distance=math.sqrt(dx*dx+dy*dy)
  if E.state=='attack'then
   local contact=clip.duration*.42
+  if E.time<contact*.55 then
+   local target=math.atan(dx,-dy);local turn=math.atan(math.sin(target-E.angle),math.cos(target-E.angle));E.angle=E.angle+math.max(-6.5*dt,math.min(6.5*dt,turn))
+   local step=math.min(1.5*dt,math.max(0,distance-.60),math.max(0,.28-(E.attackStep or 0)))
+   if distance>.001 and step>0 then
+    local nx,ny=E.x+dx/distance*step,E.y+dy/distance*step
+    if canWalk(nx,ny)then E.x,E.y=nx,ny;E.attackStep=(E.attackStep or 0)+step;dx,dy=x-E.x,y-E.y;distance=math.sqrt(dx*dx+dy*dy)end
+   end
+  end
   if not E.connected and E.time>=contact then
    E.connected=true
    if distance<.95 and(dx*math.sin(E.angle)-dy*math.cos(E.angle))/math.max(.001,distance)>.55 then
@@ -80,15 +106,15 @@ function E.tick(dt,x,y,paused,canWalk)
     if clear then life.damage()end
    end
   end
-  if E.time>=clip.duration then state('walk');E.cooldown=.20 end
+  if E.time>=clip.duration then state('walk');E.cooldown=.04 end
   return
  end
  -- All playable field and access path remain in pursuit range; camera changes do not reset it.
- local target=math.atan(dx,-dy);local turn=math.atan(math.sin(target-E.angle),math.cos(target-E.angle));E.angle=E.angle+math.max(-5.5*dt,math.min(5.5*dt,turn))
- if distance<.76 and E.cooldown<=0 then E.connected=false;state('attack');require('sound626').emit('inimigo_ataque');return end
+ local target=math.atan(dx,-dy);local turn=math.atan(math.sin(target-E.angle),math.cos(target-E.angle));E.angle=E.angle+math.max(-6.5*dt,math.min(6.5*dt,turn))
+ if distance<.76 and E.cooldown<=0 then E.connected=false;E.attackStep=0;state('attack');require('sound626').emit('menino_ataque');return end
  if distance<=.68 then return end
  local tx,ty=waypoint(x,y,canWalk);dx,dy=tx-E.x,ty-E.y;local routeDistance=math.sqrt(dx*dx+dy*dy);if routeDistance<.001 then return end
- local amount=math.min(2.35*dt,routeDistance,math.max(0,distance-.72));local n=math.max(1,math.ceil(amount/.04));local ax,ay=dx/routeDistance*amount/n,dy/routeDistance*amount/n
+ local amount=math.min(3.60*dt,routeDistance,math.max(0,distance-.72));local n=math.max(1,math.ceil(amount/.04));local ax,ay=dx/routeDistance*amount/n,dy/routeDistance*amount/n
  for i=1,n do
   local nx,ny=E.x+ax,E.y+ay
   if canWalk(nx,ny)then E.x,E.y=nx,ny;E.motion=E.motion+amount/n/1.53
@@ -101,14 +127,14 @@ function E.draw(ui,m,visible)
  if not E.enabled then return end
  for i,c in ipairs(D.palette)do local r,g,b=c&31,(c>>5)&31,(c>>10)&31;ui.palset(slots[i],math.floor(r*.34)|(math.floor(g*.40)<<5)|(math.floor(b*.50)<<10))end
  local clip=pose();local phase
- if E.state=='idle'then phase=0
+ if E.state=='dormant'then phase=0
  elseif E.state=='dead'then phase=math.min(clip.count-1,E.time*clip.fps)
  elseif E.state=='walk'then phase=((E.motion or 0)%1)*(clip.count-1)
  else phase=math.min(clip.count-1,E.time*clip.fps)end;local f=math.floor(phase);local n=math.min(f+1,clip.count-1);local blend=phase-f;local sn,cs=math.sin(E.angle),math.cos(E.angle);local r1,r2,r4=m[1],m[2],m[4]
  for i=0,D.vertices-1 do
   local p=i*3+f*D.vertices*3+1;local q=i*3+n*D.vertices*3+1;local a,b,c=clip.data:byte(p,p+2);local d,e,g=clip.data:byte(q,q+2)
   local ax=clip.low[1]+(a+(d-a)*blend)/255*clip.span[1];local z=clip.low[2]+(b+(e-b)*blend)/255*clip.span[2];local az=clip.low[3]+(c+(g-c)*blend)/255*clip.span[3]
-  local wx,wy=E.x+ax*cs-az*sn,E.y+ax*sn+az*cs;local depth=r4[1]*wx+r4[2]*wy+r4[3]*z+r4[4];local v=verts[i+1];v[1],v[2],v[3]=math.floor(((r1[1]*wx+r1[2]*wy+r1[3]*z+r1[4])/depth+1)*240+.5),math.floor((1-(r2[1]*wx+r2[2]*wy+r2[3]*z+r2[4])/depth)*135+.5),depth
+  if(E.flinch or 0)>0 then az=az+.035*math.sin(math.pi*E.flinch/.12)*math.max(0,z-.55)end;ax=ax*.84;az=az*.84;z=z*(1.50/1.65);local wx,wy=E.x+ax*cs-az*sn,E.y+ax*sn+az*cs;local depth=r4[1]*wx+r4[2]*wy+r4[3]*z+r4[4];local v=verts[i+1];v[1],v[2],v[3]=math.floor(((r1[1]*wx+r1[2]*wy+r1[3]*z+r1[4])/depth+1)*240+.5),math.floor((1-(r2[1]*wx+r2[2]*wy+r2[3]*z+r2[4])/depth)*135+.5),depth
  end
  for i=#faces,1,-1 do faces[i]=nil end
  for i,t in ipairs(tris)do local a,b,c=verts[t[1]],verts[t[2]],verts[t[3]]

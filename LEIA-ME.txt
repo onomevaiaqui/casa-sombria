@@ -1,11 +1,7 @@
-A Ultima Entrega - 16.46
-Inicio normal pelo menu Novo Jogo.
-Menu: pizza retirada; casa ao fundo preservada.
-Casa 39: bilhete N04 com fita, escrita azul velha e sem assinatura.
-B alterna imagem/transcricao do bilhete. A fecha.
-Inventario > Arquivos: B abre leitura em tela cheia. Direcional muda paginas. A volta a lista.
-Pedido de entrega: texto original mais manual em seis paginas, incluindo comandos do Lupi e teclado da previa.
-Audio nativo: 31 arquivos Furnace; chamadas de reproducao/fade conforme o contrato usado no Lupi Combat 3D.
-A API documentada possui uma unica reproducao de musica: efeitos prioritarios interrompem e retomam a trilha. Passos gravados nao interrompem a trilha de suspense.
-Sprites somente leitura. Dados por comodo para reduzir picos de memoria.
-Validacao local em Lua 5.4 com teto de 4 MiB; 2352 bitmaps conferidos apos conversao. Teste fisico no console e conversao no servidor ainda precisam ser confirmados.
+A Ultima Entrega - 16.47
+Inicio normal no menu: Novo Jogo.
+Revisao: iluminacao, cameras, perseguicao entre comodos, deposito da Casa 39, porta independente com travessia manual, passagem de tabuas somente com machadinha, inventario, bilhetes e cura.
+Audio: 37 arquivos Furnace validados por reproducao, incluindo vozes do campinho e portao metalico. Uma unica trilha de musica no Lupi; efeitos prioritarios interrompem e retomam a trilha. Passos nao interrompem musica ambiente.
+Memoria: testes Lua 5.4 limitados a 4 MiB; carregamento por comodo, camera e quadro de porta.
+Salvamento: o telefone persiste no navegador. A API atual do console nao disponibiliza io/escrita de arquivos; no Lupi, uma tentativa de salvar informa a falha e devolve a ficha. Nao ha falsa confirmacao de salvamento.
+Testes locais nao substituem teste fisico no aparelho.
