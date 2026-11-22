@@ -20,13 +20,14 @@ local function load()
  end
  if not W.x then W.x,W.y=S.anchor[1],S.anchor[2];W.angle=-math.pi/2 end
 end
-function W.releaseGraphics()vertices={};triangles={};faces={};pool={};W.lastPose=nil;W.fromPose=nil;W.previousClip=nil end
+function W.releaseGraphics()require('pursuit605').release();vertices={};triangles={};faces={};pool={};W.lastPose=nil;W.fromPose=nil;W.previousClip=nil end
 W.prepare=load
 function W.reset()
  W.room='corredor'
  W.glassSound624=false
  W.battleMusic636=false
  W.portal=nil
+ require('pursuit605').release()
  W.state='waiting';W.hp=5;W.time=0;W.eventTime=0;W.wait=0;W.cooldown=0;W.attackTime=nil;W.blend=0;W.drawn=0;W.moving=false;W.runTime=0;W.poseBlend=1;W.lastPose=nil;W.previousClip=nil
  if S then W.x,W.y=S.anchor[1],S.anchor[2];W.angle=-math.pi/2 end
  W.hitTime=nil;W.deathTime=nil;W.poise=0;W.flinch=0;W.attackStep=0
@@ -186,9 +187,22 @@ end
 local function farther(a,b)return a[4]>b[4]end
 function W.draw(room)
  if not require('pursuit605').inside[room]or W.state=='waiting'or W.state=='escaped'then return end
- if not next(vertices)then load()end
  local plan=metric.plan.rooms;local source,view=plan[W.room],plan[room];if not source or not view then return end
  local offsetX,offsetY=source.offset[1]-view.offset[1],source.offset[2]-view.offset[2]
+ local project=cameras.projector(room)
+ -- Conservative room bounds retain actors visible through open doorways.
+ -- Do not cull solely because actor and camera belong to different rooms.
+ if room~=W.room and W.state~='sequence' then
+  local size=metric.sizes[W.room];local minX,minY,maxX,maxY=1e9,1e9,-1e9,-1e9;local safe=true
+  for ix=0,1 do for iy=0,1 do for iz=0,1 do
+   local x,y,z=offsetX-1.5+ix*(size[1]+3),offsetY-1.5+iy*(size[2]+3),-.5+iz*3.5
+   local sx,sy,depth=project(x,y,z)
+   if depth<=.1 then safe=false end
+   minX,minY,maxX,maxY=math.min(minX,sx),math.min(minY,sy),math.max(maxX,sx),math.max(maxY,sy)
+  end end end
+  if safe and(maxX<0 or minX>480 or maxY<0 or minY>270)then W.drawn=0;return end
+ end
+ if not next(vertices)then load()end
  -- Keep the actor hidden until the same instant that exposes the broken window.
  if W.state=='sequence'and W.time<.4 then W.drawn=0;return end
  W.palette(ui)
@@ -213,7 +227,7 @@ function W.draw(room)
    x=W.x+ax*cos-ay*sin;y=W.y+ax*sin+ay*cos;z=az
    if W.blend<1 then local a,b,c=sample(S,55,i);local t=W.blend*W.blend*(3-2*W.blend);x=a+(x-a)*t;y=b+(y-b)*t;z=c+(z-c)*t end
   end
-  local sx,sy,dep=cameras.project(room,x+offsetX,y+offsetY,z);local out=vertices[i];out[1],out[2],out[3]=math.floor(sx+.5),math.floor(sy+.5),dep
+  local sx,sy,dep=project(x+offsetX,y+offsetY,z);local out=vertices[i];out[1],out[2],out[3]=math.floor(sx+.5),math.floor(sy+.5),dep
  end
  for i=#faces,1,-1 do faces[i]=nil end
  local count=0

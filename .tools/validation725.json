@@ -1,0 +1,21 @@
+{
+  "version": "16.59",
+  "changes": [
+    "cached reverse navigation field, invalidated by room/door/destination cell",
+    "bounded single-room navigation working set released at reset/exterior",
+    "conservative off-screen room bounds; retain doorway visibility",
+    "resolve camera projector once per enemy draw"
+  ],
+  "visual_assets_changed": false,
+  "tests": {
+    "obstacle_route_and_door_invalidation": "passed",
+    "repeated_route_host_seconds_before": 0.203,
+    "repeated_route_host_seconds_after": 0.018,
+    "first_house_all_interiors_4MiB_host": "passed",
+    "phone_checkpoint_4MiB_host": "passed",
+    "full_menu_field_shed_5MiB_64bit_host": "passed",
+    "full_menu_field_shed_4MiB_64bit_host": "memory limit exceeded with old and new navigation",
+    "native_hardware_fps": "pending"
+  },
+  "note": "Host timings are not console FPS; original meshes, animations, palettes, backgrounds and audio unchanged."
+}

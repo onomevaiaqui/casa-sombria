@@ -13,26 +13,61 @@ local function segment(room,x,y,tx,ty)
  for i=1,steps do if not N.clear(room,x+(tx-x)*i/steps,y+(ty-y)*i/steps)then return false end end
  return true
 end
-local cache={};local step=.18
+-- One navigation working set: replace it on room/door changes.
+local step=.18
+local grid,queue,distance={},{},{}
+local cachedRoom,cachedMask,cachedGoal,cachedW,cachedH
 N.lineClear=segment
+N.searches=0
+function N.release()
+ grid,queue,distance={},{},{};cachedRoom=nil;cachedGoal=nil
+end
 function N.waypoint(room,x,y,tx,ty)
  if segment(room,x,y,tx,ty)then return tx,ty,false end
  local sz=M.sizes[room];local w,h=math.floor((sz[1]-.48)/step)+1,math.floor((sz[2]-.48)/step)+1
  local function xy(id)local n=id-1;return .24+(n%w)*step,.24+math.floor(n/w)*step end
- local mask=D.stateMask({1,2,4,8,16,32,256});local key=room..':'..mask;local grid=cache[key]
- if not grid then grid={};for i=1,w*h do local a,b=xy(i);grid[i]=N.clear(room,a,b)end;cache[key]=grid end
- local function nearest(a,b)local id,dist=nil,1e9;for i=1,w*h do if grid[i]then local xx,yy=xy(i);local d=(xx-a)^2+(yy-b)^2;if d<dist then id,dist=i,d end end end;return id end
+ local mask=D.stateMask({1,2,4,8,16,32,256})
+ if cachedRoom~=room or cachedMask~=mask then
+  cachedRoom,cachedMask,cachedGoal,cachedW,cachedH=room,mask,nil,w,h
+  for i=1,w*h do local a,b=xy(i);grid[i]=N.clear(room,a,b)end
+ end
+ local function nearest(a,b)
+  local c,r=math.floor((a-.24)/step+.5),math.floor((b-.24)/step+.5)
+  local id=r*w+c+1
+  if c>=0 and c<w and r>=0 and r<h and grid[id]then return id end
+  local best,dist=nil,1e9
+  for i=1,w*h do if grid[i]then local xx,yy=xy(i);local d=(xx-a)^2+(yy-b)^2;if d<dist then best,dist=i,d end end end
+  return best
+ end
  local start,goal=nearest(x,y),nearest(tx,ty);if not start or not goal then return x,y,true end
- local q,prev={start},{[start]=0};local head=1
- while head<=#q and not prev[goal]do local id=q[head];head=head+1;local col=(id-1)%w;local row=math.floor((id-1)/w)
-  for _,v in ipairs({{1,0},{-1,0},{0,1},{0,-1}})do local c,r=col+v[1],row+v[2];local n=r*w+c+1
-   if c>=0 and c<w and r>=0 and r<h and grid[n]and prev[n]==nil then prev[n]=id;q[#q+1]=n end
+ -- Reverse BFS is shared by every update until the destination cell changes.
+ if cachedGoal~=goal then
+  cachedGoal=goal;N.searches=N.searches+1
+  for i=1,w*h do distance[i]=false end
+  queue[1]=goal;distance[goal]=0;local head,tail=1,1
+  while head<=tail do
+   local id=queue[head];head=head+1;local col=(id-1)%w;local row=math.floor((id-1)/w);local d=distance[id]+1
+   local n=id+1;if col+1<w and grid[n]and distance[n]==false then distance[n]=d;tail=tail+1;queue[tail]=n end
+   n=id-1;if col>0 and grid[n]and distance[n]==false then distance[n]=d;tail=tail+1;queue[tail]=n end
+   n=id+w;if row+1<h and grid[n]and distance[n]==false then distance[n]=d;tail=tail+1;queue[tail]=n end
+   n=id-w;if row>0 and grid[n]and distance[n]==false then distance[n]=d;tail=tail+1;queue[tail]=n end
   end
  end
- if prev[goal]==nil then return x,y,true end
- local route={goal};while route[#route]~=start do route[#route+1]=prev[route[#route]]end
- for i=1,#route do local a,b=xy(route[i]);if segment(room,x,y,a,b)then return a,b,true end end
- return x,y,true
+ if distance[start]==false then return x,y,true end
+ local id=start;local bestX,bestY=xy(start)
+ -- Follow the descending field, smoothing only along collision-free segments.
+ for i=1,w*h do
+  if id==goal then break end
+  local col=(id-1)%w;local row=math.floor((id-1)/w);local d=distance[id];local nextId
+  if col+1<w and distance[id+1]and distance[id+1]<d then nextId=id+1
+  elseif col>0 and distance[id-1]and distance[id-1]<d then nextId=id-1
+  elseif row+1<h and distance[id+w]and distance[id+w]<d then nextId=id+w
+  elseif row>0 and distance[id-w]and distance[id-w]<d then nextId=id-w end
+  if not nextId then break end
+  local a,b=xy(nextId);if not segment(room,x,y,a,b)then break end
+  bestX,bestY=a,b;id=nextId
+ end
+ return bestX,bestY,true
 end
 local function nextRoom(from,to)
  local q,prev={from},{[from]=false};local head=1
