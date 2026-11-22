@@ -1,0 +1,1 @@
+Video 2026-11-22 08.43.14: seis paginas lidas. ui sem gravacao; globais basicas; tabelas Sprites, math, music, sfx, string, table, ui, utf8, util. Diagnostico 16.49 complementa inspecao dos metodos de tabelas nao padrao e tenta resolver modulos de armazenamento usando require protegido, sem executar suas funcoes. Sem conclusao absoluta antes deste teste.
