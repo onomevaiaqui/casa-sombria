@@ -1,0 +1,7 @@
+{
+  "fix": "remove legacy emulator button reassignment; native constants remain authoritative",
+  "D02_gain_before": 0.3,
+  "D02_gain_after": 0.6,
+  "tests": "4MiB with both BTN_X and BTN_Q available; original BTN_Z opens New Game; phone resume passes",
+  "console_confirmation_pending": true
+}
