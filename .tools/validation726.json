@@ -1,0 +1,19 @@
+{
+  "version": "16.60",
+  "geometry_textures_palettes_unchanged": true,
+  "changes": [
+    "Native opaque triangles; removed tall-triangle rejection",
+    "Original apparition alpha preserved with equal-color horizontal spans",
+    "Reusable vertex and face buffers; one camera projector per draw",
+    "Swing animation uses elapsed time without the .05 second cap"
+  ],
+  "tests": {
+    "apparition_pixel_equivalence": "passed",
+    "tall_triangle_retained": "passed",
+    "elapsed_animation_time": "passed",
+    "first_house_all_interiors_4MiB_host": "passed",
+    "phone_checkpoint_4MiB_host": "passed",
+    "Lua_syntax_and_dependencies": "passed"
+  },
+  "hardware_FPS": "pending physical test"
+}

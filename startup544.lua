@@ -23,13 +23,13 @@ local function fail(err)
 end
 function B.tick(frame)
  if B.error then
-  canvas();ui.print('16.59 - FALHA NA INICIALIZACAO',10,15,241);ui.print('ETAPA: '..B.label,10,37,241);ui.print('MEMORIA LUA: '..memory()..' KB',10,55,241)
+  canvas();ui.print('16.60 - FALHA NA INICIALIZACAO',10,15,241);ui.print('ETAPA: '..B.label,10,37,241);ui.print('MEMORIA LUA: '..memory()..' KB',10,55,241)
   local row=0
   for line in(B.error..'\n'):gmatch('(.-)\n')do for p=1,math.max(1,#line),70 do ui.print(line:sub(p,p+69),10,80+row*13,241);row=row+1;if row>=11 then break end end;if row>=11 then break end end
   ui.print('Envie uma foto desta tela.',10,246,241);return
  end
  if not B.loaded then
-  frames=frames+1;canvas();ui.print('16.59 - CARREGANDO JOGO',14,70,241);ui.print('MEMORIA LUA: '..memory()..' KB',14,95,241);ui.print('ETAPA: '..B.label,14,120,241)
+  frames=frames+1;canvas();ui.print('16.60 - CARREGANDO JOGO',14,70,241);ui.print('MEMORIA LUA: '..memory()..' KB',14,95,241);ui.print('ETAPA: '..B.label,14,120,241)
   ui.print('QUADRO: '..frames,14,145,241)
   if frames<3 then return end
   if not initializer then
