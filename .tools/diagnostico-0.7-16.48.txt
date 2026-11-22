@@ -1,0 +1,1 @@
+Build diagnostico solicitado na investigacao do salvamento no firmware 0.7. Lista exclusivamente nomes e tipos de funcoes/tabelas Lua; nao invoca funcoes de armazenamento, nao altera nem apaga dados. Acao continua para o jogo 16.47. Necessita retorno das telas do console real para confirmar APIs nao documentadas na documentacao publica 0.6.8.

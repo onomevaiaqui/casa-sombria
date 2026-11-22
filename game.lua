@@ -1,2 +1,6 @@
 local startup=require('startup544')
-function update()startup.tick()end
+local diagnostic=require('save_probe700')
+function update()
+ if diagnostic.active then diagnostic.tick();return end
+ startup.tick()
+end
