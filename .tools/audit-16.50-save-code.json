@@ -1,0 +1,33 @@
+{
+  "version": "16.50",
+  "feature": "phone resume code UE1",
+  "native_storage_required": false,
+  "lua_limit_bytes": 4194304,
+  "tested_without": [
+    "io",
+    "os",
+    "load",
+    "package"
+  ],
+  "tested": [
+    "single token spent after successful encoding",
+    "missing-token path",
+    "invalid codes leave state untouched",
+    "each single-character typo detected",
+    "truncation rejected",
+    "inventory and equipment",
+    "files",
+    "door state",
+    "event flags and numeric progress",
+    "enemy state/health",
+    "fresh Lua runtime without saved RAM",
+    "fresh browser session entered entirely through controller grid",
+    "phone spawn with restored health"
+  ],
+  "checkpoint_position": "public phone",
+  "enemy_position_resolution_m": 0.0625,
+  "typical_test_code_chars": 57,
+  "diagnostic_boot_removed": true,
+  "physical_console_tested": false,
+  "initial_token_placement": "awaiting author preference"
+}

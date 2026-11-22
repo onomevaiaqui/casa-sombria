@@ -1,7 +1,9 @@
-A Ultima Entrega - 16.47
-Inicio normal no menu: Novo Jogo.
-Revisao: iluminacao, cameras, perseguicao entre comodos, deposito da Casa 39, porta independente com travessia manual, passagem de tabuas somente com machadinha, inventario, bilhetes e cura.
-Audio: 37 arquivos Furnace validados por reproducao, incluindo vozes do campinho e portao metalico. Uma unica trilha de musica no Lupi; efeitos prioritarios interrompem e retomam a trilha. Passos nao interrompem musica ambiente.
-Memoria: testes Lua 5.4 limitados a 4 MiB; carregamento por comodo, camera e quadro de porta.
-Salvamento: o telefone persiste no navegador. A API atual do console nao disponibiliza io/escrita de arquivos; no Lupi, uma tentativa de salvar informa a falha e devolve a ficha. Nao ha falsa confirmacao de salvamento.
-Testes locais nao substituem teste fisico no aparelho.
+A Ultima Entrega - 16.50
+Inicio normal pelo menu, sem telas de diagnostico.
+Telefone: exige uma ficha. Confirmar salvar consome uma ficha e exibe um codigo UE1. Anote ou fotografe.
+Menu > RETOMAR POR CODIGO: selecione os caracteres com o direcional, B insere, APAGAR remove o ultimo e CARREGAR retoma. A volta. Teclado USB e opcional.
+O codigo recupera vida, mochila, arquivos, portas, progresso e estado principal dos inimigos. A retomada acontece no telefone. Ataques e temporizadores em andamento sao reiniciados como num checkpoint. Posicoes de inimigos sao quantizadas em 1/16 m.
+O codigo tem verificacao de erros; entrada invalida nao altera a partida.
+Sem depender de io, os, load, package ou escrita no console. No navegador permanece tambem a persistencia automatica existente.
+Nenhuma ficha gratuita fica no telefone. Local da primeira ficha ainda a definir pelo autor.
+Carregamento por comodo/camera/quadro respeita 4 MiB de Lua. Audio nativo: 37 arquivos Furnace validados.

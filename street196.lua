@@ -367,8 +367,8 @@ end
  end
  footsteps292.tick(moved,dt,run,M.surface624(),paused or interaction287.busy())
  shot=selectCamera(x,y,shot)
- if not inside39 and not front39 and x>5.5 and y>4.5 and y<14 then ambush360=ambush360 or require('enemy360');ambush360.bind(medicineInventory.collected);require('save680').applyEnemy('enemy360',ambush360)end
- if insideFacility=='campo'then fieldEnemy641=fieldEnemy641 or require('field_enemy641');fieldEnemy641.bind(medicineInventory.collected);require('save680').applyEnemy('field_enemy641',fieldEnemy641);fieldEnemy641.tick(dt,x,y,paused or life360.dead,house39.walkable)end
+ if not inside39 and not front39 and x>5.5 and y>4.5 and y<14 then ambush360=ambush360 or require('enemy360');require('save680').trackEnemy('enemy360',ambush360);ambush360.bind(medicineInventory.collected);require('save680').applyEnemy('enemy360',ambush360)end
+ if insideFacility=='campo'then fieldEnemy641=fieldEnemy641 or require('field_enemy641');require('save680').trackEnemy('field_enemy641',fieldEnemy641);fieldEnemy641.bind(medicineInventory.collected);require('save680').applyEnemy('field_enemy641',fieldEnemy641);fieldEnemy641.tick(dt,x,y,paused or life360.dead,house39.walkable)end
  if ambush360 then ambush360.tick(dt,x,y,paused or inside39 or front39 or life360.dead,sceneWalkable360)end
 
  ui.cls(0)

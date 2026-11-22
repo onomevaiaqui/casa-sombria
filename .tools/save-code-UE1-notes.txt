@@ -1,0 +1,1 @@
+UE1 schema is frozen. Future changes must retain this decoder or increment the code version. Character alphabet excludes 0,1,I,O. CRC16-CCITT rejects accidental errors. Enemy attack and hit transients normalize at checkpoint; live positions quantize to 1/16m. Resume point is always the public phone. No Lua code is evaluated from the entered password.

@@ -1912,6 +1912,7 @@ local titleCancel,titleLeft,titleRight = false,false,false
 local volume = 100
 
 local function drawTitle()
+    if save680.codeEntryActive()then save680.codeEntryTick(ui);return end
     local up,down,confirm,cancel = held(UP or 1),held(DOWN or 3),held(BTN_Z or 4),held(BTN_G or 13)
     local left,right = held(LEFT or 4),held(RIGHT or 2)
     local choose = confirm and not titleConfirm
@@ -1950,10 +1951,12 @@ local function drawTitle()
             end
         end
     else
-        if previous then titleChoice = (titleChoice+1)%3+1 end
-        if nextChoice then titleChoice = titleChoice%3+1 end
+        if previous then titleChoice = (titleChoice+2)%4+1 end
+        if nextChoice then titleChoice = titleChoice%4+1 end
         if choose then
             if titleChoice==3 then
+                save680.beginCodeEntry();titleConfirm=true;return
+            elseif titleChoice==4 then
                 settingsOpen,settingsChoice = true,1
             elseif titleChoice==1 or canContinue then
                 if titleChoice==2 and save680.exists()then save680.load()
@@ -2019,7 +2022,7 @@ local function drawTitle()
             end
         end
     else
-        local options = {"NOVO JOGO","CONTINUAR","CONFIGURACOES"}
+        local options = {"NOVO JOGO","CONTINUAR","RETOMAR POR CODIGO","CONFIGURACOES"}
         for index,text in ipairs(options) do
             local row = 120+(index-1)*23
             local ink = index==2 and not canContinue and 243 or 241
@@ -2049,7 +2052,7 @@ save680.configure(inventory,function()
  local d={inventory={},hp=life.hp,doors={opened=save680.copy(doors.opened),unlocked=save680.copy(doors.unlocked)},enemies={}}
  for _,k in ipairs({'bag','files','collected','equipped','remoteReady','lit','clueRevealed','collarBoxOpen'})do d.inventory[k]=save680.copy(inventory[k])end
  for name,obj in pairs({enemy153=enemy,window_enemy563=windowEnemy})do d.enemies[name]=save680.primitives(obj)end
- for _,name in ipairs({'field_enemy641','enemy360'})do local obj=package.loaded[name];if type(obj)=='table'then d.enemies[name]=save680.primitives(obj)end end
+ for _,name in ipairs({'field_enemy641','enemy360'})do local obj=(save680.tracked and save680.tracked[name])or(type(package)=='table'and package.loaded and package.loaded[name]);if type(obj)=='table'then d.enemies[name]=save680.primitives(obj)end end
  return d
 end,function(d)
  inventory:reset();life.reset();enemy.reset();windowEnemy.reset();doors.reset();codeLock:reset();familyPhoto.reset();require('clue209').reset()
