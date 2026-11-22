@@ -1,0 +1,11 @@
+{
+  "actual_device_log": "BOOT716 FAIL CONFIGURAR MENU: /apps/1445294631/clue209.lua:41 module clue214_palette not found",
+  "pipeline_rule": "filename:match(palette%.lua$) => IgnoreCodec",
+  "renamed": {
+    "clue214_palette": "clue214_colors718",
+    "doc655_paper_palette": "doc655_paper_colors718",
+    "note649_palette": "note649_colors718",
+    "street_palette": "street_colors718"
+  },
+  "physical_console_test_pending": true
+}

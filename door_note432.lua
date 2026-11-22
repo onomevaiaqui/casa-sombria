@@ -27,7 +27,7 @@ end
 function N.draw(ui)
  if N.phase==0 then return end
  if N.phase==4 or N.phase==5 then
-  local sprites=require('sprite_refs697');local colors=require('note649_palette')
+  local sprites=require('sprite_refs697');local colors=require('note649_colors718')
   ui.palset(240,0);ui.palset(241,32767);ui.cls(240)
   for i,v in ipairs(colors)do if N.phase==5 then v=math.floor((v&31)*.32)|(math.floor(((v>>5)&31)*.32)<<5)|(math.floor(((v>>10)&31)*.32)<<10)end;ui.palset(i-1,v)end
   ui.spr(sprites.note649_0,100,5);ui.spr(sprites.note649_1,100,135)

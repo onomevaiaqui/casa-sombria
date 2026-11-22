@@ -13,7 +13,7 @@ function Reader.new(id)
  end
  function state:draw()
   local sprites=require('sprite_refs697')
-  local colors=require(self.doc.mother and 'note649_palette'or'doc655_paper_palette')
+  local colors=require(self.doc.mother and 'note649_colors718'or'doc655_paper_colors718')
   ui.palset(240,0);ui.palset(241,32767);ui.cls(240)
   for i,v in ipairs(colors)do
    v=math.floor((v&31)*.32)|(math.floor(((v>>5)&31)*.32)<<5)|(math.floor(((v>>10)&31)*.32)<<10)

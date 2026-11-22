@@ -1,7 +1,7 @@
 local actor=require('actor_data')
 local cameras=require('street_data')
 local hole=require('hole')
-local palette=require('street_palette')
+local palette=require('street_colors718')
 local sprites=require('sprite_refs697')
 local config=require('review_config')
 local x,y,angle=0,5,0

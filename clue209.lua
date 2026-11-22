@@ -38,7 +38,7 @@ function P.tick(dt,left,right,up,down,b,a)
  local close=a and not previousA;previousB,previousA=b,a
  if close then P.active=false;mesh=nil;bag=nil;buffers={};return true end
 end
-local palette=require('clue214_palette')
+local palette=require('clue214_colors718')
 local sprites
 local inspectionSlots339
 local inspectionKeys339={4330,6446,2183,2184,13877,12891,6513,10574,9549,5423,7435,24412,20152,9516,6580,19230,7469,5287,5354,8459,3241,5389,6614,7705,5388,4332,3139,6547,6546,5457,4366,2149,10540,1127,9482,5490,9483,7367,5253,3207,2148,2217,12721,3172,1092,4230,1057,3173}
