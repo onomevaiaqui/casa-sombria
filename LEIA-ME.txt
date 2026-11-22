@@ -1,9 +1,10 @@
-A Ultima Entrega - 16.50
-Inicio normal pelo menu, sem telas de diagnostico.
-Telefone: exige uma ficha. Confirmar salvar consome uma ficha e exibe um codigo UE1. Anote ou fotografe.
-Menu > RETOMAR POR CODIGO: selecione os caracteres com o direcional, B insere, APAGAR remove o ultimo e CARREGAR retoma. A volta. Teclado USB e opcional.
-O codigo recupera vida, mochila, arquivos, portas, progresso e estado principal dos inimigos. A retomada acontece no telefone. Ataques e temporizadores em andamento sao reiniciados como num checkpoint. Posicoes de inimigos sao quantizadas em 1/16 m.
-O codigo tem verificacao de erros; entrada invalida nao altera a partida.
-Sem depender de io, os, load, package ou escrita no console. No navegador permanece tambem a persistencia automatica existente.
-Nenhuma ficha gratuita fica no telefone. Local da primeira ficha ainda a definir pelo autor.
-Carregamento por comodo/camera/quadro respeita 4 MiB de Lua. Audio nativo: 37 arquivos Furnace validados.
+A Ultima Entrega - 16.51
+Inicio normal pelo menu.
+Salvar: encontre a ficha ao examinar o corpo no box do banheiro da primeira casa. No telefone publico, confirmar salvar consome uma ficha e informa um password de sete digitos. Anote o numero.
+Continuar: navegue no telefone vermelho com o direcional e use B para digitar. Os sete digitos validam automaticamente. Numero correto toca uma vez e faz fade para o jogo; numero incorreto toca sinal de linha desligada e limpa o visor. * apaga; A volta.
+Passwords retomam checkpoints predefinidos com vida 4/4 e inventario padronizado para cada etapa. Nao sao uma gravacao exata da partida. A ficha consumida no primeiro salvamento nao reaparece ao retomar.
+Sala: luz do abajur aumentada em 30 por cento para facilitar a leitura da porta do corredor.
+Inimigo do corredor: 5 pontos de vida, ataques mais espacados e maior reacao aos golpes.
+Firmware alvo 0.7. Testes locais com limite de 4 MiB de Lua, Sprites somente leitura e sem io/os/load/package no jogo.
+Audio nativo: 39 arquivos Furnace; dois tons telefonicos sintetizados para esta versao.
+Validacao local concluida; teste fisico no console pendente.

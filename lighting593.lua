@@ -13,7 +13,7 @@ local rooms={
  rua={ambient=.35,sources={{-1.05,0,.28,3.2},{18.03,5.01,.30,2.2}}},
  quintal={ambient=.36,sources={{6.135,2.3,.30,2.2},{6.135,6.3,.175,1.8},{.8,1,.24,1.6}}},
  frente={ambient=.36,sources={{8,8.535,.30,2.2},{14.4,5.79,.27,2.1}}},
- sala={ambient=.32,sources={{.5,.6,.52,1.85}}},
+ sala={ambient=.35,sources={{.5,.6,.58,1.85}}},
  cozinha={ambient=.36,sources={{2.4,2.1,.48,2.0}}},
  corredor={ambient=.29,sources={{.25,.30,.38,1.2},{2.65,1.45,.38,1.2},{5.35,.30,.38,1.2},{5.92,.9,.12,1.0}}},
  banheiro={ambient=.38,sources={{1.3,1.8,.39,1.4}}},

@@ -1921,7 +1921,7 @@ local function drawTitle()
         menuStart624.time=menuStart624.time+(frameTime.dt or 1/60)
         choose=menuStart624.time>=.75
         if choose then menuStart624=nil end
-    elseif choose and not settingsOpen and (titleChoice==1 or (titleChoice==2 and canContinue))then
+    elseif choose and not settingsOpen and titleChoice==1 then
         menuStart624={time=0,choice=titleChoice};print('TRANSITION624|out');choose=false
     end
 
@@ -1951,12 +1951,12 @@ local function drawTitle()
             end
         end
     else
-        if previous then titleChoice = (titleChoice+2)%4+1 end
-        if nextChoice then titleChoice = titleChoice%4+1 end
+        if previous then titleChoice = (titleChoice+1)%3+1 end
+        if nextChoice then titleChoice = titleChoice%3+1 end
         if choose then
-            if titleChoice==3 then
+            if titleChoice==2 then
                 save680.beginCodeEntry();titleConfirm=true;return
-            elseif titleChoice==4 then
+            elseif titleChoice==3 then
                 settingsOpen,settingsChoice = true,1
             elseif titleChoice==1 or canContinue then
                 if titleChoice==2 and save680.exists()then save680.load()
@@ -2022,10 +2022,10 @@ local function drawTitle()
             end
         end
     else
-        local options = {"NOVO JOGO","CONTINUAR","RETOMAR POR CODIGO","CONFIGURACOES"}
+        local options = {"NOVO JOGO","CONTINUAR","CONFIGURACOES"}
         for index,text in ipairs(options) do
             local row = 120+(index-1)*23
-            local ink = index==2 and not canContinue and 243 or 241
+            local ink = 241
             ui.print(text,46,row,ink)
             if titleChoice==index then
                 ui.print(">",30,row,242)
@@ -2033,7 +2033,7 @@ local function drawTitle()
             end
         end
         if titleChoice==2 then
-            ui.print(save680.exists()and "Carregar jogo salvo"or "Sem jogo salvo",30,193,243)
+            ui.print("Inserir numero-password",30,193,243)
         end
     end
 end
@@ -2273,7 +2273,7 @@ function update()
             nearbyDoor=nil
             roomNotice=""
         elseif interaction then
-            dialogue:open(interaction.pages)
+            dialogue:open(interactions.examine(interaction,inventory))
             facing=perspective.facing(currentRoom,interaction.lookX,interaction.lookY)
             walking,running=false,false
             transitionCarry=nil
@@ -2303,7 +2303,7 @@ function update()
     elseif nearbyDoor and not aiming then
         status=nearbyDoor.id=="casinha"and "B: EXAMINAR CADEADO"or nearbyDoor.id=="garagem_externa"and "B: EXAMINAR PORTA DE ROLO"or nearbyDoor.id=="jardim_quintal"and "B: ABRIR PORTAO"or "B: ABRIR PORTA"
     elseif interaction and not aiming then
-        status=interaction.id=='ghost_girl_swing'and 'B: FALAR COM A MENINA'or interaction.id=='cozinha_comida_podre'and 'B: EXAMINAR PIA'or 'B: EXAMINAR QUADROS'
+        status=interaction.id=='shower_body712'and 'B: EXAMINAR CORPO'or interaction.id=='ghost_girl_swing'and 'B: FALAR COM A MENINA'or interaction.id=='cozinha_comida_podre'and 'B: EXAMINAR PIA'or 'B: EXAMINAR QUADROS'
     elseif familyPhoto.near(currentRoom,ix,iy)and not aiming then
         status='B: EXAMINAR FOTO'
     elseif pickup and not aiming then

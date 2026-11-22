@@ -35,7 +35,7 @@ end
 function S.trackEnemy(name,obj)S.tracked=S.tracked or{};S.tracked[name]=obj end
 function S.beginCodeEntry()
  require('code_entry702').begin(function(code)
-  local d,err=require('save_code702').decode(code);if not d then return false,err end
+  local d,err=require('phone_checkpoints703').decode(code);if not d then return false,err end
   if not restore then return false,'Jogo ainda nao carregado.'end
   S.phase=nil;S.lastData=copy(d);restore(d);return true
  end)
@@ -50,13 +50,14 @@ function S.save()
  local ok,data=pcall(capture)
  if not ok then table.insert(inv.bag,index,'phone_token');return false,'Nao foi possivel gerar o codigo. Ficha devolvida.'end
  data.version=1
- local code,err=require('save_code702').encode(data)
+ local code,err=require('phone_checkpoints703').encode(data)
  if not code then table.insert(inv.bag,index,'phone_token');return false,'Nao foi possivel gerar o codigo. Ficha devolvida.'end
- S.lastData=copy(data);S.code=code
+ local checkpoint=require('phone_checkpoints703').decode(code)
+ S.lastData=copy(checkpoint);S.code=code;S.checkpointInfo=require('phone_checkpoints703').info(code)
  -- The browser keeps its existing automatic persistence in addition to the code.
  if browser then
   pcall(function()
-   local text='return '..encode(data);local f=assert(io.open(path,'wb'));assert(f:write(text));assert(f:close())
+   local text='return '..encode(checkpoint);local f=assert(io.open(path,'wb'));assert(f:write(text));assert(f:close())
    print('SAVE680|'..text:gsub('.',function(c)return string.format('%02x',c:byte())end))
   end)
  end
@@ -87,19 +88,19 @@ function S.draw(ui)
  local text=require('subtitles').text
  if S.phase=='code'then
   ui.palset(240,0);ui.palset(241,32767);ui.palset(242,21140);ui.cls(240)
-  ui.print('CODIGO DE RETOMADA',24,18,241)
+  ui.print('PASSWORD DO TELEFONE',24,18,241)
   ui.print('Uma ficha telefonica foi utilizada.',24,43,242)
-  local code=require('save_code702').format(S.code or'UE1-');local row,line=0,''
-  for part in code:gmatch('[^-]+')do if #line+#part+1>44 then ui.print(line,24,73+row*17,241);row=row+1;line=part else line=line==''and part or(line..'-'..part)end end
-  if line~=''then ui.print(line,24,73+row*17,241)end
-  ui.print('Anote ou fotografe este codigo.',24,214,242)
-  ui.print('Menu: RETOMAR POR CODIGO.',24,233,242)
+  ui.print('Seu password e '..require('phone_checkpoints703').format(S.code)..'.',24,82,241)
+  local info=S.checkpointInfo
+  if info then ui.print(info.name,24,122,241);ui.print('VIDA AO RETOMAR: 4/4',24,145,242);ui.print(info.gear,24,165,242)end
+  ui.print('Checkpoint predefinido. Anote o numero.',24,205,242)
+  ui.print('Menu: CONTINUAR para digitar o password.',24,230,242)
   ui.print('B / A: FECHAR',24,253,242)
  elseif S.phase=='intro'then
   text(ui,'Um telefone publico. Preciso de fichas para usar.',32,221,68)
   text(ui,inv:has('phone_token')and'B: CONTINUAR    A: VOLTAR'or'B / A: VOLTAR',32,250,68)
  elseif S.phase=='confirm'then
-  text(ui,'Salvar jogo?',32,207,68)
+  text(ui,'Salvar checkpoint? Vida e inventario serao padronizados ao retomar.',32,195,68)
   text(ui,S.choice==1 and'> Sim       Nao'or'  Sim     > Nao',32,229,68)
   text(ui,'B: CONFIRMAR    A: CANCELAR',32,250,68)
  else text(ui,S.message or'',32,221,68);text(ui,'B / A: VOLTAR',32,250,68)end

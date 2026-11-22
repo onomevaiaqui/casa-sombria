@@ -1,6 +1,6 @@
 -- The Wrapped / Codyanka (CC0). Arm-free recovery authored offline.
 local W={room='corredor',state='waiting',hp=5,drawn=0}
-W.tuning={speed=2.65,attackRate=1.65,recovery=.16,punchReach=.80,kickReach=.95,weaponReach=1.10,impactReach=.95}
+W.tuning={speed=2.15,attackRate=1.20,recovery=.68,punchReach=.80,kickReach=.95,weaponReach=1.10,impactReach=.95}
 local cameras=require('cameras168')
 local metric=require('metric_rooms')
 local doors=require('doors131')
@@ -48,7 +48,7 @@ function W.tryHit(room,x,y,facing,weapon,kind)
  local stagger=(W.poise or 0)<=0
  if W.hp<=0 then W.state='dying';W.deathTime=0;W.hitTime=nil;W.attackTime=nil
  elseif stagger then
-  W.attackTime=nil;W.moving=false;W.cooldown=.10;W.blend=1;W.hitTime=0;W.poise=.90
+  W.attackTime=nil;W.moving=false;W.cooldown=.50;W.blend=1;W.hitTime=0;W.poise=.45
  else W.flinch=.12 end
  if W.hp<=0 or stagger then
   W.fromPose=W.lastPose;W.lastPose={};W.poseBlend=W.fromPose and 0 or 1;W.previousClip=W.hp<=0 and death or hit
@@ -101,7 +101,7 @@ function W.tick(dt,room,px,py)
  if W.portal then require('pursuit605').advancePortal(W,dt,run.duration);return end
  if room~=W.room then W.attackTime=nil;require('pursuit605').follow(W,room,dt,run.duration);return end
  if W.hitTime then
-  W.poseBlend=math.min(1,W.poseBlend+dt/.08);W.hitTime=W.hitTime+dt*1.65
+  W.poseBlend=math.min(1,W.poseBlend+dt/.08);W.hitTime=W.hitTime+dt*1.10
   if W.hitTime>=hit.duration then W.hitTime=nil end
   return
  end

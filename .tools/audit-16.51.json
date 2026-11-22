@@ -1,0 +1,24 @@
+{
+  "version": "16.51",
+  "phone": "seven-digit predefined checkpoints; one coin per save; automatic ring+fade on valid number; busy+clear on invalid",
+  "bathroom": "dead body with one phone token, no added blocker, full inventory retry, consumed flag in password presets",
+  "lighting": "living room existing S13 +30 percent",
+  "corridor_enemy": {
+    "hp": 5,
+    "speed": 2.15,
+    "attack_rate": 1.2,
+    "recovery": 0.68,
+    "poise": 0.45
+  },
+  "new_bitmap_count": 53,
+  "phone_tones": "original synthesized PCM converted to native Furnace NES files",
+  "physical_console_tested": false,
+  "tests_passed": [
+    "Lua5.4 cap4MiB full menu/new game/manual/field enemy/shed exit",
+    "no package, immutable native Sprites",
+    "phone invalid busy and clear, valid once ring and automatic restore",
+    "corpse single pickup, full bag retry, password consumed flag",
+    "53 bitmap dimensions and224-color limits",
+    "39 native Furnace tracks including generated phone tones"
+  ]
+}

@@ -17,7 +17,7 @@ local function fail(err)
 end
 function B.tick()
  if B.error then
-  canvas();ui.print('16.50 - FALHA NA INICIALIZACAO',10,15,241)
+  canvas();ui.print('16.51 - FALHA NA INICIALIZACAO',10,15,241)
   ui.print('ETAPA: '..B.label,10,37,241)
   ui.print('MEMORIA LUA: '..memory()..' KB',10,55,241)
   local row=0
@@ -28,7 +28,7 @@ function B.tick()
   ui.print('Envie uma foto desta tela.',10,246,241);return
  end
  if not B.loaded then
-  frames=frames+1;canvas();ui.print('16.50 - CARREGANDO JOGO',14,85,241)
+  frames=frames+1;canvas();ui.print('16.51 - CARREGANDO JOGO',14,85,241)
   ui.print('MEMORIA LUA: '..memory()..' KB',14,110,241)
   if frames<3 then return end
   if modules[pending]then
