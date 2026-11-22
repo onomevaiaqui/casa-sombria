@@ -1,0 +1,12 @@
+{
+  "serial_log": "COM6 115200, firmware0.7.0, app1445294631",
+  "observed": "game launch frame stalls followed by black screen with VM frame loop still running; no Lua error emitted",
+  "fix": "core update is a local closure returned explicitly by initializer; stable startup entry loop; no global update handoff",
+  "tests": [
+    "old failure reproduced with isolated module environments",
+    "fixed isolated module boot/New Game under4MiB",
+    "shared-environment full gameplay regression",
+    "phone automatic resume regression"
+  ],
+  "physical_test_pending": true
+}

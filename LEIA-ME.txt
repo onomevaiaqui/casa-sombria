@@ -1,4 +1,4 @@
-A Ultima Entrega - 16.52
+A Ultima Entrega - 16.53
 Inicio normal pelo menu.
 Salvar: encontre a ficha ao examinar o corpo no box do banheiro da primeira casa. No telefone publico, confirmar salvar consome uma ficha e informa um password de sete digitos. Anote o numero.
 Continuar: navegue no telefone vermelho com o direcional e use B para digitar. Os sete digitos validam automaticamente. Numero correto toca uma vez e faz fade para o jogo; numero incorreto toca sinal de linha desligada e limpa o visor. * apaga; A volta.
@@ -9,4 +9,6 @@ Firmware alvo 0.7. Testes locais com limite de 4 MiB de Lua, Sprites somente lei
 Audio nativo: 39 arquivos Furnace; dois tons telefonicos sintetizados para esta versao.
 Validacao local concluida; teste fisico no console pendente.
 
-16.52: inicializador compilado antes das dependencias; carregamento em etapas; dados binarios do personagem extraidos sem alterar nenhum byte. Etapa e contador visiveis durante o boot. Testes locais de memoria insuficiente e dependencia ausente mostram erro sem tela preta silenciosa. Confirmacao no hardware pendente.
+16.53: inicializador compilado antes das dependencias; carregamento em etapas; dados binarios do personagem extraidos sem alterar nenhum byte. Etapa e contador visiveis durante o boot. Testes locais de memoria insuficiente e dependencia ausente mostram erro sem tela preta silenciosa. Confirmacao no hardware pendente.
+
+16.53: funcao de atualizacao devolvida explicitamente pelo inicializador. Entrada principal estavel, compativel com modulos em ambientes isolados; logs BOOT716 quando disponiveis.
