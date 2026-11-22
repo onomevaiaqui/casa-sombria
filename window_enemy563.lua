@@ -16,8 +16,7 @@ local function load()
  for i=1,D.vertices do vertices[i]={0,0,0} end
  for i=1,#D.triangles,7 do
   local a,b,c,d,e,f,k=D.triangles:byte(i,i+6)
-  triangles[#triangles+1]={a+b*256+1,c+d*256+1,e+f*256+1,k}
-  pool[#pool+1]={0,0,0,0,0}
+  local n=#triangles;triangles[n+1],triangles[n+2],triangles[n+3],triangles[n+4]=a+b*256+1,c+d*256+1,e+f*256+1,k
  end
  W.x,W.y=S.anchor[1],S.anchor[2];W.angle=-math.pi/2
 end
@@ -204,10 +203,10 @@ function W.draw(room)
   else
    local ax,az,ay=sample(clip,pos,i)
    if W.fromPose and W.poseBlend<1 then
-    local a=W.fromPose[i];local t=W.poseBlend*W.poseBlend*(3-2*W.poseBlend)
-    if a then ax=a[1]+(ax-a[1])*t;az=a[2]+(az-a[2])*t;ay=a[3]+(ay-a[3])*t end
+    local j=(i-1)*3;local a=W.fromPose;local t=W.poseBlend*W.poseBlend*(3-2*W.poseBlend)
+    if a[j+1]then ax=a[j+1]+(ax-a[j+1])*t;az=a[j+2]+(az-a[j+2])*t;ay=a[j+3]+(ay-a[j+3])*t end
    end
-   local lp=W.lastPose[i];if not lp then lp={};W.lastPose[i]=lp end;lp[1],lp[2],lp[3]=ax,az,ay
+   local j=(i-1)*3;W.lastPose[j+1],W.lastPose[j+2],W.lastPose[j+3]=ax,az,ay
    x=W.x+ax*cos-ay*sin;y=W.y+ax*sin+ay*cos;z=az
    if W.blend<1 then local a,b,c=sample(S,55,i);local t=W.blend*W.blend*(3-2*W.blend);x=a+(x-a)*t;y=b+(y-b)*t;z=c+(z-c)*t end
   end
@@ -215,10 +214,10 @@ function W.draw(room)
  end
  for i=#faces,1,-1 do faces[i]=nil end
  local count=0
- for _,t in ipairs(triangles)do
-  local a,b,c=vertices[t[1]],vertices[t[2]],vertices[t[3]]
+ for ti=1,#triangles,4 do
+  local a,b,c=vertices[triangles[ti]],vertices[triangles[ti+1]],vertices[triangles[ti+2]]
   if a[3]>.1 and b[3]>.1 and c[3]>.1 and (b[1]-a[1])*(c[2]-a[2])-(b[2]-a[2])*(c[1]-a[1])<0 and visible(a,b,c)then
-   count=count+1;local f=pool[count];f[1],f[2],f[3],f[4],f[5]=a,b,c,a[3]+b[3]+c[3],slots[t[4]+1];faces[count]=f
+   count=count+1;local f=pool[count];if not f then f={};pool[count]=f end;f[1],f[2],f[3],f[4],f[5]=a,b,c,a[3]+b[3]+c[3],slots[triangles[ti+3]+1];faces[count]=f
   end
  end
  table.sort(faces,farther)

@@ -1,2 +1,2 @@
 local startup=require('startup544')
-function update()startup.tick()end
+function update(frame)startup.tick(frame)end

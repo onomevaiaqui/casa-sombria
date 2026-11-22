@@ -13,14 +13,14 @@ function D.tick()
  local task=tasks[index]
  if not task then tasks=nil;D.pending=false;D.label='PRIMEIRO QUADRO';return end
  D.label=task[1]
- canvas();ui.print('16.55 - INICIANDO PARTIDA',16,35,241)
+ canvas();ui.print('16.56 - INICIANDO PARTIDA',16,35,241)
  ui.print('ETAPA '..index..'/'..#tasks..': '..D.label,16,65,241)
  if wait>0 then wait=wait-1;return end
  task[2]();index=index+1;wait=4
 end
 function D.fail(err)D.error=tostring(err);D.pending=false;tasks=nil;emergency=nil;if type(collectgarbage)=='function'then pcall(collectgarbage,'collect')end end
 function D.drawError()
- canvas();ui.print('16.55 - FALHA CAPTURADA',12,16,241)
+ canvas();ui.print('16.56 - FALHA CAPTURADA',12,16,241)
  ui.print('ETAPA: '..D.label,12,36,241)
  local text=D.error or 'Erro sem mensagem';local row=0
  for line in (text..'\n'):gmatch('(.-)\n')do

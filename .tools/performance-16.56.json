@@ -1,0 +1,21 @@
+{
+  "reproduced": "4MiB failure entering bathroom after window enemy",
+  "fixes": [
+    "602-vertex enemy pose buffers flattened",
+    "enemy triangle indices flattened, face pool allocated only when used",
+    "idle7 interpolated keyframes instead of61, same5s duration",
+    "shower glass only when actor behind pane, half-resolution sparse mask",
+    "unused legacy prototype bitmap data removed",
+    "real console frame passed to simulation clock",
+    "footsteps drop under FPS24 and while audio channel busy",
+    "menu PCM doubled offline with limiter, master initialized once"
+  ],
+  "tests": [
+    "first-house five rooms, three loops, live window enemy",
+    "same test entering shower",
+    "menu/NewGame/manual/field/shed under4MiB",
+    "phone password/tone/fade restore",
+    "console clock dropped frames"
+  ],
+  "hardware_performance_pending": true
+}

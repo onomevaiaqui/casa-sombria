@@ -15,7 +15,7 @@ end
 function E.tick(ui)
  local keys={l=held(LEFT or 0),r=held(RIGHT or 1),u=held(UP or 2),d=held(DOWN or 3),b=held(BTN_Z or 4),a=held(BTN_G or 13)}
  if E.phase then
-  E.clock=E.clock+1/60
+  E.clock=E.clock+(require('frame_time').dt or 1/60)
   if E.phase=='busy'and E.clock>=.85 then E.phase=nil;E.text='';E.cursor=0;E.error='Numero incorreto. Tente novamente.'
   elseif E.phase=='ring'and E.clock>=1.9 then
    local ok,message=callback(E.text)

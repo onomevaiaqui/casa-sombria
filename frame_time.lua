@@ -34,7 +34,10 @@ function T.sample(ui)
   end
  end
  -- Bound long stalls; never turn a valid 5 FPS reading into a 60 Hz simulation.
- T.dt=math.min(.5,1/(T.fps or 60))
+ local console=T.consoleFrame
+ local delta=type(console)=='number'and T.previousConsoleFrame and console-T.previousConsoleFrame or nil
+ if type(console)=='number'then T.previousConsoleFrame=console end
+ T.dt=math.min(.5,delta and delta>0 and delta/60 or 1/(T.fps or 60))
  return T.dt
 end
 function T.hud(ui)

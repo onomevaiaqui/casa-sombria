@@ -20,15 +20,15 @@ end
 local function fail(err)
  reserve=nil;core=nil;initializer=nil;pcall(collectgarbage,'collect');B.error=tostring(err);B.loaded=false;log('FAIL '..B.label..': '..B.error)
 end
-function B.tick()
+function B.tick(frame)
  if B.error then
-  canvas();ui.print('16.55 - FALHA NA INICIALIZACAO',10,15,241);ui.print('ETAPA: '..B.label,10,37,241);ui.print('MEMORIA LUA: '..memory()..' KB',10,55,241)
+  canvas();ui.print('16.56 - FALHA NA INICIALIZACAO',10,15,241);ui.print('ETAPA: '..B.label,10,37,241);ui.print('MEMORIA LUA: '..memory()..' KB',10,55,241)
   local row=0
   for line in(B.error..'\n'):gmatch('(.-)\n')do for p=1,math.max(1,#line),70 do ui.print(line:sub(p,p+69),10,80+row*13,241);row=row+1;if row>=11 then break end end;if row>=11 then break end end
   ui.print('Envie uma foto desta tela.',10,246,241);return
  end
  if not B.loaded then
-  frames=frames+1;canvas();ui.print('16.55 - CARREGANDO JOGO',14,70,241);ui.print('MEMORIA LUA: '..memory()..' KB',14,95,241);ui.print('ETAPA: '..B.label,14,120,241)
+  frames=frames+1;canvas();ui.print('16.56 - CARREGANDO JOGO',14,70,241);ui.print('MEMORIA LUA: '..memory()..' KB',14,95,241);ui.print('ETAPA: '..B.label,14,120,241)
   ui.print('QUADRO: '..frames,14,145,241)
   if frames<3 then return end
   if not initializer then
@@ -45,6 +45,6 @@ function B.tick()
   if type(candidate)~='function'then fail('Atualizacao do jogo ausente');return end
   core=candidate;B.loaded=true;initializer=nil;reserve=nil;pcall(collectgarbage,'collect');log('MENU READY '..memory()..' KB');log('KEYS Z='..tostring(BTN_Z)..' X='..tostring(BTN_X)..' G='..tostring(BTN_G)..' Q='..tostring(BTN_Q)..' F='..tostring(BTN_F)..' E='..tostring(BTN_E));return
  end
- inputTrace();local ok,err=pcall(core);if not ok then fail(err)end
+ require('frame_time').consoleFrame=frame;local ok,err=pcall(core,frame);if not ok then fail(err)end
 end
 return B
