@@ -24,6 +24,7 @@ end
 function A.effect(name)
  local e=effects[name];if not e or type(music)~='table'then return end
  -- Recorded steps have no independent mixer on this firmware. Never chop a suspense loop at each footfall.
+ if(require('frame_time').fps or 60)<20 and(e[2]==2 or name:find('esforco'))then return end
  if e[2]==1 and(A.wanted~='off'or A.hold>0 or(require('frame_time').fps or 60)<24)then return end
  if A.hold>0 and e[2]<A.priority then return end
  local gain=name=='vidro'and .8 or name=='soco_impacto'and .48 or name=='chute_impacto'and .54 or name:find('esforco')and .23 or .32

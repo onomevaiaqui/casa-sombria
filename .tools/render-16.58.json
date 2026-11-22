@@ -1,0 +1,11 @@
+{
+  "visuals": "original408-vertex courier and602-vertex window enemy, original animation data; LOD removed",
+  "renderer": "full triangles rasterized to bounded2048-pixel bands, max16 colors per image tile with recursive splits; original palette retained; UI fallback for unsupported image API",
+  "test_images_per_actor_average": 10.69,
+  "tests": [
+    "all five rooms repeated, live window enemy, shower,4MiB cap",
+    "field/shed/manual/phone regressions",
+    "image size and color contracts"
+  ],
+  "physical_fps_pending": true
+}

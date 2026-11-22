@@ -5,7 +5,6 @@ local cameras=require('cameras168')
 local metric=require('metric_rooms')
 local doors=require('doors131')
 local life=require('survival158')
-local lod=require('window_lod723')
 local D,S,run,attack,idle,hit,death
 local vertices,triangles,faces,pool={},{},{},{}
 local slots={205,206,207,208,209,210,211,212,213,214,215,219,220,221,222,223}
@@ -14,9 +13,9 @@ local function load()
  D=require('window_mesh563');S=require('window_sequence563')
  run=require('window_run563');attack=require('window_attack563');idle=require('window_idle563')
  hit=require('window_hit566');death=require('window_death566')
- for _,i in ipairs(lod.vertices)do vertices[i]={0,0,0} end
- for i=1,#lod.triangles,7 do
-  local a,b,c,d,e,f,k=lod.triangles:byte(i,i+6)
+ for i=1,D.vertices do vertices[i]={0,0,0} end
+ for i=1,#D.triangles,7 do
+  local a,b,c,d,e,f,k=D.triangles:byte(i,i+6)
   local n=#triangles;triangles[n+1],triangles[n+2],triangles[n+3],triangles[n+4]=a+b*256+1,c+d*256+1,e+f*256+1,k
  end
  if not W.x then W.x,W.y=S.anchor[1],S.anchor[2];W.angle=-math.pi/2 end
@@ -201,7 +200,7 @@ function W.draw(room)
   W.fromPose=W.lastPose;W.lastPose={};W.poseBlend=W.fromPose and 0 or 1;W.previousClip=clip
  end
  local sin,cos=math.sin(W.angle),math.cos(W.angle)
- for _,i in ipairs(lod.vertices)do
+ for i=1,D.vertices do
   local x,y,z
   if seq then x,y,z=sample(S,math.min(55,W.time*10),i)
   else
@@ -225,7 +224,7 @@ function W.draw(room)
   end
  end
  table.sort(faces,farther)
- for _,f in ipairs(faces)do tri(f[1],f[2],f[3],f[5])end
+ if not require('native_batch724').draw(faces)then for _,f in ipairs(faces)do tri(f[1],f[2],f[3],f[5])end end
  W.drawn=count
 end
 function W.beforePlayer(room,x,y)

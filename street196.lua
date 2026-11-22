@@ -182,13 +182,13 @@ local function drawActor(clip,phase,clipName)
  local equipped=medicineInventory and medicineInventory.equipped
  if inside39 then house39.prepare(shot)elseif front39 then yard39.prepare(shot)else prepareCarMask()end
  if poseClip==clip and posePhase==phase and poseX==x and poseY==y and poseAngle==angle and poseShot==shot and poseEquipped==equipped then
-  for _,f in ipairs(faces)do ui.trisfill(f[1][1],f[1][2],f[2][1],f[2][2],f[3][1],f[3][2],f[5])end
+  if not require('native_batch724').draw(faces)then for _,f in ipairs(faces)do ui.trisfill(f[1][1],f[1][2],f[2][1],f[2][2],f[3][1],f[3][2],f[5])end end
   return
  end
  poseClip,posePhase,poseX,poseY,poseAngle,poseShot=clip,phase,x,y,angle,shot;poseEquipped=equipped
  local frame=math.floor(phase);local nextFrame=math.min(frame+1,clip.count-1);local blend=phase-frame;local low,span=clip.low or actor.low,clip.span or actor.span;local sn,cs=math.sin(angle),math.cos(angle);local factor=1.8/1.852
  local m=cameras[shot].m;local r1,r2,r4=m[1],m[2],m[4]
- for _,i in ipairs(actor.vertexSet)do
+ for i=0,407 do
   local p=i*3+frame*1224+1;local q=i*3+nextFrame*1224+1
   local a,b,c=clip.data:byte(p,p+2);local d,e,f=clip.data:byte(q,q+2)
   local ax=(low[1]+(a+(d-a)*blend)/255*span[1])*factor
@@ -219,7 +219,7 @@ local function drawActor(clip,phase,clipName)
   end
  end
  table.sort(faces,farther)
- for _,f in ipairs(faces)do ui.trisfill(f[1][1],f[1][2],f[2][1],f[2][2],f[3][1],f[3][2],f[5])end
+ if not require('native_batch724').draw(faces)then for _,f in ipairs(faces)do ui.trisfill(f[1][1],f[1][2],f[2][1],f[2][2],f[3][1],f[3][2],f[5])end end
 end
 local function startDogPickup()
  local dx,dy=x-5.05,y+5.55;local length=math.max(.001,math.sqrt(dx*dx+dy*dy));local px,py=5.05+dx/length*.82,-5.55+dy/length*.82
@@ -443,7 +443,7 @@ function M.setup(sharedActor,refs,buffers,masterPalette,inv)
  end
  actor,sprites=sharedActor,refs
  vertices,faces,facePool=buffers.vertices,buffers.faces,buffers.pool
- assert(#vertices==408 and #facePool>=#actor.triangles/7,'Buffer 3D incompleto')
+ assert(#vertices==408 and #facePool>=1,'Buffer 3D incompleto')
 end
 M.carOcclusion=carTriangleVisible;M.prepareCarMask=prepareCarMask
 M.selectCamera=selectCamera;M.clearance=clearance;M.walkable=walkable

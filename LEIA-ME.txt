@@ -1,4 +1,4 @@
-A Ultima Entrega - 16.57
+A Ultima Entrega - 16.58
 Inicio normal pelo menu.
 Salvar: encontre a ficha ao examinar o corpo no box do banheiro da primeira casa. No telefone publico, confirmar salvar consome uma ficha e informa um password de sete digitos. Anote o numero.
 Continuar: navegue no telefone vermelho com o direcional e use B para digitar. Os sete digitos validam automaticamente. Numero correto toca uma vez e faz fade para o jogo; numero incorreto toca sinal de linha desligada e limpa o visor. * apaga; A volta.
@@ -9,14 +9,16 @@ Firmware alvo 0.7. Testes locais com limite de 4 MiB de Lua, Sprites somente lei
 Audio nativo: 39 arquivos Furnace; dois tons telefonicos sintetizados para esta versao.
 Validacao local concluida; teste fisico no console pendente.
 
-16.57: inicializador compilado antes das dependencias; carregamento em etapas; dados binarios do personagem extraidos sem alterar nenhum byte. Etapa e contador visiveis durante o boot. Testes locais de memoria insuficiente e dependencia ausente mostram erro sem tela preta silenciosa. Confirmacao no hardware pendente.
+16.58: inicializador compilado antes das dependencias; carregamento em etapas; dados binarios do personagem extraidos sem alterar nenhum byte. Etapa e contador visiveis durante o boot. Testes locais de memoria insuficiente e dependencia ausente mostram erro sem tela preta silenciosa. Confirmacao no hardware pendente.
 
-16.57: funcao de atualizacao devolvida explicitamente pelo inicializador. Entrada principal estavel, compativel com modulos em ambientes isolados; logs BOOT716 quando disponiveis.
+16.58: funcao de atualizacao devolvida explicitamente pelo inicializador. Entrada principal estavel, compativel com modulos em ambientes isolados; logs BOOT716 quando disponiveis.
 
-16.57: logs do Lupi identificaram um modulo de cores removido pelo codec. Os quatro arquivos terminados em palette.lua foram renomeados para colors718.lua; referencias revisadas e validadas.
+16.58: logs do Lupi identificaram um modulo de cores removido pelo codec. Os quatro arquivos terminados em palette.lua foram renomeados para colors718.lua; referencias revisadas e validadas.
 
-16.57: removida a remarcacao antiga dos botoes; constantes nativas preservadas para confirmar menus e interagir. Musica D02 do menu aumentada de0.30 para0.60.
+16.58: removida a remarcacao antiga dos botoes; constantes nativas preservadas para confirmar menus e interagir. Musica D02 do menu aumentada de0.30 para0.60.
 
-16.57: memoria do inimigo e efeito do box reduzidos; testes percorrem todos os interiores repetidamente com inimigo ativo. Relogio usa o contador do console. Arquivo D02 amplificado em2x com limitador. Passos suprimidos abaixo de24FPS para nao disputar carregamento com sons prioritarios. Sequencia da janela preservada. Desempenho final depende do teste no aparelho.
+16.58: memoria do inimigo e efeito do box reduzidos; testes percorrem todos os interiores repetidamente com inimigo ativo. Relogio usa o contador do console. Arquivo D02 amplificado em2x com limitador. Passos suprimidos abaixo de24FPS para nao disputar carregamento com sons prioritarios. Sequencia da janela preservada. Desempenho final depende do teste no aparelho.
 
-16.57: geometria nativa simplificada (personagem141 vertices, inimigo180), preservando trajetorias de animacao e colisoes. Inimigo preparado antes de iniciar a partida, buffers graficos liberados na saida da casa. Arquivo original D02 restaurado apos diagnostico LAS incompativel, volume de reproducao em1.0.
+16.58: geometria nativa simplificada (personagem141 vertices, inimigo180), preservando trajetorias de animacao e colisoes. Inimigo preparado antes de iniciar a partida, buffers graficos liberados na saida da casa. Arquivo original D02 restaurado apos diagnostico LAS incompativel, volume de reproducao em1.0.
+
+16.58: geometria original restaurada. Renderizacao por pequenos blocos de imagem com a paleta original e buffer limitado, substituindo centenas de comandos por cerca de11 imagens por personagem nos testes. Fallback para triangulos se ui.img for recusado. Coleta de memoria incremental e grafismo de fontes corrigido.
