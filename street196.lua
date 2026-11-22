@@ -188,7 +188,7 @@ local function drawActor(clip,phase,clipName)
  poseClip,posePhase,poseX,poseY,poseAngle,poseShot=clip,phase,x,y,angle,shot;poseEquipped=equipped
  local frame=math.floor(phase);local nextFrame=math.min(frame+1,clip.count-1);local blend=phase-frame;local low,span=clip.low or actor.low,clip.span or actor.span;local sn,cs=math.sin(angle),math.cos(angle);local factor=1.8/1.852
  local m=cameras[shot].m;local r1,r2,r4=m[1],m[2],m[4]
- for i=0,407 do
+ for _,i in ipairs(actor.vertexSet)do
   local p=i*3+frame*1224+1;local q=i*3+nextFrame*1224+1
   local a,b,c=clip.data:byte(p,p+2);local d,e,f=clip.data:byte(q,q+2)
   local ax=(low[1]+(a+(d-a)*blend)/255*span[1])*factor

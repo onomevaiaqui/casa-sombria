@@ -5,21 +5,24 @@ local cameras=require('cameras168')
 local metric=require('metric_rooms')
 local doors=require('doors131')
 local life=require('survival158')
+local lod=require('window_lod723')
 local D,S,run,attack,idle,hit,death
 local vertices,triangles,faces,pool={},{},{},{}
 local slots={205,206,207,208,209,210,211,212,213,214,215,219,220,221,222,223}
 local function load()
- if D then return end
+ if D and next(vertices)then return end
  D=require('window_mesh563');S=require('window_sequence563')
  run=require('window_run563');attack=require('window_attack563');idle=require('window_idle563')
  hit=require('window_hit566');death=require('window_death566')
- for i=1,D.vertices do vertices[i]={0,0,0} end
- for i=1,#D.triangles,7 do
-  local a,b,c,d,e,f,k=D.triangles:byte(i,i+6)
+ for _,i in ipairs(lod.vertices)do vertices[i]={0,0,0} end
+ for i=1,#lod.triangles,7 do
+  local a,b,c,d,e,f,k=lod.triangles:byte(i,i+6)
   local n=#triangles;triangles[n+1],triangles[n+2],triangles[n+3],triangles[n+4]=a+b*256+1,c+d*256+1,e+f*256+1,k
  end
- W.x,W.y=S.anchor[1],S.anchor[2];W.angle=-math.pi/2
+ if not W.x then W.x,W.y=S.anchor[1],S.anchor[2];W.angle=-math.pi/2 end
 end
+function W.releaseGraphics()vertices={};triangles={};faces={};pool={};W.lastPose=nil;W.fromPose=nil;W.previousClip=nil end
+W.prepare=load
 function W.reset()
  W.room='corredor'
  W.glassSound624=false
@@ -184,6 +187,7 @@ end
 local function farther(a,b)return a[4]>b[4]end
 function W.draw(room)
  if not require('pursuit605').inside[room]or W.state=='waiting'or W.state=='escaped'then return end
+ if not next(vertices)then load()end
  local plan=metric.plan.rooms;local source,view=plan[W.room],plan[room];if not source or not view then return end
  local offsetX,offsetY=source.offset[1]-view.offset[1],source.offset[2]-view.offset[2]
  -- Keep the actor hidden until the same instant that exposes the broken window.
@@ -197,7 +201,7 @@ function W.draw(room)
   W.fromPose=W.lastPose;W.lastPose={};W.poseBlend=W.fromPose and 0 or 1;W.previousClip=clip
  end
  local sin,cos=math.sin(W.angle),math.cos(W.angle)
- for i=1,D.vertices do
+ for _,i in ipairs(lod.vertices)do
   local x,y,z
   if seq then x,y,z=sample(S,math.min(55,W.time*10),i)
   else

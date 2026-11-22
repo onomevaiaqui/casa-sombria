@@ -1,0 +1,25 @@
+{
+  "courier": {
+    "old_vertices": 408,
+    "draw_vertices": 141,
+    "old_faces": 812,
+    "new_faces": 278
+  },
+  "window_enemy": {
+    "old_vertices": 602,
+    "new_vertices": 180,
+    "old_faces": 1200,
+    "new_faces": 356,
+    "animation_bytes_removed": 162048,
+    "retained_trajectories": "exact original source vertex samples"
+  },
+  "window": "assets loaded in New Game preparation, no surprise require at trigger",
+  "menu_audio": "original 16.55 Furnace file restored after console reported unsupported LAS for amplified variant; playback gain1.0",
+  "tests": [
+    "five interior rooms repeated three times with live enemy and shower",
+    "field combat and shed manual exit",
+    "phone checkpoint restore",
+    "4MiB Lua cap"
+  ],
+  "hardware_fps_pending": true
+}
