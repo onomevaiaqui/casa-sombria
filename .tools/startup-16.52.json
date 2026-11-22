@@ -1,0 +1,80 @@
+{
+  "extracted": [
+    {
+      "module": "courier715_00",
+      "bytes": 5684,
+      "kind": "actor"
+    },
+    {
+      "module": "courier715_01",
+      "bytes": 1224,
+      "kind": "actor"
+    },
+    {
+      "module": "courier715_02",
+      "bytes": 1224,
+      "kind": "actor"
+    },
+    {
+      "module": "courier715_03",
+      "bytes": 39168,
+      "kind": "actor"
+    },
+    {
+      "module": "courier715_04",
+      "bytes": 28152,
+      "kind": "actor"
+    },
+    {
+      "module": "courier715_05",
+      "bytes": 50184,
+      "kind": "actor"
+    },
+    {
+      "module": "courier715_06",
+      "bytes": 7200,
+      "kind": "legacy fallback"
+    },
+    {
+      "module": "courier715_07",
+      "bytes": 1050,
+      "kind": "legacy fallback"
+    },
+    {
+      "module": "courier715_08",
+      "bytes": 6534,
+      "kind": "legacy fallback"
+    }
+  ],
+  "old_core_source": 299301,
+  "new_core_source": 110674,
+  "staged_dependencies": [
+    "save680",
+    "sprite_refs697",
+    "boot349",
+    "interaction287",
+    "death171",
+    "shutter169",
+    "turn168",
+    "progression167",
+    "photo162",
+    "survival158",
+    "steering157",
+    "enemy153",
+    "window_enemy563",
+    "gc150",
+    "frame_time",
+    "metric_rooms",
+    "cameras168",
+    "doors131",
+    "passage156",
+    "lock158",
+    "crowbar160",
+    "combat164",
+    "interactions",
+    "subtitles",
+    "perspective",
+    "navigation"
+  ],
+  "physical_console_tested": false
+}
